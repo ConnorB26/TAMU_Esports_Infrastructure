@@ -3,12 +3,17 @@ const path = require('node:path');
 const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
 const { config } = require('dotenv');
 const TwitchApi = require("node-twitch").default;
+const { TwitterApi } = require('twitter-api-v2');
 
 // Set up environment variables
 config();
 const TOKEN = process.env.TOKEN;
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
+
+// Set up Twitter connection
+//const twitterClient = new TwitterApi('<YOUR_APP_USER_TOKEN>');
+//console.log(twitterClient.v2.userTimeline('')[0]);
 
 // Set up Twitch connection
 const twitch = new TwitchApi({
