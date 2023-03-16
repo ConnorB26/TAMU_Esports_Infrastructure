@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const Database = require('../database/database');
-const db = new Database(false);
+const createDatabaseInstance  = require('../../database/database.js');
+const db = createDatabaseInstance(false);
 
 const usersRoute = require('./routes/users');
 

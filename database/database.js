@@ -1,10 +1,9 @@
-const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const EventEmitter = require('events');
-require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../', '.env') });
 
-const UserSchema = require('./models/UserSchema');
+const UserSchema = require('./models/User');
 
 class Database extends EventEmitter {
   constructor(watch = false) {
@@ -15,12 +14,13 @@ class Database extends EventEmitter {
 
   async connect() {
     try {
-      const sslCA = path.resolve(__dirname, '../../DB_Cert.pem');
+      const ssl = path.resolve(__dirname, '../DB_Cert.pem');
 
       await mongoose.connect(process.env.DB_CONNECTION, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        sslCA: sslCA,
+        sslKey: ssl,
+        sslCert: ssl,
       });
 
       console.log('MongoDB connected');
@@ -34,7 +34,7 @@ class Database extends EventEmitter {
   }
 
   watchChanges() {
-    const collection = mongoose.connection.collection('yourCollectionName');
+    const collection = mongoose.connection.collection('users');
     const changeStream = collection.watch();
 
     changeStream.on('change', (change) => {
@@ -66,4 +66,4 @@ class Database extends EventEmitter {
   }
 }
 
-module.exports = new Database();
+module.exports = (watch = false) => new Database(watch);

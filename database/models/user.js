@@ -1,29 +1,24 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    match: /^\S+@tamu\.edu$/,
   },
-  password: {
-    type: String,
-    required: true
-  },
-  membershipPaid: {
-    type: Boolean,
-    default: false
-  },
-  discordId: {
-    type: String,
-    unique: true
-  }
+  name: { type: String, required: true },
+  discordId: { type: String, required: true },
+  membershipPaid: { type: Boolean, default: false },
 });
 
-const User = mongoose.model('User', UserSchema);
+const modelName = 'User';
 
-module.exports = User;
+// Check if the model is already compiled, and if so, return it.
+if (mongoose.models[modelName]) {
+  module.exports = mongoose.model(modelName);
+} else {
+  // If the model is not compiled, compile and export it.
+  module.exports = mongoose.model(modelName, userSchema);
+}

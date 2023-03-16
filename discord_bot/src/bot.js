@@ -3,8 +3,8 @@ const path = require('path');
 const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
 const TwitchApi = require("node-twitch").default;
 const { TwitterApi } = require('twitter-api-v2');
-const Database = require('../database/database');
-const db = new Database(true);
+const createDatabaseInstance  = require('../../database/database.js');
+const db = createDatabaseInstance(true);
 require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
 
 // Set up environment variables
