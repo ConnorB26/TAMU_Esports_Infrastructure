@@ -1,6 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const Database = require('../database/database');
+const db = new Database(false);
+
+const usersRoute = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,10 +14,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Sample route
-app.get('/', (req, res) => {
-  res.send('Welcome to the Texas A&M eSports backend!');
-});
+// Use route files
+app.use('/api/users', usersRoute);
 
 // Start the server
 app.listen(PORT, () => {

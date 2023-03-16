@@ -1,12 +1,13 @@
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require('fs');
+const path = require('path');
 const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
-const { config } = require('dotenv');
 const TwitchApi = require("node-twitch").default;
 const { TwitterApi } = require('twitter-api-v2');
+const Database = require('../database/database');
+const db = new Database(true);
+require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
 
 // Set up environment variables
-config();
 const TOKEN = process.env.TOKEN;
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
@@ -91,11 +92,31 @@ for (const file of eventFiles) {
 	}
 }
 
-// Listen to changes in database
-// If user added, give them the specified membership role
-// If user removed, take away the specified membership role
+// Database listening
+db.on('documentAdded', (document) => {
+	console.log('A new document was added:', document);
+	// Give member role
+});
+
+db.on('documentUpdated', (updateDescription) => {
+	console.log('A document was updated:', updateDescription);
+	// Make sure discord ID didn't change, and if so, remove member role from old ID and add to new
+});
+
+db.on('documentDeleted', (documentKey) => {
+	console.log('A document was deleted:', documentKey);
+	// Remove member role
+});
+
 // If membership role changed, replace all old roles with new one
 // If reset date change, reset cron job, which removes all roles upon expiration
+
+// Use the addDocument, updateDocument, and deleteDocument functions
+// Example usage:
+// const newDocumentData = { field1: 'value1', field2: 'value2' };
+// database.addDocument(newDocumentData).then((newDocument) => {
+//   console.log('Document added:', newDocument);
+// });
 
 // Log in to Discord
 client.login(TOKEN);
