@@ -1,14 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const { Client, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, EmbedBuilder, Intents } = require('discord.js');
 const TwitchApi = require("node-twitch").default;
 const { TwitterApi } = require('twitter-api-v2');
-const createDatabaseInstance  = require('../../database/database.js');
+const { CronJob } = require('cron');
+const createDatabaseInstance = require('../../database/database.js');
 const db = createDatabaseInstance(true);
 require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
 
 // Set up environment variables
-const TOKEN = process.env.TOKEN;
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 
@@ -59,7 +61,9 @@ async function sendTwitchNotification(streamData) {
 }
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
+});
 
 // Set up custom commands
 client.commands = new Collection();
@@ -86,37 +90,186 @@ for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
 	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
+		client.once(event.name, (...args) => event.execute(...args, db));
 	} else {
-		client.on(event.name, (...args) => event.execute(...args));
+		client.on(event.name, (...args) => event.execute(...args, db));
 	}
 }
 
-// Database listening
-db.on('documentAdded', (document) => {
-	console.log('A new document was added:', document);
+// Database Interactions
+const infoData = {
+	reset_date: '',
+	member_role: '',
+	twitch_notif_channel: '',
+	twitch_notif_role: '',
+	twitter_notif_channel: '',
+	twitter_notif_role: '',
+};
+let resetRoleCronJob;
+
+// User added event
+db.on('userAdded', async (user) => {
+	//console.log('A new user was added:', user);
+	const userTag = user.discordId;
+
 	// Give member role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const role = guild.roles.cache.get(infoData['member_role']);
+
+	// Get member
+	const member = getUserByTag(userTag);
+	if (!member) {
+		return;
+	}
+	await member.roles.add(role);
 });
 
-db.on('documentUpdated', (updateDescription) => {
-	console.log('A document was updated:', updateDescription);
-	// Make sure discord ID didn't change, and if so, remove member role from old ID and add to new
-});
+// User updated event
+db.on('userUpdated', async (user) => {
+	console.log('A user was updated:', user);
+  
+	await syncMemberRoles();
+	const userTag = user.discordId;
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const role = guild.roles.cache.get(infoData['member_role']);
+	const member = await getUserByTag(userTag);
+  
+	if (member) {
+	  await member.roles.add(role);
+	  console.log(`Role '${role.name}' assigned to '${member.user.tag}'`);
+	} else {
+	  console.error(`User with tag "${userTag}" not found in the guild.`);
+	}
+  });
+  
+// User deleted event
+db.on('userDeleted', async (userKey) => {
+	console.log('A user was deleted:', userKey);
 
-db.on('documentDeleted', (documentKey) => {
-	console.log('A document was deleted:', documentKey);
 	// Remove member role
+	const discordId = userKey._id;
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const role = guild.roles.cache.get(infoData['member_role']);
+	await guild.members.cache.get(discordId).roles.remove(role);
 });
 
-// If membership role changed, replace all old roles with new one
-// If reset date change, reset cron job, which removes all roles upon expiration
+// Info updated event
+db.on('infoUpdated', async (updateData) => {
+	//console.log('An info field was updated:', updateData);
 
-// Use the addDocument, updateDocument, and deleteDocument functions
-// Example usage:
-// const newDocumentData = { field1: 'value1', field2: 'value2' };
-// database.addDocument(newDocumentData).then((newDocument) => {
-//   console.log('Document added:', newDocument);
-// });
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 
-// Log in to Discord
-client.login(TOKEN);
+	const updatedInfoKey = updateData.key;
+	const updatedInfoValue = updateData.value;
+	const oldValue = infoData[updatedInfoKey];
+
+	infoData[updatedInfoKey] = updatedInfoValue;
+
+	// If membership role changed, replace all old roles with new one
+	if (updatedInfoKey === 'member_role') {
+		const oldRoleId = oldValue;
+		const newRoleId = updatedInfoValue;
+
+		const oldRole = guild.roles.cache.get(oldRoleId);
+		const newRole = guild.roles.cache.get(newRoleId);
+
+		// Iterate through members with the old role and replace it with the new role
+		await guild.members.fetch().then(members => {
+			members.each(async member => {
+				if (member.roles.cache.has(oldRoleId)) {
+					await member.roles.remove(oldRole);
+					await member.roles.add(newRole);
+				}
+			});
+		});
+	}
+
+	// If reset date changed, reset the cron job to remove all roles upon expiration
+	if (updatedInfoKey === 'reset_date') {
+		// Stop the current cron job
+		resetRoleCronJob.stop();
+
+		// Convert the new reset_date value to a cron expression
+		const newResetDate = new Date(updatedInfoValue);
+		const newCronExpression = `${newResetDate.getMinutes()} ${newResetDate.getHours()} ${newResetDate.getDate()} ${newResetDate.getMonth() + 1} *`;
+
+		// Create a new cron job with the updated reset_date value
+		createCronJob(newCronExpression);
+
+		// Start the new cron job
+		resetRoleCronJob.start();
+	}
+
+});
+
+async function syncMemberRoles() {
+	// Retrieve all Discord tags from the database
+	const users = await db.getAllUsers().select('discordId');
+	const discordTags = users.map(user => user.discordId);
+
+	// Get the guild and the member role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const memberRole = guild.roles.cache.get(infoData['member_role']);
+
+	// Iterate through all guild members
+	guild.members.cache.each(async (member) => {
+		// Check if the member has the member role
+		if (member.roles.cache.has(memberRole.id)) {
+			// If the member is not in the list of valid Discord tags, remove the role
+			if (!discordTags.includes(member.user.tag)) {
+				await member.roles.remove(memberRole);
+				console.log(`Role '${memberRole.name}' removed from '${member.user.tag}'`);
+			}
+		}
+	});
+}
+
+async function getUserByTag(tag) {
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const members = await guild.members.fetch();
+	return members.find(m => m.user.tag === tag);
+}
+
+async function fetchInitialInfoData() {
+	const allInfoData = await db.getAllInfo();
+	allInfoData.forEach(data => {
+		infoData[data.info] = data.value;
+	});
+}
+
+async function createCronJob(expression) {
+	resetRoleCronJob = new CronJob(expression, async () => {
+		// Your logic for resetting roles goes here
+		const memberRoleId = infoData['member_role'];
+
+		// Loop through the guild members and remove the member_role from each member who has it
+		await guild.members.fetch().then(members => {
+			members.each(async member => {
+				if (member.roles.cache.has(memberRoleId)) {
+					await member.roles.remove(memberRoleId);
+				}
+			});
+		});
+
+		// Stop the cron job after it has executed once
+		resetRoleCronJob.stop();
+	}, {
+		scheduled: false,
+		timezone: 'America/Chicago'
+	});
+}
+
+fetchInitialInfoData().then(async () => {
+	// Convert the reset_date value to a cron expression
+	const resetDate = new Date(infoData['reset_date']);
+	const cronExpression = `${resetDate.getMinutes()} ${resetDate.getHours()} ${resetDate.getDate()} ${resetDate.getMonth() + 1} *`;
+
+	// Create the cron job with the reset_date value
+	createCronJob(cronExpression);
+
+	// Start the cron job
+	resetRoleCronJob.start();
+
+	// Log in to Discord
+	client.login(DISCORD_TOKEN);
+});

@@ -4,6 +4,7 @@ const EventEmitter = require('events');
 require('dotenv').config({ path: path.resolve(__dirname, '../', '.env') });
 
 const UserSchema = require('./models/User');
+const InfoSchema = require('./models/Info');
 
 class Database extends EventEmitter {
   constructor(watch = false) {
@@ -24,6 +25,7 @@ class Database extends EventEmitter {
       });
 
       console.log('MongoDB connected');
+      await this.enablePreAndPostImages();
       if (this.watch) {
         this.watchChanges();
       }
@@ -33,36 +35,99 @@ class Database extends EventEmitter {
     }
   }
 
-  watchChanges() {
-    const collection = mongoose.connection.collection('users');
-    const changeStream = collection.watch();
+  async enablePreAndPostImages() {
+    try {
+      const result = await mongoose.connection.db.command({
+        collMod: 'users',
+        changeStreamPreAndPostImages: { enabled: true },
+      });
 
-    changeStream.on('change', (change) => {
+      console.log('Pre and Post Images Enabled:', result);
+    } catch (error) {
+      console.error('Error enabling Pre and Post Images:', error);
+    }
+  }
+
+  watchChanges() {
+    const userChangeStream = mongoose.connection.collection('users').watch([
+      {
+        $match: {
+          operationType: { $in: ['insert', 'update', 'delete'] },
+        },
+      },
+    ],
+      {
+        fullDocument: 'updateLookup',
+        fullDocumentBeforeChange: 'whenAvailable'
+      });
+
+    const infoChangeStream = mongoose.connection.collection('infos').watch();
+
+    userChangeStream.on('change', async (change) => {
       switch (change.operationType) {
         case 'insert':
-          this.emit('documentAdded', change.fullDocument);
+          this.emit('userAdded', change.fullDocument);
           break;
         case 'update':
-          this.emit('documentUpdated', change.updateDescription);
+          const oldUser = change.fullDocumentBeforeChange;
+          const updatedFields = change.updateDescription.updatedFields;
+          const newUser = { ...oldUser, ...updatedFields };
+          this.emit('userUpdated', oldUser, newUser);
           break;
         case 'delete':
-          this.emit('documentDeleted', change.documentKey);
+          this.emit('userDeleted', change.fullDocumentBeforeChange);
           break;
       }
     });
+
+
+    infoChangeStream.on('change', async (change) => {
+      if (change.operationType === 'update') {
+        const infoEntry = await InfoSchema.findById(change.documentKey._id);
+        const key = infoEntry.info;
+        const value = change.updateDescription.updatedFields.value;
+        this.emit('infoUpdated', { key, value });
+      }
+    });
+
   }
 
-  async addDocument(data) {
-    const newDocument = new UserSchema(data);
-    return await newDocument.save();
+  async createUser(data) {
+    const newUser = new UserSchema(data);
+    return await newUser.save();
   }
 
-  async updateDocument(id, updates) {
-    return await UserSchema.findByIdAndUpdate(id, updates, { new: true });
+  async updateUserByEmail(email, updates) {
+    return await UserSchema.findOneAndUpdate({ email: email }, updates, { new: true });
   }
 
-  async deleteDocument(id) {
-    return await UserSchema.findByIdAndDelete(id);
+  async deleteUserByEmail(email) {
+    return await UserSchema.findOneAndDelete({ email: email });
+  }
+
+  async findUserByEmail(email) {
+    return await UserSchema.findOne({ email: email });
+  }
+
+  async createInfoEntry(data) {
+    const newEntry = new InfoSchema(data);
+    return await newEntry.save();
+  }
+
+  async updateInfoEntry(key, value) {
+    return await InfoSchema.findOneAndUpdate({ info: key }, { $set: { value } }, { new: true });
+  }
+
+  async deleteInfoEntry(key) {
+    return await InfoSchema.findOneAndDelete({ info: key });
+  }
+
+  async getAllInfo() {
+    return await InfoSchema.find({});
+  }
+
+  async getAllUsers() {
+    return await UserSchema.find({});
   }
 }
 

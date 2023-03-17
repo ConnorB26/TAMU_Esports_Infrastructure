@@ -1,12 +1,12 @@
 const { REST, Routes } = require('discord.js');
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
 
 // Set up environment variables
-const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID;
-const TOKEN = process.env.TOKEN;
+const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 // Get all commands
 const commands = [];
@@ -20,7 +20,7 @@ for (const file of commandFiles) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest = new REST({ version: '10' }).setToken(TOKEN);
+const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
 // Deploy commands
 (async () => {
@@ -28,8 +28,8 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
 		const data = await rest.put(
-			//Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), // Dev server only
-            Routes.applicationCommands(CLIENT_ID), // All servers
+			//Routes.applicationGuildCommands(DISCORD_CLIENT_ID, DISCORD_GUILD_ID), // Dev server only
+            Routes.applicationCommands(DISCORD_CLIENT_ID), // All servers
 			{ body: commands },
 		);
 

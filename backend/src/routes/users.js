@@ -1,19 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../../../database/models/user');
+const userController = require('../controllers/UserController');
 
-router.get('/', (req, res) => {
-  res.send('User route');
-});
+module.exports = (database) => {
+  router.get('/', (req, res) => userController.getUsers(req, res, database));
+  router.post('/', (req, res) => userController.createUser(req, res, database));
+  router.put('/:id', (req, res) => userController.updateUser(req, res, database));
+  router.delete('/:id', (req, res) => userController.deleteUser(req, res, database));
+  router.get('/email/:email', (req, res) => userController.getUserByEmail(req, res, database));
 
-router.post('/register', async (req, res) => {
-  try {
-    const newUser = new User(req.body);
-    await newUser.save();
-    res.status(201).send(newUser);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-module.exports = router;
+  return router;
+};
