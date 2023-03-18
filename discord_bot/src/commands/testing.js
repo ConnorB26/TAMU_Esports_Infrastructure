@@ -79,7 +79,12 @@ module.exports = {
 
         // Edit user
         if (interaction.options.getSubcommand() === 'edit_user') {
-            response = await editUser(options.getString('email'), options.getString('name'), options.getUser('discord_id').tag, db);
+            const userEmail = options.getString('email');
+            const userName = options.getString('name') || null;
+            const discordUser = options.getUser('discord_id');
+            const discordTag = discordUser ? discordUser.tag : null;
+
+            response = await editUser(userEmail, userName, discordTag, db);
         }
 
         // Remove user

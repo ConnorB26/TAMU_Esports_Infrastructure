@@ -1,5 +1,4 @@
-const createDatabaseInstance = require('./database.js');
-const db = createDatabaseInstance(false);
+const db = require('./database.js');
 
 async function seedInfoData() {
     const initialData = [
@@ -10,6 +9,8 @@ async function seedInfoData() {
         { info: 'twitter_notif_channel', value: '#xxxxxxxx' },
         { info: 'twitter_notif_role', value: '000000000' },
     ];
+
+    await db.connect();
 
     for (const data of initialData) {
         try {

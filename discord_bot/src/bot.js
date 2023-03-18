@@ -108,16 +108,16 @@ const infoData = {
 let resetRoleCronJob;
 
 // User added event
-db.on('userAdded', async (user) => {
-	//console.log('A new user was added:', user);
-	const userTag = user.discordId;
+db.on('userAdded', async (payload) => {
+	//console.log('A new user was added:', payload);
+	const userTag = payload.new.discordId;
 
 	// Give member role
 	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 	const role = guild.roles.cache.get(infoData['member_role']);
 
 	// Get member
-	const member = getUserByTag(userTag);
+	const member = await getUserByTag(userTag);
 	if (!member) {
 		return;
 	}
@@ -125,50 +125,65 @@ db.on('userAdded', async (user) => {
 });
 
 // User updated event
-db.on('userUpdated', async (user) => {
-	console.log('A user was updated:', user);
-  
-	await syncMemberRoles();
-	const userTag = user.discordId;
+db.on('userUpdated', async (payload) => {
+	//console.log('A user was updated:', payload);
+
+	const oldUserTag = payload.old.discordId;
+	const newUserTag = payload.new.discordId;
+
+	// Only change roles if the discord IDs are different
+	if(oldUserTag === newUserTag) {
+		return;
+	}
+
+	// Give next discord id member role and remove from old
 	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 	const role = guild.roles.cache.get(infoData['member_role']);
-	const member = await getUserByTag(userTag);
-  
-	if (member) {
-	  await member.roles.add(role);
-	  console.log(`Role '${role.name}' assigned to '${member.user.tag}'`);
-	} else {
-	  console.error(`User with tag "${userTag}" not found in the guild.`);
+
+	const oldMember = await getUserByTag(oldUserTag);
+	if (oldMember) {
+		oldMember.roles.remove(role);
 	}
-  });
-  
+
+	const newMember = await getUserByTag(newUserTag);
+	if (newMember) {
+		newMember.roles.add(role);
+	}
+});
+
 // User deleted event
-db.on('userDeleted', async (userKey) => {
-	console.log('A user was deleted:', userKey);
+db.on('userDeleted', async (payload) => {
+	//console.log('A user was deleted:', payload);
 
 	// Remove member role
-	const discordId = userKey._id;
+	const userTag = payload.old.discordId;
 	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 	const role = guild.roles.cache.get(infoData['member_role']);
-	await guild.members.cache.get(discordId).roles.remove(role);
+
+	const oldMember = await getUserByTag(userTag);
+	if (!oldMember) {
+		return;
+	} else {
+		oldMember.roles.remove(role);
+	}
 });
 
 // Info updated event
-db.on('infoUpdated', async (updateData) => {
-	//console.log('An info field was updated:', updateData);
+db.on('infoUpdated', async (payload) => {
+	//console.log('An info field was updated:', payload);
 
 	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 
-	const updatedInfoKey = updateData.key;
-	const updatedInfoValue = updateData.value;
-	const oldValue = infoData[updatedInfoKey];
+	const oldValue = payload.old.value;
+	const newValue = payload.new.value;
+	const key = payload.new.info;
 
-	infoData[updatedInfoKey] = updatedInfoValue;
+	infoData[key] = newValue;
 
 	// If membership role changed, replace all old roles with new one
-	if (updatedInfoKey === 'member_role') {
+	if (key === 'member_role') {
 		const oldRoleId = oldValue;
-		const newRoleId = updatedInfoValue;
+		const newRoleId = newValue;
 
 		const oldRole = guild.roles.cache.get(oldRoleId);
 		const newRole = guild.roles.cache.get(newRoleId);
@@ -185,12 +200,12 @@ db.on('infoUpdated', async (updateData) => {
 	}
 
 	// If reset date changed, reset the cron job to remove all roles upon expiration
-	if (updatedInfoKey === 'reset_date') {
+	if (key === 'reset_date') {
 		// Stop the current cron job
 		resetRoleCronJob.stop();
 
 		// Convert the new reset_date value to a cron expression
-		const newResetDate = new Date(updatedInfoValue);
+		const newResetDate = new Date(newValue);
 		const newCronExpression = `${newResetDate.getMinutes()} ${newResetDate.getHours()} ${newResetDate.getDate()} ${newResetDate.getMonth() + 1} *`;
 
 		// Create a new cron job with the updated reset_date value
@@ -231,6 +246,7 @@ async function getUserByTag(tag) {
 }
 
 async function fetchInitialInfoData() {
+	await db.connect();
 	const allInfoData = await db.getAllInfo();
 	allInfoData.forEach(data => {
 		infoData[data.info] = data.value;

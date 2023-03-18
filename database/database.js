@@ -1,134 +1,112 @@
 const path = require('path');
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
 const EventEmitter = require('events');
+const pg = require('pg');
 require('dotenv').config({ path: path.resolve(__dirname, '../', '.env') });
 
-const UserSchema = require('./models/User');
-const InfoSchema = require('./models/Info');
+const database = process.env.DB_DATABASE;
+const user = process.env.DB_USERNAME;
+const password = process.env.DB_PASSWORD;
+const host = process.env.DB_HOST;
+const port = process.env.DB_PORT;
+
+const User = require('./models/User');
+const Info = require('./models/Info');
 
 class Database extends EventEmitter {
-  constructor(watch = false) {
+  constructor(listenToEvents = false) {
     super();
-    this.connect();
-    this.watch = watch;
+    this.sequelize = new Sequelize(database, user, password, {
+      host,
+      port,
+      dialect: 'postgres',
+      logging: false,
+    });
+
+    this.User = User(this.sequelize, Sequelize);
+    this.Info = Info(this.sequelize, Sequelize);
+
+    if (listenToEvents) {
+      this.setupListeners();
+    }
   }
 
   async connect() {
     try {
-      const ssl = path.resolve(__dirname, '../DB_Cert.pem');
-
-      await mongoose.connect(process.env.DB_CONNECTION, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        sslKey: ssl,
-        sslCert: ssl,
-      });
-
-      console.log('MongoDB connected');
-      await this.enablePreAndPostImages();
-      if (this.watch) {
-        this.watchChanges();
-      }
+      await this.sequelize.authenticate();
+      console.log('Connection to the database has been established successfully.');
+      await this.sequelize.sync();
     } catch (error) {
-      console.error('Error connecting to MongoDB:', error);
-      process.exit(1);
+      console.error('Error connecting to PostgreSQL:', error);
     }
   }
 
-  async enablePreAndPostImages() {
-    try {
-      const result = await mongoose.connection.db.command({
-        collMod: 'users',
-        changeStreamPreAndPostImages: { enabled: true },
-      });
+  async setupListeners() {
+    const client = new pg.Client({
+      connectionString: `postgres://${user}:${password}@${host}:${port}/${database}`,
+    });
+    await client.connect();
+    client.query('LISTEN users_changes');
+    client.query('LISTEN infos_changes');
 
-      console.log('Pre and Post Images Enabled:', result);
-    } catch (error) {
-      console.error('Error enabling Pre and Post Images:', error);
-    }
-  }
-
-  watchChanges() {
-    const userChangeStream = mongoose.connection.collection('users').watch([
-      {
-        $match: {
-          operationType: { $in: ['insert', 'update', 'delete'] },
-        },
-      },
-    ],
-      {
-        fullDocument: 'updateLookup',
-        fullDocumentBeforeChange: 'whenAvailable'
-      });
-
-    const infoChangeStream = mongoose.connection.collection('infos').watch();
-
-    userChangeStream.on('change', async (change) => {
-      switch (change.operationType) {
-        case 'insert':
-          this.emit('userAdded', change.fullDocument);
+    client.on('notification', async (msg) => {
+      const payload = JSON.parse(msg.payload);
+      switch (payload.event) {
+        case 'users_changes':
+          if (payload.type === 'INSERT') {
+            this.emit('userAdded', payload);
+          } else if (payload.type === 'UPDATE') {
+            this.emit('userUpdated', payload);
+          } else if (payload.type === 'DELETE') {
+            this.emit('userDeleted', payload);
+          }
           break;
-        case 'update':
-          const oldUser = change.fullDocumentBeforeChange;
-          const updatedFields = change.updateDescription.updatedFields;
-          const newUser = { ...oldUser, ...updatedFields };
-          this.emit('userUpdated', oldUser, newUser);
+        case 'infos_changes':
+          if (payload.type === 'UPDATE') {
+            this.emit('infoUpdated', payload);
+          }
           break;
-        case 'delete':
-          this.emit('userDeleted', change.fullDocumentBeforeChange);
-          break;
+        default:
+          console.log(`Unhandled event: ${msg.channel}`);
       }
     });
-
-
-    infoChangeStream.on('change', async (change) => {
-      if (change.operationType === 'update') {
-        const infoEntry = await InfoSchema.findById(change.documentKey._id);
-        const key = infoEntry.info;
-        const value = change.updateDescription.updatedFields.value;
-        this.emit('infoUpdated', { key, value });
-      }
-    });
-
   }
 
   async createUser(data) {
-    const newUser = new UserSchema(data);
-    return await newUser.save();
+    return await this.User.create(data);
   }
 
   async updateUserByEmail(email, updates) {
-    return await UserSchema.findOneAndUpdate({ email: email }, updates, { new: true });
+    return await this.User.update(updates, { where: { email }, returning: true });
   }
 
   async deleteUserByEmail(email) {
-    return await UserSchema.findOneAndDelete({ email: email });
+    return await this.User.destroy({ where: { email } });
   }
 
   async findUserByEmail(email) {
-    return await UserSchema.findOne({ email: email });
+    return await this.User.findOne({ where: { email } });
   }
 
   async createInfoEntry(data) {
-    const newEntry = new InfoSchema(data);
-    return await newEntry.save();
+    return await this.Info.create(data);
   }
 
   async updateInfoEntry(key, value) {
-    return await InfoSchema.findOneAndUpdate({ info: key }, { $set: { value } }, { new: true });
+    return await this.Info.update({ value }, { where: { info: key }, returning: true });
   }
 
   async deleteInfoEntry(key) {
-    return await InfoSchema.findOneAndDelete({ info: key });
+    return await this.Info.destroy({ where: { info: key } });
   }
 
   async getAllInfo() {
-    return await InfoSchema.find({});
+    return await this.Info.findAll();
   }
 
   async getAllUsers() {
-    return await UserSchema.find({});
+    return await this.User.findAll();
   }
 }
 
-module.exports = (watch = false) => new Database(watch);
+module.exports = (listenToEvents) => new Database(listenToEvents);

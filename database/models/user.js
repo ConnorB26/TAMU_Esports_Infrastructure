@@ -1,24 +1,24 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { DataTypes } = require('sequelize');
 
-const userSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    match: /^\S+@tamu\.edu$/,
-  },
-  name: { type: String, required: true },
-  discordId: { type: String, required: true },
-  membershipPaid: { type: Boolean, default: false },
-});
+module.exports = (sequelize) => {
+  const User = sequelize.define('User', {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+        isTamuEmail(value) {
+          if (!/^\S+@tamu\.edu$/.test(value)) {
+            throw new Error('Email must be a valid tamu.edu address');
+          }
+        },
+      },
+    },
+    name: { type: DataTypes.STRING, allowNull: false },
+    discordId: { type: DataTypes.STRING, allowNull: false },
+    membershipPaid: { type: DataTypes.BOOLEAN, defaultValue: false },
+  });
 
-const modelName = 'User';
-
-// Check if the model is already compiled, and if so, return it.
-if (mongoose.models[modelName]) {
-  module.exports = mongoose.model(modelName);
-} else {
-  // If the model is not compiled, compile and export it.
-  module.exports = mongoose.model(modelName, userSchema);
-}
+  return User;
+};

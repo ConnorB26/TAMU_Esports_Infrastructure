@@ -22,9 +22,18 @@ async function addUser(email, name, discordId, db) {
 }
 
 async function editUser(email, newName, newDiscordId, db) {
-    await db.updateUserByEmail(email, { name: newName, discordId: newDiscordId });
-    return `User updated: Email: ${email}, New Name: ${newName}, New Discord ID: ${newDiscordId}`;
-}
+    const updates = {};
+    if (newName) updates.name = newName;
+    if (newDiscordId) updates.discordId = newDiscordId;
+  
+    await db.updateUserByEmail(email, updates);
+  
+    const responseParts = [`User updated: Email: ${email}`];
+    if (newName) responseParts.push(`New Name: ${newName}`);
+    if (newDiscordId) responseParts.push(`New Discord ID: ${newDiscordId}`);
+    
+    return responseParts.join(', ');
+  }  
 
 async function removeUser(email, db) {
     await db.deleteUserByEmail(email);
