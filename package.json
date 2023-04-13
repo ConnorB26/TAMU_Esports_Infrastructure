@@ -7,8 +7,7 @@
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:bot\"",
     "start:frontend": "cd frontend && npm start",
     "start:backend": "cd backend && npm start",
-    "start:bot": "cd discord-bot && npm start",
-    "build-theme": "npx grunt --gruntfile bootswatch_custom/Gruntfile-custom.js swatch"
+    "start:bot": "cd discord-bot && npm start"
   },
   "repository": {
     "type": "git",
