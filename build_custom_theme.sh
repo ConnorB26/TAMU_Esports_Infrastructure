@@ -24,8 +24,9 @@ npx grunt swatch:lux
 cp "dist/lux/bootstrap.css" "../frontend/src/assets/css/custom-lux.css"
 cp "dist/lux/bootstrap.min.css" "../frontend/src/assets/css/custom-lux.min.css"
 
-# Restore the original _variables.scss file
+# Restore the original _variables.scss file and remove the backup
 mv "$BACKUP_VARIABLES" "$ORIGINAL_VARIABLES"
+rm "$BACKUP_VARIABLES"
 
 # Go back to the root of your project
 cd ..

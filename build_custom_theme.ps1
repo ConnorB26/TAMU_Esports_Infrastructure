@@ -22,8 +22,9 @@ npx grunt swatch:lux
 Copy-Item -Path "dist\lux\bootstrap.css" -Destination "..\frontend\src\assets\css\custom-lux.css"
 Copy-Item -Path "dist\lux\bootstrap.min.css" -Destination "..\frontend\src\assets\css\custom-lux.min.css"
 
-# Restore the original _variables.scss file
+# Restore the original _variables.scss file and remove the backup
 Move-Item -Path $BACKUP_VARIABLES -Destination $ORIGINAL_VARIABLES -Force
+Remove-Item -Path $BACKUP_VARIABLES -Force
 
 # Go back to the root of your project
 Set-Location -Path ..
