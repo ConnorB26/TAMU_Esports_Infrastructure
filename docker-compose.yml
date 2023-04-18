@@ -1,0 +1,79 @@
+version: '3.8'
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - ./database:/app/database
+      - ./.env:/.env
+      - ./public:/app/public
+    networks:
+      - app-network
+
+  discord_bot:
+    build: ./discord_bot
+    container_name: discord_bot
+    volumes:
+      - ./discord_bot:/app
+      - ./database:/app/database
+      - ./.env:/.env
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+      - ./.env:/.env
+      - ./public:/app/public
+    networks:
+      - app-network
+
+  bootswatch_builder:
+    build: ./bootswatch-builder
+    container_name: bootswatch_builder
+    volumes:
+      - ./bootswatch-builder:/app
+      - ./public:/app/public
+    networks:
+      - app-network

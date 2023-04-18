@@ -8,7 +8,7 @@ git pull
 
 # Store the paths to the original and custom _variables.scss files
 ORIGINAL_VARIABLES="dist/lux/_variables.scss"
-CUSTOM_VARIABLES="../frontend/src/assets/css/custom_lux_variables.scss"
+CUSTOM_VARIABLES="../css/custom_lux_variables.scss"
 BACKUP_VARIABLES="dist/lux/_variables_original.scss"
 
 # Backup the original _variables.scss file
@@ -21,12 +21,11 @@ cp "$CUSTOM_VARIABLES" "$ORIGINAL_VARIABLES"
 npx grunt swatch:lux
 
 # Copy the built theme to your desired location
-cp "dist/lux/bootstrap.css" "../frontend/src/assets/css/custom-lux.css"
-cp "dist/lux/bootstrap.min.css" "../frontend/src/assets/css/custom-lux.min.css"
+cp "dist/lux/bootstrap.css" "../css/custom-lux.css"
+cp "dist/lux/bootstrap.min.css" "../css/custom-lux.min.css"
 
 # Restore the original _variables.scss file and remove the backup
 mv "$BACKUP_VARIABLES" "$ORIGINAL_VARIABLES"
-rm "$BACKUP_VARIABLES"
 
 # Go back to the root of your project
 cd ..
