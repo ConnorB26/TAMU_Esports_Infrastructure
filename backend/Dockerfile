@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then /wait-for.sh my_frontend:80 -- node src/index.js; else nodemon src/index.js; fi"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then /wait-for.sh my_frontend:80 -- npm run start:prod; else npm run start:dev; fi"]

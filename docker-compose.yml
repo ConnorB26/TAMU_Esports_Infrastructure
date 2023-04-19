@@ -4,6 +4,10 @@ networks:
   app-network:
     driver: bridge
 
+volumes:
+  frontend-assets:
+  frontend-build:
+
 services:
   postgres:
     image: postgres:latest
@@ -43,7 +47,7 @@ services:
       - ./backend:/app
       - ./database:/app/database
       - ./.env:/.env
-      - ./public:/app/public
+      - frontend-build:/app/public
     networks:
       - app-network
 
@@ -65,7 +69,8 @@ services:
     volumes:
       - ./frontend:/app
       - ./.env:/.env
-      - ./public:/app/public
+      - frontend-assets:/app/src/assets/css
+      - frontend-build:/app/build
     networks:
       - app-network
 
@@ -74,6 +79,6 @@ services:
     container_name: bootswatch_builder
     volumes:
       - ./bootswatch-builder:/app
-      - ./public:/app/public
+      - frontend-assets:/app/output
     networks:
       - app-network

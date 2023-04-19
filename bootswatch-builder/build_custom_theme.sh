@@ -21,8 +21,8 @@ cp "$CUSTOM_VARIABLES" "$ORIGINAL_VARIABLES"
 npx grunt swatch:lux
 
 # Copy the built theme to your desired location
-cp "dist/lux/bootstrap.css" "../css/custom-lux.css"
-cp "dist/lux/bootstrap.min.css" "../css/custom-lux.min.css"
+cp "dist/lux/bootstrap.css" "/app/output/custom-lux.css"
+cp "dist/lux/bootstrap.min.css" "/app/output/custom-lux.min.css"
 
 # Restore the original _variables.scss file and remove the backup
 mv "$BACKUP_VARIABLES" "$ORIGINAL_VARIABLES"

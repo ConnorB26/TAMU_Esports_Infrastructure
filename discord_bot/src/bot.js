@@ -4,10 +4,8 @@ const { Client, GatewayIntentBits, Collection, EmbedBuilder, Intents } = require
 const TwitchApi = require("node-twitch").default;
 const { TwitterApi } = require('twitter-api-v2');
 const { CronJob } = require('cron');
-const createDatabaseInstance = require('../../database/database.js');
+const createDatabaseInstance = require('../database/database.js');
 const db = createDatabaseInstance(true);
-require('dotenv').config({ path: path.resolve(__dirname, '../..', '.env') });
-
 // Set up environment variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
@@ -97,7 +95,7 @@ for (const file of eventFiles) {
 }
 
 // Database Interactions
-const infoData = {
+const settings = {
 	reset_date: '',
 	member_role: '',
 	twitch_notif_channel: '',
@@ -106,79 +104,51 @@ const infoData = {
 	twitter_notif_role: '',
 };
 let resetRoleCronJob;
+let guild;
+let memberRole;
 
-// User added event
-db.on('userAdded', async (payload) => {
-	//console.log('A new user was added:', payload);
-	const userTag = payload.new.discordId;
+// Util function
+async function getUser(id) {
+	try {
+		const user = await client.users.fetch(id);
+		return user;
+	} catch (error) {
+		console.error(`Error fetching user by Discord ID: ${error.message}`);
+		return null;
+	}
+}
 
-	// Give member role
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const role = guild.roles.cache.get(infoData['member_role']);
-
-	// Get member
-	const member = await getUserByTag(userTag);
+// Member added (dues paid) event
+db.on('addMember', async (payload) => {
+	// Get user by their id number
+	const member = await getUser(payload.discord_id);
 	if (!member) {
 		return;
 	}
-	await member.roles.add(role);
-});
 
-// User updated event
-db.on('userUpdated', async (payload) => {
-	//console.log('A user was updated:', payload);
-
-	const oldUserTag = payload.old.discordId;
-	const newUserTag = payload.new.discordId;
-
-	// Only change roles if the discord IDs are different
-	if(oldUserTag === newUserTag) {
-		return;
-	}
-
-	// Give next discord id member role and remove from old
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const role = guild.roles.cache.get(infoData['member_role']);
-
-	const oldMember = await getUserByTag(oldUserTag);
-	if (oldMember) {
-		oldMember.roles.remove(role);
-	}
-
-	const newMember = await getUserByTag(newUserTag);
-	if (newMember) {
-		newMember.roles.add(role);
-	}
+	// Give user the member role
+	member.roles.add(memberRole);
 });
 
 // User deleted event
 db.on('userDeleted', async (payload) => {
-	//console.log('A user was deleted:', payload);
-
-	// Remove member role
-	const userTag = payload.old.discordId;
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const role = guild.roles.cache.get(infoData['member_role']);
-
-	const oldMember = await getUserByTag(userTag);
+	// Get user by their id number
+	const oldMember = await getUser(payload.discord_id);
 	if (!oldMember) {
 		return;
-	} else {
-		oldMember.roles.remove(role);
 	}
+
+	// Remove member role
+	oldMember.roles.remove(memberRole);
 });
 
 // Info updated event
-db.on('infoUpdated', async (payload) => {
-	//console.log('An info field was updated:', payload);
-
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-
+db.on('settingUpdated', async (payload) => {
 	const oldValue = payload.old.value;
 	const newValue = payload.new.value;
-	const key = payload.new.info;
+	const key = payload.new.name;
 
-	infoData[key] = newValue;
+	settings[key] = newValue;
 
 	// If membership role changed, replace all old roles with new one
 	if (key === 'member_role') {
@@ -197,6 +167,8 @@ db.on('infoUpdated', async (payload) => {
 				}
 			});
 		});
+
+		memberRole = newRole;
 	}
 
 	// If reset date changed, reset the cron job to remove all roles upon expiration
@@ -217,46 +189,23 @@ db.on('infoUpdated', async (payload) => {
 
 });
 
-async function syncMemberRoles() {
-	// Retrieve all Discord tags from the database
-	const users = await db.getAllUsers().select('discordId');
-	const discordTags = users.map(user => user.discordId);
-
-	// Get the guild and the member role
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const memberRole = guild.roles.cache.get(infoData['member_role']);
-
-	// Iterate through all guild members
-	guild.members.cache.each(async (member) => {
-		// Check if the member has the member role
-		if (member.roles.cache.has(memberRole.id)) {
-			// If the member is not in the list of valid Discord tags, remove the role
-			if (!discordTags.includes(member.user.tag)) {
-				await member.roles.remove(memberRole);
-				console.log(`Role '${memberRole.name}' removed from '${member.user.tag}'`);
-			}
-		}
-	});
-}
-
-async function getUserByTag(tag) {
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const members = await guild.members.fetch();
-	return members.find(m => m.user.tag === tag);
-}
-
-async function fetchInitialInfoData() {
+async function fetchInitialSettings() {
 	await db.connect();
-	const allInfoData = await db.getAllInfo();
-	allInfoData.forEach(data => {
-		infoData[data.info] = data.value;
+	const allSettings = await db.getAllDiscordSettings();
+	allSettings.forEach(data => {
+		settings[data.name] = data.value;
 	});
+}
+
+async function setGuildMember() {
+	guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	memberRole = guild.roles.cache.get(settings['member_role']);
 }
 
 async function createCronJob(expression) {
 	resetRoleCronJob = new CronJob(expression, async () => {
 		// Your logic for resetting roles goes here
-		const memberRoleId = infoData['member_role'];
+		const memberRoleId = settings['member_role'];
 
 		// Loop through the guild members and remove the member_role from each member who has it
 		await guild.members.fetch().then(members => {
@@ -267,6 +216,9 @@ async function createCronJob(expression) {
 			});
 		});
 
+		// Reset database info
+		await db.resetDues();
+
 		// Stop the cron job after it has executed once
 		resetRoleCronJob.stop();
 	}, {
@@ -275,9 +227,9 @@ async function createCronJob(expression) {
 	});
 }
 
-fetchInitialInfoData().then(async () => {
+fetchInitialSettings().then(async () => {
 	// Convert the reset_date value to a cron expression
-	const resetDate = new Date(infoData['reset_date']);
+	const resetDate = new Date(settings['reset_date']);
 	const cronExpression = `${resetDate.getMinutes()} ${resetDate.getHours()} ${resetDate.getDate()} ${resetDate.getMonth() + 1} *`;
 
 	// Create the cron job with the reset_date value
@@ -287,5 +239,8 @@ fetchInitialInfoData().then(async () => {
 	resetRoleCronJob.start();
 
 	// Log in to Discord
-	client.login(DISCORD_TOKEN);
+	await client.login(DISCORD_TOKEN);
+
+	// Set more settings
+	setGuildMember();
 });

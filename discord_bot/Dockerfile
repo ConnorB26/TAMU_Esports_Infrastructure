@@ -9,4 +9,4 @@ RUN npm install -g nodemon
 
 COPY . .
 
-CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then node src/bot.js; else nodemon src/bot.js; fi"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run start:prod; else npm run start:dev; fi"]

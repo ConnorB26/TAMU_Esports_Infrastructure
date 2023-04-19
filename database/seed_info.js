@@ -1,23 +1,24 @@
-const db = require('./database.js');
+const createDatabaseInstance = require('./database.js');
+const db = createDatabaseInstance(true);
 
 async function seedInfoData() {
     const initialData = [
-        { info: 'reset_date', value: '10/10/2020' },
-        { info: 'member_role', value: '000000000000' },
-        { info: 'twitch_notif_channel', value: '#xxxxxxxx' },
-        { info: 'twitch_notif_role', value: '000000000' },
-        { info: 'twitter_notif_channel', value: '#xxxxxxxx' },
-        { info: 'twitter_notif_role', value: '000000000' },
+        { name: 'reset_date', value: '10/10/2020' },
+        { name: 'member_role', value: '000000000000' },
+        { name: 'twitch_notif_channel', value: '#xxxxxxxx' },
+        { name: 'twitch_notif_role', value: '000000000' },
+        { name: 'twitter_notif_channel', value: '#xxxxxxxx' },
+        { name: 'twitter_notif_role', value: '000000000' },
     ];
 
     await db.connect();
 
     for (const data of initialData) {
         try {
-            const entry = await db.createInfoEntry(data);
-            console.log(`Added ${entry.info}: ${entry.value}`);
+            const entry = await db.createSetting(data);
+            console.log(`Added ${entry.name}: ${entry.value}`);
         } catch (error) {
-            console.error(`Error adding ${data.info}:`, error);
+            console.error(`Error adding ${data.name}:`, error);
         }
     }
 }
