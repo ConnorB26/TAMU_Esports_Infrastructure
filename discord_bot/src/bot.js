@@ -6,6 +6,7 @@ const { TwitterApi } = require('twitter-api-v2');
 const { CronJob } = require('cron');
 const createDatabaseInstance = require('../database/database.js');
 const db = createDatabaseInstance(true);
+
 // Set up environment variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
@@ -46,8 +47,6 @@ const checkLive = async function getStream() {
 setInterval(checkLive, 15000)
 
 // Send twitch notification embed
-const streamNotificationChannelID = '1084332794328666115'; // 1058623616905916486
-const streamPingID = '1084722237568974929'; // 1058617568178479104
 async function sendTwitchNotification(streamData) {
 	const embed = new EmbedBuilder()
 		.setColor(0x500000)
@@ -55,7 +54,7 @@ async function sendTwitchNotification(streamData) {
 		.setURL('https://www.twitch.tv/tamuesports')
 		.setImage(streamData.thumbnail_url.replace('{width}x{height}', '1920x1080'))
 
-	client.channels.cache.get(streamNotificationChannelID).send({ content: `<@&${streamPingID}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
+	client.channels.cache.get(settings["twitch_notif_channel"]).send({ content: `<@&${settings["twitch_notif_role"]}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
 }
 
 // Create a new client instance
@@ -120,11 +119,16 @@ async function getUser(id) {
 
 // Member added (dues paid) event
 db.on('addMember', async (payload) => {
+	console.log(payload);
 	// Get user by their id number
-	const member = await getUser(payload.discord_id);
+	const discordId = payload.data.discord_id;
+	console.log(`Discord id = ${discordId}`);
+	const member = await getUser(discordIdString);
 	if (!member) {
 		return;
 	}
+	console.log(member);
+	console.log(memberRole);
 
 	// Give user the member role
 	member.roles.add(memberRole);

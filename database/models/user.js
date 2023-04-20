@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     discord_id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.STRING(255),
       allowNull: false,
       unique: true
     },

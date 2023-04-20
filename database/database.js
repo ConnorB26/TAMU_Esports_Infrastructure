@@ -94,7 +94,6 @@ class Database extends EventEmitter {
         }
     }
 
-
     // Get entire discord_settings table
     async getAllDiscordSettings() {
         try {
@@ -105,6 +104,23 @@ class Database extends EventEmitter {
             return null;
         }
     }
+
+    // Set settings
+    async updateSettingByName(name, value) {
+        try {
+            const updatedSetting = await this.Setting.update({ value }, { where: { name } });
+            if (updatedSetting[0] === 0) {
+                console.log(`No setting found with name: ${name}`);
+                return null;
+            }
+            console.log(`Setting '${name}' updated to value: ${value}`);
+            return updatedSetting;
+        } catch (error) {
+            console.error(`Error updating setting '${name}': ${error.message}`);
+            return null;
+        }
+    }
+
 
     // User CRUD operations
     async createUser(data) {
