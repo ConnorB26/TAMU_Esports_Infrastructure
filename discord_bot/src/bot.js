@@ -32,8 +32,7 @@ const checkLive = async function getStream() {
 		if (result !== undefined) {
 			if (result.type === 'live') {
 				if (isLiveMemory === false || isLiveMemory === undefined) {
-					sendTwitchNotification(result);
-					isLiveMemory = true;
+					isLiveMemory = await sendTwitchNotification(result);
 				}
 			}
 		}
@@ -52,9 +51,20 @@ async function sendTwitchNotification(streamData) {
 		.setColor(0x500000)
 		.setTitle(streamData.title)
 		.setURL('https://www.twitch.tv/tamuesports')
-		.setImage(streamData.thumbnail_url.replace('{width}x{height}', '1920x1080'))
+		.setImage(streamData.thumbnail_url.replace('{width}x{height}', '1920x1080'));
 
-	client.channels.cache.get(settings["twitch_notif_channel"]).send({ content: `<@&${settings["twitch_notif_role"]}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
+	return client.channels.fetch(settings["twitch_notif_channel"])
+		.then(res => {
+			if (res) {
+				res.send({ content: `<@&${settings["twitch_notif_role"]}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
+				return true;
+			}
+			return false;
+		})
+		.catch(err => {
+			console.error('Error fetching the channel:', err);
+			return false;
+		});
 }
 
 // Create a new client instance
@@ -103,32 +113,31 @@ const settings = {
 	twitter_notif_role: '',
 };
 let resetRoleCronJob;
-let guild;
-let memberRole;
 
 // Util function
 async function getUser(id) {
 	try {
-		const user = await client.users.fetch(id);
+		const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+		const user = await guild.members.fetch(id);
 		return user;
 	} catch (error) {
-		console.error(`Error fetching user by Discord ID: ${error.message}`);
+		console.error(`Error fetching member by Discord ID: ${error.message}`);
 		return null;
 	}
 }
 
 // Member added (dues paid) event
 db.on('addMember', async (payload) => {
-	console.log(payload);
 	// Get user by their id number
 	const discordId = payload.data.discord_id;
-	console.log(`Discord id = ${discordId}`);
-	const member = await getUser(discordIdString);
+	const member = await getUser(discordId);
 	if (!member) {
 		return;
 	}
-	console.log(member);
-	console.log(memberRole);
+
+	// Get role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const memberRole = guild.roles.cache.get(settings['member_role']);
 
 	// Give user the member role
 	member.roles.add(memberRole);
@@ -137,10 +146,14 @@ db.on('addMember', async (payload) => {
 // User deleted event
 db.on('userDeleted', async (payload) => {
 	// Get user by their id number
-	const oldMember = await getUser(payload.discord_id);
+	const oldMember = await getUser(payload.data.discord_id);
 	if (!oldMember) {
 		return;
 	}
+
+	// Get role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const memberRole = guild.roles.cache.get(settings['member_role']);
 
 	// Remove member role
 	oldMember.roles.remove(memberRole);
@@ -153,6 +166,8 @@ db.on('settingUpdated', async (payload) => {
 	const key = payload.new.name;
 
 	settings[key] = newValue;
+
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
 
 	// If membership role changed, replace all old roles with new one
 	if (key === 'member_role') {
@@ -171,8 +186,6 @@ db.on('settingUpdated', async (payload) => {
 				}
 			});
 		});
-
-		memberRole = newRole;
 	}
 
 	// If reset date changed, reset the cron job to remove all roles upon expiration
@@ -199,11 +212,6 @@ async function fetchInitialSettings() {
 	allSettings.forEach(data => {
 		settings[data.name] = data.value;
 	});
-}
-
-async function setGuildMember() {
-	guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	memberRole = guild.roles.cache.get(settings['member_role']);
 }
 
 async function createCronJob(expression) {
@@ -244,7 +252,4 @@ fetchInitialSettings().then(async () => {
 
 	// Log in to Discord
 	await client.login(DISCORD_TOKEN);
-
-	// Set more settings
-	setGuildMember();
 });
