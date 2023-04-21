@@ -1,12 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-const {
-    updateResetDate,
-    updateMemberRole,
-    updateTwitchChannel,
-    updateTwitchRole,
-    updateTwitterChannel,
-    updateTwitterRole
-} = require('../databaseUtil');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -39,22 +31,28 @@ module.exports = {
 
         switch (subcommand) {
             case 'update_reset_date':
-                response = await updateResetDate(options.getString('date'), db);
+                await db.updateSettingByName('reset_date', options.getString('date'));
+                response = `Reset date updated: ${options.getString('date')}`;
                 break;
             case 'update_member_role':
-                response = await updateMemberRole(options.getRole('role').id, db);
+                await db.updateSettingByName('member_role', options.getRole('role').id);
+                response = `Member role ID updated: ${options.getRole('role').id}`;
                 break;
             case 'update_twitch_channel':
-                response = await updateTwitchChannel(options.getChannel('channel').id, db);
+                await db.updateSettingByName('twitch_notif_channel', options.getChannel('channel').id);
+                response = `Twitch notification channel updated: ${options.getChannel('channel').id}`;
                 break;
             case 'update_twitch_role':
-                response = await updateTwitchRole(options.getRole('role').id, db);
+                await db.updateSettingByName('twitch_notif_role', options.getRole('role').id);
+                response = `Twitch notification role ID updated: ${options.getRole('role').id}`;
                 break;
             case 'update_twitter_channel':
-                response = await updateTwitterChannel(options.getChannel('channel').id, db);
+                await db.updateSettingByName('twitter_notif_channel', options.getChannel('channel').id);
+                response = `Twitter notification channel updated: ${options.getChannel('channel').id}`;
                 break;
             case 'update_twitter_role':
-                response = await updateTwitterRole(options.getRole('role').id, db);
+                await db.updateSettingByName('twitter_notif_role', options.getRole('role').id);
+                response = `Twitter notification role ID updated: ${options.getRole('role').id}`;
                 break;
             default:
                 response = 'Invalid subcommand.';

@@ -208,7 +208,7 @@ db.on('settingUpdated', async (payload) => {
 
 async function fetchInitialSettings() {
 	await db.connect();
-	const allSettings = await db.getAllDiscordSettings();
+	const allSettings = await db.getAllSettings();
 	allSettings.forEach(data => {
 		settings[data.name] = data.value;
 	});

@@ -76,101 +76,114 @@ class Database extends EventEmitter {
         });
     }
 
-    // Reset information at the end of the semester
-    async resetDues() {
-        try {
-            // Clear paid dues table
-            await this.PaidDue.destroy({ where: {} });
+    // CRUD functions for discord_settings
+    async findSettingByName(name) {
+        return await this.Setting.findOne({ where: { name } });
+    }
 
-            // Reset has_paid_dues column in users table
-            await this.User.update({ has_paid_dues: false }, { where: {} });
+    async createSetting(name, value) {
+        return await this.Setting.create({ name, value });
+    }
 
-            // Reset confirmation_code column in users table
-            await this.User.update({ confirmation_code: null }, { where: {} });
+    async updateSettingByName(name, newValue) {
+        return await this.Setting.update({ value: newValue }, { where: { name } });
+    }
 
-            console.log('Dues information reset successfully.');
-        } catch (error) {
-            console.error(`Error resetting dues information: ${error.message}`);
+    async deleteSettingByName(name) {
+        return await this.Setting.destroy({ where: { name } });
+    }
+
+    async getAllSettings() {
+        return await this.Setting.findAll();
+    }
+
+    async deleteAllSettings() {
+        return await this.Setting.destroy({ where: {} });
+    }
+
+    // CRUD functions for paid_dues
+    async createPaidDue(paidDueData) {
+        return await this.PaidDue.create(paidDueData);
+    }
+
+    async getPaidDueByConfirmationNumber(confirmation_number) {
+        return await this.PaidDue.findOne({ where: { confirmation_number } });
+    }
+
+    async getPaidDueByFullName(full_name) {
+        return await this.PaidDue.findOne({ where: { full_name } });
+    }
+
+    async updatePaidDueByConfirmationNumber(confirmation_number, newPaidDueData) {
+        return await this.PaidDue.update(newPaidDueData, { where: { confirmation_number } });
+    }
+
+    async updatePaidDueByFullName(full_name, newPaidDueData) {
+        return await this.PaidDue.update(newPaidDueData, { where: { full_name } });
+    }
+
+    async deletePaidDueByConfirmationNumber(confirmation_number) {
+        return await this.PaidDue.destroy({ where: { confirmation_number } });
+    }
+
+    async deletePaidDueByFullName(full_name) {
+        return await this.PaidDue.destroy({ where: { full_name } });
+    }
+
+    async getAllPaidDues() {
+        return await this.PaidDue.findAll();
+    }
+
+    async deleteAllPaidDues() {
+        return await this.PaidDue.destroy({ where: {} });
+    }
+
+    // CRUD functions for users
+    async createUser(userData) {
+        return await this.User.create(userData);
+    }
+
+    async findUserByColumn(column, value) {
+        return await this.User.findOne({ where: { [column]: value } });
+    }
+
+    async updateUserByColumn(column, value, newUserData) {
+        return await this.User.update(newUserData, { where: { [column]: value } });
+    }
+
+    async deleteUserByColumn(column, value) {
+        return await this.User.destroy({ where: { [column]: value } });
+    }
+
+    async getAllUsers() {
+        return await this.User.findAll();
+    }
+
+    // Utility functions
+    async claimDues(user_id, confirmation_number) {
+        const user = await this.User.findByPk(user_id);
+        const paidDue = await this.getPaidDueByConfirmationNumber(confirmation_number);
+
+        if (user && paidDue) {
+            await user.update({ has_paid_dues: true, confirmation_code: confirmation_number });
+            await paidDue.update({ claimed: true });
         }
     }
 
-    // Get entire discord_settings table
-    async getAllDiscordSettings() {
-        try {
-            const settings = await this.Setting.findAll();
-            return settings;
-        } catch (error) {
-            console.error(`Error fetching all Discord settings: ${error.message}`);
-            return null;
-        }
-    }
-
-    // Set settings
-    async updateSettingByName(name, value) {
-        try {
-            const updatedSetting = await this.Setting.update({ value }, { where: { name } });
-            if (updatedSetting[0] === 0) {
-                console.log(`No setting found with name: ${name}`);
-                return null;
+    async unclaimDues(user_id) {
+        const user = await this.User.findByPk(user_id);
+        if (user && user.confirmation_code) {
+            const paidDue = await this.getPaidDueByConfirmationNumber(user.confirmation_code);
+            if (paidDue) {
+                await paidDue.update({ claimed: false });
             }
-            console.log(`Setting '${name}' updated to value: ${value}`);
-            return updatedSetting;
-        } catch (error) {
-            console.error(`Error updating setting '${name}': ${error.message}`);
-            return null;
+            await user.update({ has_paid_dues: false, confirmation_code: null });
         }
     }
 
-
-    // User CRUD operations
-    async createUser(data) {
-        return await this.User.create(data);
-    }
-
-    async getUser(id) {
-        return await this.User.findByPk(id);
-    }
-
-    async updateUser(id, data) {
-        return await this.User.update(data, { where: { id } });
-    }
-
-    async deleteUser(id) {
-        return await this.User.destroy({ where: { id } });
-    }
-
-    // Setting CRUD operations
-    async createSetting(data) {
-        return await this.Setting.create(data);
-    }
-
-    async getSetting(id) {
-        return await this.Setting.findByPk(id);
-    }
-
-    async updateSetting(id, data) {
-        return await this.Setting.update(data, { where: { id } });
-    }
-
-    async deleteSetting(id) {
-        return await this.Setting.destroy({ where: { id } });
-    }
-
-    // PaidDue CRUD operations
-    async createPaidDue(data) {
-        return await this.PaidDue.create(data);
-    }
-
-    async getPaidDue(id) {
-        return await this.PaidDue.findByPk(id);
-    }
-
-    async updatePaidDue(id, data) {
-        return await this.PaidDue.update(data, { where: { id } });
-    }
-
-    async deletePaidDue(id) {
-        return await this.PaidDue.destroy({ where: { id } });
+    async resetAllDues() {
+        await this.deleteAllPaidDues();
+        await this.User.update({ has_paid_dues: false, confirmation_code: null }, { where: {} });
     }
 }
 
