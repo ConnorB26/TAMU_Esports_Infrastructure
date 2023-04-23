@@ -114,49 +114,19 @@ const settings = {
 };
 let resetRoleCronJob;
 
-// Util function
-async function getUser(id) {
-	try {
-		const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-		const user = await guild.members.fetch(id);
-		return user;
-	} catch (error) {
-		console.error(`Error fetching member by Discord ID: ${error.message}`);
-		return null;
-	}
-}
-
 // Member added (dues paid) event
 db.on('addMember', async (payload) => {
-	// Get user by their id number
-	const discordId = payload.data.discord_id;
-	const member = await getUser(discordId);
-	if (!member) {
-		return;
-	}
+	addMemberRole(payload.data.discord_id);
+});
 
-	// Get role
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const memberRole = guild.roles.cache.get(settings['member_role']);
-
-	// Give user the member role
-	member.roles.add(memberRole);
+// Member removed event
+db.on('removeMember', async (payload) => {
+	removeMemberRole(payload.data.discord_id);
 });
 
 // User deleted event
 db.on('userDeleted', async (payload) => {
-	// Get user by their id number
-	const oldMember = await getUser(payload.data.discord_id);
-	if (!oldMember) {
-		return;
-	}
-
-	// Get role
-	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
-	const memberRole = guild.roles.cache.get(settings['member_role']);
-
-	// Remove member role
-	oldMember.roles.remove(memberRole);
+	removeMemberRole(payload.data.discord_id);
 });
 
 // Info updated event
@@ -205,6 +175,50 @@ db.on('settingUpdated', async (payload) => {
 	}
 
 });
+
+// Get user object from id number
+async function getUser(id) {
+	try {
+		const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+		const user = await guild.members.fetch(id);
+		return user;
+	} catch (error) {
+		console.error(`Error fetching member by Discord ID: ${error.message}`);
+		return null;
+	}
+}
+
+// Add member role from specified user
+async function addMemberRole(id) {
+	// Get user by their id number
+	const member = await getUser(id);
+	if (!member) {
+		return;
+	}
+
+	// Get role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const memberRole = guild.roles.cache.get(settings['member_role']);
+
+	// Remove member role
+	member.roles.add(memberRole);
+}
+
+// Remove member role from specified user
+async function removeMemberRole(id) {
+	// Get user by their id number
+	const member = await getUser(id);
+	if (!member) {
+		return;
+	}
+
+	// Get role
+	const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
+	const memberRole = guild.roles.cache.get(settings['member_role']);
+
+	// Remove member role
+	member.roles.remove(memberRole);
+}
 
 async function fetchInitialSettings() {
 	await db.connect();

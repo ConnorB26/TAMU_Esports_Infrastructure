@@ -55,9 +55,12 @@ class Database extends EventEmitter {
         client.on('notification', async (msg) => {
             const payload = JSON.parse(msg.payload);
             switch (payload.event) {
-                case 'dues_payment_updated':
+                case 'dues_payment_updated_true':
                     this.emit('addMember', payload);
                     break;
+                case 'dues_payment_updated_false':
+                        this.emit('removeMember', payload);
+                        break;
                 case 'users_changes':
                     if (payload.type === 'INSERT') {
                         this.emit('userAdded', payload);
