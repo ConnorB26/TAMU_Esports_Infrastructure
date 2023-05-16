@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('Purge all members without the guest, student, or alumni roles'),
     async execute(interaction) {
         // Check if the user has admin permissions
-        if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator) && !interaction.member.user.username === 'Hockeyflame') {
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
             return await interaction.reply('You do not have permission to execute this command');
         }
 

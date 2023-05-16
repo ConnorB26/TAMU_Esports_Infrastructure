@@ -15,7 +15,7 @@ async function seedInfoData() {
 
     for (const data of initialData) {
         try {
-            const entry = await db.createSetting(data);
+            const entry = await db.createSetting(data.name, data.value);
             console.log(`Added ${entry.name}: ${entry.value}`);
         } catch (error) {
             console.error(`Error adding ${data.name}:`, error);

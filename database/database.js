@@ -59,8 +59,8 @@ class Database extends EventEmitter {
                     this.emit('addMember', payload);
                     break;
                 case 'dues_payment_updated_false':
-                        this.emit('removeMember', payload);
-                        break;
+                    this.emit('removeMember', payload);
+                    break;
                 case 'users_changes':
                     if (payload.type === 'INSERT') {
                         this.emit('userAdded', payload);

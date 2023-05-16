@@ -1,0 +1,27 @@
+{
+  "name": "content-management-system",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "@strapi/plugin-i18n": "4.10.5",
+    "@strapi/plugin-users-permissions": "4.10.5",
+    "@strapi/strapi": "4.10.5",
+    "better-sqlite3": "8.0.1",
+    "pg": "^8.11.0",
+    "sharp": "^0.32.1"
+  },
+  "strapi": {
+    "uuid": "4342c8c9-17dc-4d21-8102-c8069a228af5"
+  },
+  "engines": {
+    "node": ">=14.19.1 <=18.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

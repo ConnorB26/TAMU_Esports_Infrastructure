@@ -254,15 +254,18 @@ async function createCronJob(expression) {
 }
 
 fetchInitialSettings().then(async () => {
-	// Convert the reset_date value to a cron expression
-	const resetDate = new Date(settings['reset_date']);
-	const cronExpression = `${resetDate.getMinutes()} ${resetDate.getHours()} ${resetDate.getDate()} ${resetDate.getMonth() + 1} *`;
+	// Make sure reset date exists
+	if (settings['reset_date']) {
+		// Convert the reset_date value to a cron expression
+		const resetDate = new Date(settings['reset_date']);
+		const cronExpression = `${resetDate.getMinutes()} ${resetDate.getHours()} ${resetDate.getDate()} ${resetDate.getMonth() + 1} *`;
 
-	// Create the cron job with the reset_date value
-	createCronJob(cronExpression);
+		// Create the cron job with the reset_date value
+		createCronJob(cronExpression);
 
-	// Start the cron job
-	resetRoleCronJob.start();
+		// Start the cron job
+		resetRoleCronJob.start();
+	}
 
 	// Log in to Discord
 	await client.login(DISCORD_TOKEN);

@@ -41,7 +41,7 @@ services:
       driver: none
 
   backend:
-    build: 
+    build:
       context: .
       dockerfile: backend/Dockerfile
     container_name: backend
@@ -66,10 +66,12 @@ services:
       - app-network
 
   frontend:
-    build: 
+    build:
       context: .
       dockerfile: frontend/Dockerfile
     container_name: frontend
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend:/app
       - ./.env:/.env
@@ -86,3 +88,35 @@ services:
       - frontend-assets:/app/output
     networks:
       - app-network
+
+  strapi:
+    build:
+      context: ./content-management-system
+      dockerfile: Dockerfile
+    container_name: content_management_system
+    image: strapi/strapi
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      HOST: ${CMS_HOST}
+      PORT: ${CMS_PORT}
+      APP_KEYS: ${APP_KEYS}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_CLIENT: "postgres"
+      DATABASE_NAME: ${DB_DATABASE}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+      DATABASE_USERNAME: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+    volumes:
+      - ./content-management-system:/app
+      - ./.env:/.env
+    ports:
+      - "1337:1337"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
