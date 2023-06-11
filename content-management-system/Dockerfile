@@ -25,13 +25,10 @@ FROM node:16-alpine as production
 RUN apk add vips-dev
 RUN rm -rf /var/cache/apk/*
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
 WORKDIR /app
 
 COPY --from=build /app ./
 
 EXPOSE 1337
 
-CMD if [ "$NODE_ENV" = "production" ] ; then npm run start ; else npm run develop ; fi
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run start; else npm run develop; fi"]
