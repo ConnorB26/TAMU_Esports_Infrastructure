@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "set NODE_ENV=development && docker-compose --env-file .env up",
-    "start:prod": "set NODE_ENV=production && docker-compose --env-file .env up",
-    "build": "docker-compose build --no-cache",
+    "start:dev": "set NODE_ENV=development&& docker-compose --env-file .env up",
+    "start:prod": "set NODE_ENV=production&& docker-compose --env-file .env up",
+    "build": "docker-compose build",
     "rebuild-strapi": "docker-compose down && docker-compose build postgres strapi && docker-compose up -d postgres strapi"
   },
   "repository": {

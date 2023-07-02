@@ -10,6 +10,4 @@ COPY . .
 
 EXPOSE 3000
 
-COPY ../wait-for.sh /wait-for.sh
-RUN chmod +x /wait-for.sh
-CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then /wait-for.sh bootswatch_builder:80 -- npm run build; else npm run start; fi"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run build; else npm start; fi"]

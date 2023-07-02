@@ -4,10 +4,6 @@ networks:
   app-network:
     driver: bridge
 
-volumes:
-  frontend-assets:
-  frontend-build:
-
 services:
   postgres:
     image: postgres:latest
@@ -22,8 +18,6 @@ services:
       - "5432:5432"
     networks:
       - app-network
-    logging:
-      driver: none
 
   pgadmin:
     image: dpage/pgadmin4
@@ -37,8 +31,6 @@ services:
       - "5050:80"
     networks:
       - app-network
-    logging:
-      driver: none
 
   backend:
     build:
@@ -47,23 +39,25 @@ services:
     container_name: backend
     ports:
       - "3001:3001"
+      - "8080:8080"
     volumes:
       - ./backend:/app
-      - ./database:/app/database
       - ./.env:/.env
-      - frontend-build:/app/public
     networks:
       - app-network
+    depends_on:
+      - postgres
 
   discord_bot:
     build: ./discord_bot
     container_name: discord_bot
     volumes:
       - ./discord_bot:/app
-      - ./database:/app/database
       - ./.env:/.env
     networks:
       - app-network
+    depends_on:
+      - backend
 
   frontend:
     build:
@@ -75,17 +69,6 @@ services:
     volumes:
       - ./frontend:/app
       - ./.env:/.env
-      - frontend-assets:/app/src/assets/css
-      - frontend-build:/app/build
-    networks:
-      - app-network
-
-  bootswatch_builder:
-    build: ./bootswatch-builder
-    container_name: bootswatch_builder
-    volumes:
-      - ./bootswatch-builder:/app
-      - frontend-assets:/app/output
     networks:
       - app-network
 
