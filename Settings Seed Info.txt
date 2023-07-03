@@ -1,8 +1,0 @@
-INSERT INTO discord_settings (name, value)
-VALUES 
-('reset_date', '10/10/2020'),
-('member_role', '000000000000'),
-('twitch_notif_channel', '#xxxxxxxx'),
-('twitch_notif_role', '000000000'),
-('twitter_notif_channel', '#xxxxxxxx'),
-('twitter_notif_role', '000000000');

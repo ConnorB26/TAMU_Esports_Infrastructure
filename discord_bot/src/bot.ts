@@ -36,27 +36,16 @@ ws.on('close', function close() {
 });
 
 ws.on('message', function incoming(message) {
+    console.log(message);
     const data = JSON.parse(message.toString());
     console.log(`Received: ${data}`);
 
     switch (data.event) {
         case 'addMember':
-            //addMember(data.data);
             break;
         case 'removeMember':
-            //removeMember(data.data);
-            break;
-        case 'userAdded':
-            //userAdded(data.data);
-            break;
-        case 'userUpdated':
-            //userUpdated(data.data);
-            break;
-        case 'userDeleted':
-            //userDeleted(data.data);
             break;
         case 'settingUpdated':
-            //settingUpdated(data.data);
             break;
         default:
             console.log(`Unhandled event: ${data.event}`);
