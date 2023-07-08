@@ -6,10 +6,12 @@ const maxRetryTimeout = 60000; // maximum delay cap
 
 export function createWebsocket(onMessage: Function) {
     let ws: WebSocket;
+    let isReconnecting = false;
 
     function reconnect() {
-        // Only try to reconnect if the WebSocket is not open
-        if (ws.readyState !== WebSocket.OPEN) {
+        // Only try to reconnect if the WebSocket is not open and no reconnection attempt is in progress
+        if (!isReconnecting && ws.readyState !== WebSocket.OPEN) {
+            isReconnecting = true;
             console.log('Attempting to reconnect...');
             createWebsocket(onMessage);
             // Increase the delay for the next attempt, with a maximum cap
@@ -27,6 +29,7 @@ export function createWebsocket(onMessage: Function) {
         console.log('Websocket connection open');
         // Reset the retry timeout back to initial delay once connection is successful
         retryTimeout = 5000;
+        isReconnecting = false;
     });
 
     ws.on('close', function close() {

@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from './config';
-import { DatabaseTriggersService } from './triggers/db.triggers';
-import { EventsGateway } from './websockets/events.gateway';
+import { DiscordSettingModule } from './modules/discordSettings.module';
+import { DiscordBotInteractionModule } from './modules/discordBotInteraction.module';
+import { TokenMiddleware } from 'src/middleware/token.middleware';
+import { DiscordSetting } from './entities/discordSetting.entity';
 
 @Module({
   imports: [
@@ -13,11 +15,18 @@ import { EventsGateway } from './websockets/events.gateway';
       username: config.DB_USERNAME,
       password: config.DB_PASSWORD,
       database: config.DB_DATABASE,
-      //entities: [], // Include the paths to your entities here. Example: [__dirname + '/**/*.entity{.ts,.js}']
-      //synchronize: true,
-    })
+      entities: [DiscordSetting]
+    }),
+    DiscordSettingModule,
+    DiscordBotInteractionModule
   ],
   controllers: [],
-  providers: [DatabaseTriggersService, EventsGateway],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TokenMiddleware)
+      .forRoutes('*');
+  }
+}

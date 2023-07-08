@@ -15,7 +15,7 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
-      - ./.env:/.env
+      - ./.env:/app/.env
     networks:
       - app-network
 
@@ -24,7 +24,7 @@ services:
     container_name: discord_bot
     volumes:
       - ./discord_bot:/app
-      - ./.env:/.env
+      - ./.env:/app/.env
     networks:
       - app-network
     depends_on:
@@ -39,7 +39,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      - ./.env:/.env
+      - ./.env:/app/.env
     networks:
       - app-network
 
