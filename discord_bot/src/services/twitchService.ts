@@ -1,5 +1,5 @@
 import { TwitchApi } from 'node-twitch';
-import { client } from '../config';
+import { client } from '../utilities/config';
 import { ChannelType, DMChannel, EmbedBuilder, TextChannel } from 'discord.js';
 
 const twitch = new TwitchApi({

@@ -1,5 +1,5 @@
 import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'ws';
+import { Server, WebSocket } from 'ws';
 import { config } from '../config';
 
 @WebSocketGateway(8080)
@@ -19,7 +19,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     handleDisconnect(client: any) {
-        console.log('Client disconnected:', client.id);
+        console.log('Client disconnected:', client._socket.remoteAddress);
     }
 
     sendMessageToClients(data: any) {

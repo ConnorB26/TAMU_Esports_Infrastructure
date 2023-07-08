@@ -1,9 +1,10 @@
-import { config } from "./config";
+import { config } from "./utilities/config";
 import { commands } from "./commands";
-import { updateSettings } from './store/settingsStore';
-import { client } from "./config";
-import WebSocket from 'ws';
+import { client } from "./utilities/config";
+import { createWebsocket } from "./utilities/websocket";
+import { initializeSettings, updateSetting } from "./utilities/settings";
 
+// Setup bot
 client.once("ready", () => {
     console.log("Discord bot is ready! 🤖");
 });
@@ -20,34 +21,25 @@ client.on("interactionCreate", async (interaction) => {
 
 client.login(config.DISCORD_TOKEN);
 
+// Setup settings
+const settings = {}//getAllSettings();
+initializeSettings(settings);
+
 // Create a WebSocket connection to the server
-const ws = new WebSocket(`ws://backend:8080`, {
-    headers: {
-        Authorization: `Bearer ${config.WEB_SOCKET_TOKEN}`
-    }
-});
-
-ws.on('open', function open() {
-    console.log('connected');
-});
-
-ws.on('close', function close() {
-    console.log('disconnected');
-});
-
-ws.on('message', function incoming(message) {
-    console.log(message);
-    const data = JSON.parse(message.toString());
-    console.log(`Received: ${data}`);
-
+function handleMessage(data: any) {
+    console.log(data);
     switch (data.event) {
         case 'addMember':
             break;
         case 'removeMember':
             break;
-        case 'settingUpdated':
+        case 'settings_changed':
+            updateSetting(data.new.name, data.new.value);
             break;
         default:
             console.log(`Unhandled event: ${data.event}`);
+            break;
     }
-});
+}
+
+createWebsocket(handleMessage);
