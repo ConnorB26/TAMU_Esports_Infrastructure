@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, ParseIntPipe } from '@nestjs/common';
-import { DiscordSettingDto } from 'src/dtos/discord-settings.dto';
+import { DiscordSettingDto } from 'src/entities/discordSetting.entity';
 import { DiscordSettingService } from 'src/services/discordSetting.service';
 
 @Controller('discord_settings')
