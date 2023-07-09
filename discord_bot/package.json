@@ -12,11 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
     "node-twitch": "^0.5.0",
-    "path": "^0.12.7",
-    "ws": "^8.13.0"
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@types/node": "^20.3.3",
