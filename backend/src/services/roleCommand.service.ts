@@ -31,6 +31,16 @@ export class RoleCommandService {
         await this.roleCommandRepository.remove(entity);
     }
 
+    async removeVals(role_id: string, command_name: string): Promise<void> {
+        const entity = await this.roleCommandRepository.findOne({
+            where: {
+                role_id: role_id,
+                command_name: command_name
+            }
+        });
+        await this.roleCommandRepository.remove(entity);
+    }
+
     async update(id: number, updateDto: Partial<RoleCommand>): Promise<RoleCommand> {
         const entity = await this.findOne(id);
         const updatedEntity = Object.assign(entity, updateDto);

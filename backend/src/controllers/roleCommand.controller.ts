@@ -26,6 +26,11 @@ export class RoleCommandController {
         return this.roleCommandService.remove(id);
     }
 
+    @Delete(':role_id/:command_name')
+    removeVals(@Param('role_id') role_id: string, @Param('command_name') command_name: string) {
+        return this.roleCommandService.removeVals(role_id, command_name);
+    }
+
     @Put(':id')
     update(@Param('id', ParseIntPipe) id: number, @Body() roleCommandDto: RoleCommand) {
         return this.roleCommandService.update(id, roleCommandDto);

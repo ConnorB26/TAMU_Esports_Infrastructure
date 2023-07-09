@@ -1,26 +1,15 @@
 import { config } from "./utilities/config";
 import { commands } from "./commands";
 import { client } from "./utilities/config";
-import * as discordSettingService from './services/discordSettingService';
-import * as roleCommandService from './services/roleCommandService';
-import DiscordSettingCache from "./cache/discordSettingCache";
-import RoleCommandCache from "./cache/roleCommandCache";
-
-// Cache instances
-const settings = new DiscordSettingCache();
-const permissions = new RoleCommandCache();
+import { populateCaches } from "./utilities/populateCache";
+import roleCommandCache from "./cache/roleCommandCache";
 
 // Setup bot
 client.once("ready", async () => {
     console.log(`Logged in as ${client.user?.tag}!`);
 
-    // Populate discordSettingCache
-    const settingsRes = await discordSettingService.findAll();
-    settings.populate(settingsRes);
-
-    // Populate roleCommandCache
-    const roleCommands = await roleCommandService.findAll();
-    permissions.populate(roleCommands);
+    // Populate caches
+    await populateCaches();
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -37,7 +26,7 @@ client.on("interactionCreate", async (interaction) => {
 
     // Check if user can execute the command
     const hasPermission = memberRoles?.some(roleId => {
-        const roleCommands = permissions.get(roleId);
+        const roleCommands = roleCommandCache.get(roleId);
         return roleCommands && (roleCommands.includes(commandName) || roleCommands.includes('All'));
     });
 

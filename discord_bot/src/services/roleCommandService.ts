@@ -26,3 +26,7 @@ export async function update(id: number, roleCommand: Partial<RoleCommand>): Pro
 export async function remove(id: number): Promise<void> {
     return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${id}`));
 }
+
+export async function removeVals(roleID: string, commandName: string) {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${roleID}/${commandName}`));
+}

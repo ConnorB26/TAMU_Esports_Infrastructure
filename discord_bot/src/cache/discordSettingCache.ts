@@ -1,10 +1,19 @@
 import { DiscordSetting } from '../models/discordSetting';
 
-export default class DiscordSettingCache {
+class DiscordSettingCache {
+    private static instance: DiscordSettingCache;
     private cache: Map<string, string>;
 
     constructor() {
         this.cache = new Map<string, string>();
+    }
+
+    public static getInstance(): DiscordSettingCache {
+        if (!DiscordSettingCache.instance) {
+            DiscordSettingCache.instance = new DiscordSettingCache();
+        }
+
+        return DiscordSettingCache.instance;
     }
 
     public async populate(settings: DiscordSetting[]): Promise<void> {
@@ -22,3 +31,5 @@ export default class DiscordSettingCache {
         return this.cache.get(name);
     }    
 }
+
+export default DiscordSettingCache.getInstance();

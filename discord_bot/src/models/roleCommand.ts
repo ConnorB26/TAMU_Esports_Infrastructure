@@ -1,5 +1,5 @@
 export interface RoleCommand {
-    id: number;
+    id?: number;
     role_id: string;
     command_name: string;
 }
