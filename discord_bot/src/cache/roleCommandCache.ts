@@ -1,10 +1,10 @@
 import { RoleCommand } from "../models/roleCommand";
 
 export default class RoleCommandCache {
-    private cache: Map<number, string[]>;
+    private cache: Map<string, string[]>;
 
     constructor() {
-        this.cache = new Map<number, string[]>();
+        this.cache = new Map<string, string[]>();
     }
 
     public async populate(roleCommands: RoleCommand[]): Promise<void> {
@@ -37,7 +37,7 @@ export default class RoleCommandCache {
         }
     }
 
-    public get(role_id: number): string[] | undefined {
+    public get(role_id: string): string[] | undefined {
         return this.cache.get(role_id);
     }
 }

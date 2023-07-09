@@ -34,13 +34,10 @@ client.on("interactionCreate", async (interaction) => {
     if ('cache' in interaction.member!.roles) {
         memberRoles = interaction.member?.roles.cache.map(role => role.id) || [];
     }
-    console.log(memberRoles);
-    console.log(permissions);
 
+    // Check if user can execute the command
     const hasPermission = memberRoles?.some(roleId => {
-        const num = BigInt(roleId);
-        console.log(num);
-        const roleCommands = permissions.get(num);
+        const roleCommands = permissions.get(roleId);
         return roleCommands && (roleCommands.includes(commandName) || roleCommands.includes('All'));
     });
 
@@ -49,10 +46,10 @@ client.on("interactionCreate", async (interaction) => {
         return;
     }
 
+    // Execute command
     if (commands[commandName as keyof typeof commands]) {
         commands[commandName as keyof typeof commands].execute(interaction);
     }
 });
-
 
 client.login(config.DISCORD_TOKEN);
