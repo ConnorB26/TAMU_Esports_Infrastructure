@@ -27,8 +27,44 @@ export class UserCodeService {
         return entity;
     }
 
+    async findByUser(discordId: string): Promise<UserCode> {
+        const entity = await this.userCodeRepository.findOne({
+            where: {
+                discordId: discordId
+            }
+        });
+        if (!entity) {
+            throw new NotFoundException(`User code with discordId ${discordId} not found.`);
+        }
+        return entity;
+    }
+
+    async findByCode(code: string): Promise<UserCode> {
+        const entity = await this.userCodeRepository.findOne({
+            where: {
+                code: code
+            }
+        });
+        if (!entity) {
+            throw new NotFoundException(`User code with code ${code} not found.`);
+        }
+        return entity;
+    }
+
     async remove(discordId: string, code: string): Promise<void> {
         const entity = await this.findOne(discordId, code);
+        await this.userCodeRepository.remove(entity);
+    }
+
+    async removeUser(discordId: string): Promise<void> {
+        const entity = await this.userCodeRepository.findOne({
+            where: {
+                discordId: discordId
+            }
+        });
+        if (!entity) {
+            throw new NotFoundException(`User code with discordId ${discordId} not found.`);
+        }
         await this.userCodeRepository.remove(entity);
     }
 

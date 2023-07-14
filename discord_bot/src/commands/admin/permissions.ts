@@ -1,6 +1,6 @@
-import { CommandInteraction, SlashCommandBuilder, Role } from 'discord.js';
-import * as roleCommandService from '../services/roleCommandService';
-import roleCommandCache from '../cache/roleCommandCache';
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder } from 'discord.js';
+import * as roleCommandService from '../../services/roleCommandService';
+import roleCommandCache from '../../cache/roleCommandCache';
 
 export const data = new SlashCommandBuilder()
     .setName('permissions')
@@ -38,12 +38,14 @@ export const data = new SlashCommandBuilder()
                     .setDescription('Role to remove all permissions from')
                     .setRequired(true)));
 
-export async function execute(interaction) {
+export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply();
 
-    const subcommand = interaction.options.getSubcommand();
-    const role = interaction.options.getRole('role');
-    const command = interaction.options.getString('command');
+    const opts = interaction.options as CommandInteractionOptionResolver;
+
+    const subcommand = opts.getSubcommand();
+    const role = opts.getRole('role')!;
+    const command = opts.getString('command')!;
     const roleId = role.id;
 
     switch (subcommand) {
@@ -51,10 +53,10 @@ export async function execute(interaction) {
             try {
                 const addedRoleCommand = await roleCommandService.create({role_id: roleId, command_name: command});
                 roleCommandCache.addCommand(addedRoleCommand);
-                await interaction.editReply(`Added command permission for ${role?.name} role.`);
+                await interaction.editReply(`Added permission for command ${command} to the ${role?.name} role`);
             } catch (error) {
                 console.error(error);
-                await interaction.editReply(`Failed to add command permission.`);
+                await interaction.editReply(`Failed to add command permission`);
             }
             break;
         case 'remove':
@@ -62,15 +64,15 @@ export async function execute(interaction) {
                 const roleCommands = roleCommandCache.get(roleId);
     
                 if (!roleCommands || !roleCommands.includes(command)) {
-                    await interaction.editReply(`No command permission found for ${role?.name} role.`);
+                    await interaction.editReply(`No permission for command ${command} found for ${role?.name} role`);
                 } else {
                     await roleCommandService.removeVals(roleId, command);
                     roleCommandCache.removeCommand({role_id: roleId, command_name: command});
-                    await interaction.editReply(`Removed command permission for ${role?.name} role.`);
+                    await interaction.editReply(`Removed permission for command ${command} to the ${role?.name} role`);
                 }
             } catch (error) {
                 console.error(error);
-                await interaction.editReply(`Failed to remove command permission.`);
+                await interaction.editReply(`Failed to remove command permission`);
             }
             break;
         case 'remove_all':
@@ -78,17 +80,17 @@ export async function execute(interaction) {
                 const roleCommands = roleCommandCache.get(roleId);
     
                 if (!roleCommands || roleCommands.length === 0) {
-                    await interaction.editReply(`No command permissions found for ${role?.name} role.`);
+                    await interaction.editReply(`No permissions found for ${role?.name} role`);
                 } else {
                     roleCommands.forEach(async (command) => {
                         await roleCommandService.removeVals(roleId, command);
                         roleCommandCache.removeCommand({role_id: roleId, command_name: command});
                     });
-                    await interaction.editReply(`Removed all command permissions for ${role?.name} role.`);
+                    await interaction.editReply(`Removed all permissions for ${role?.name} role`);
                 }
             } catch (error) {
                 console.error(error);
-                await interaction.editReply(`Failed to remove all command permissions.`);
+                await interaction.editReply(`Failed to remove all permissions`);
             }
             break;
         default:

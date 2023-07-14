@@ -19,8 +19,8 @@ export async function create(discordSetting: Partial<DiscordSetting>): Promise<D
     return withAxiosErrorHandling(() => axios.post<DiscordSetting>(baseURL, discordSetting));
 }
 
-export async function update(id: number, discordSetting: Partial<DiscordSetting>): Promise<DiscordSetting> {
-    return withAxiosErrorHandling(() => axios.put<DiscordSetting>(`${baseURL}/${id}`, discordSetting));
+export async function update(name: string, discordSetting: Partial<DiscordSetting>): Promise<DiscordSetting> {
+    return withAxiosErrorHandling(() => axios.put<DiscordSetting>(`${baseURL}/name/${name}`, discordSetting));
 }
 
 export async function remove(id: number): Promise<void> {

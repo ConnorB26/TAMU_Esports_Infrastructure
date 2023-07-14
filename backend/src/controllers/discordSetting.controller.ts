@@ -30,4 +30,9 @@ export class DiscordSettingController {
     update(@Param('id', ParseIntPipe) id: number, @Body() discordSettingDto: DiscordSettingDto) {
         return this.discordSettingService.update(id, discordSettingDto);
     }
+
+    @Put('/name/:name')
+    updateName(@Param('name') name: string, @Body() discordSettingDto: DiscordSettingDto) {
+        return this.discordSettingService.updateName(name, discordSettingDto);
+    }
 }

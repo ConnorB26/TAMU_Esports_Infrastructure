@@ -37,6 +37,19 @@ export class DiscordSettingService {
         return this.discordSettingRepository.save(updatedEntity);
     }
 
+    async updateName(name: string, updateDto: Partial<DiscordSetting>): Promise<DiscordSetting> {
+        const entity = await this.discordSettingRepository.findOne({
+            where: {
+                name: name
+            }
+        });
+        if (!entity) {
+            throw new NotFoundException(`Discord setting with name ${name} not found.`);
+        }
+        const updatedEntity = Object.assign(entity, updateDto);
+        return this.discordSettingRepository.save(updatedEntity);
+    }
+
     async save(createDto: Partial<DiscordSetting>): Promise<DiscordSetting> {
         const newEntity = this.discordSettingRepository.create(createDto as any);
         return this.discordSettingRepository.save(newEntity as any);

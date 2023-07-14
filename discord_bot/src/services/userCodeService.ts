@@ -26,3 +26,15 @@ export async function update(discordId: string, code: string, userCode: Partial<
 export async function remove(discordId: string, code: string): Promise<void> {
     return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${discordId}/${code}`));
 }
+
+export async function removeId(discordId: string): Promise<void> {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${discordId}`));
+}
+
+export async function findByUser(discordId: string): Promise<UserCode[]> {
+    return withAxiosErrorHandling(() => axios.get<UserCode[]>(`${baseURL}/user/${discordId}`));
+}
+
+export async function findByCode(code: string): Promise<UserCode[]> {
+    return withAxiosErrorHandling(() => axios.get<UserCode[]>(`${baseURL}/code/${code}`));
+}

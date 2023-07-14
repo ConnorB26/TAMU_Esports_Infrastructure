@@ -20,16 +20,24 @@ class DiscordSettingCache {
         settings.forEach(setting => this.cache.set(setting.name, setting.value));
     }
 
-    public update(setting: DiscordSetting): void {
-        if (!this.cache.has(setting.name)) {
-            throw new Error(`Setting with name ${setting.name} does not exist`);
+    public update(name: string, value: string): void {
+        if (!this.cache.has(name)) {
+            throw new Error(`Setting with name ${name} does not exist`);
         }
-        this.cache.set(setting.name, setting.value);
+        this.cache.set(name, value);
     }
 
     public get(name: string): string | undefined {
         return this.cache.get(name);
-    }    
+    }
+
+    public getAll(): { [key: string]: string } {
+        let obj = Object.create(null);
+        for (let [k, v] of this.cache) {
+            obj[k] = v;
+        }
+        return obj;
+    }
 }
 
 export default DiscordSettingCache.getInstance();
