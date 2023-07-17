@@ -1,5 +1,6 @@
-import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, GuildMember, SlashCommandBuilder } from "discord.js";
 import { findOne as findUser, create as createUser, remove as removeUser } from '../../services/userService';
+import { createProfileEmbed } from "../../utilities/users";
 
 export const data = new SlashCommandBuilder()
     .setName('users')
@@ -30,10 +31,10 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)));
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const opts = interaction.options as CommandInteractionOptionResolver;
-    const user = opts.getUser('user');
+    const user = opts.getMember('user') as GuildMember;
 
     if (!user) {
         return await interaction.editReply('You must specify a user.');
@@ -41,19 +42,19 @@ export async function execute(interaction: CommandInteraction) {
 
     try {
         if (opts.getSubcommand() === 'get') {
-            const userInfo = await findUser(user.id);
-            await interaction.editReply(`User info: ${JSON.stringify(userInfo)}`);
+            const embed = await createProfileEmbed(user);
+            await interaction.editReply({ embeds: [embed] });
         } else if (opts.getSubcommand() === 'register') {
-            await createUser({ discordId: user.id, hasPaidDues: false });
-            await interaction.editReply(`Registered ${user.username}`);
+            await createUser({ discordId: user.user.id, hasPaidDues: false });
+            await interaction.editReply(`Registered ${user.user.username}`);
         } else if (opts.getSubcommand() === 'unregister') {
             await removeUser(user.id);
-            await interaction.editReply(`Unregistered ${user.username}`);
+            await interaction.editReply(`Unregistered ${user.user.username}`);
         } else {
             await interaction.editReply(`Unknown subcommand: ${opts.getSubcommand()}`);
         }
     } catch (error) {
         console.error(error);
-        await interaction.editReply(`Failed to ${opts.getSubcommand()} user ${user.username}`);
+        await interaction.editReply(`Failed to ${opts.getSubcommand()} user ${user.user.username}`);
     }
 }

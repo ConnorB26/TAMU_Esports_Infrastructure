@@ -7,7 +7,7 @@ export const data = new SlashCommandBuilder()
     .setDescription('Reset the memberships');
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
         const userCodes = await userCodeService.findAll();

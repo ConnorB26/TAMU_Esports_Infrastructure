@@ -43,7 +43,7 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)));
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const opts = interaction.options as CommandInteractionOptionResolver;
     const user = opts.getUser('user');

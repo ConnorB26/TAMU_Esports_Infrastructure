@@ -25,16 +25,18 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)));
 
 export async function execute(interaction: CommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
+    
     const opts = interaction.options as CommandInteractionOptionResolver;
 
     if (opts.getSubcommand() === 'get') {
         const settingName = opts.getString('setting_name');
         if (settingName) {
             const settingValue = DiscordSettingCache.get(settingName);
-            return interaction.reply(`Setting ${settingName} is ${settingValue}`);
+            return interaction.editReply(`Setting ${settingName} is ${settingValue}`);
         } else {
             const allSettings = DiscordSettingCache.getAll();
-            return interaction.reply(`All settings: ${JSON.stringify(allSettings)}`);
+            return interaction.editReply(`All settings: ${JSON.stringify(allSettings)}`);
         }
     } else if (opts.getSubcommand() === 'update') {
         const settingName = opts.getString('setting_name')!;
@@ -42,10 +44,10 @@ export async function execute(interaction: CommandInteraction) {
         try {
             await updateSetting(settingName, { name: settingName, value: newValue });
             DiscordSettingCache.update(settingName, newValue);
-            return interaction.reply(`Updated setting ${settingName} to ${newValue}`);
+            return interaction.editReply(`Updated setting ${settingName} to ${newValue}`);
         } catch (error) {
             console.error(error);
-            return interaction.reply(`Failed to update setting ${settingName}`);
+            return interaction.editReply(`Failed to update setting ${settingName}`);
         }
     }
 }

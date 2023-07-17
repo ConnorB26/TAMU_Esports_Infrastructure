@@ -1,12 +1,12 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { registerUser, unregisterUser } from "../../utilities/users";
+import { unregisterUser } from "../../utilities/users";
 
 export const data = new SlashCommandBuilder()
     .setName('unregister')
     .setDescription('Unregister the current user');
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
         await unregisterUser(interaction.user.id);

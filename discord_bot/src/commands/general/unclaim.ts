@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription('Unclaim membership for the current user');
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     if (!interaction.guild || !interaction.member) {
         return await interaction.editReply('This command must be used in a server.');

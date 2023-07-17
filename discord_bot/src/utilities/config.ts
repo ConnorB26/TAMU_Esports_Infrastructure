@@ -1,4 +1,4 @@
-import { Client, IntentsBitField } from "discord.js";
+import { Client, GatewayIntentBits, IntentsBitField } from "discord.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -19,5 +19,10 @@ export const config = {
 };
 
 export const client = new Client({
-    intents: [IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.DirectMessages, IntentsBitField.Flags.GuildMembers],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences, GatewayIntentBits.GuildModeration, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMessages],
 });
+
+export const rateLimit = {
+    minutes: 1,
+    commands: 5
+};

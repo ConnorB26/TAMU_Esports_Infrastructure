@@ -1,1 +1,0 @@
-INSERT INTO role_commands(role_id, command_name) VALUES ('RoleID', 'All');

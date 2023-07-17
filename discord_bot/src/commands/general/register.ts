@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription('Register the current user');
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
         await registerUser(interaction.user.id);

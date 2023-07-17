@@ -1,6 +1,7 @@
-import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, GuildMember, SlashCommandBuilder } from "discord.js";
 import { findOne as findUser } from '../../services/userService';
 import RoleCommandCache from '../../cache/roleCommandCache';
+import { createProfileEmbed } from "../../utilities/users";
 
 export const data = new SlashCommandBuilder()
     .setName('profile')
@@ -15,7 +16,7 @@ export const data = new SlashCommandBuilder()
             .setDescription('Get user permissions'));
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const opts = interaction.options as CommandInteractionOptionResolver;
 
@@ -27,8 +28,8 @@ export async function execute(interaction: CommandInteraction) {
 
     try {
         if (subcommand === 'info') {
-            const userInfo = await findUser(interaction.user.id);
-            await interaction.editReply(`User info: ${JSON.stringify(userInfo)}`);
+            const embed = await createProfileEmbed(interaction.member as GuildMember);
+            await interaction.editReply({ embeds: [embed] });
         } else if (subcommand === 'permissions') {
             const member = interaction.guild.members.resolve(interaction.user.id);
             const roles = [...(member?.roles.cache.values() || [])];
