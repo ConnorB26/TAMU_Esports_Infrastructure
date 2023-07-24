@@ -11,28 +11,28 @@ export async function findAll(): Promise<UserCode[]> {
     return withAxiosErrorHandling(() => axios.get<UserCode[]>(baseURL));
 }
 
-export async function findOne(discordId: string, code: string): Promise<UserCode> {
-    return withAxiosErrorHandling(() => axios.get<UserCode>(`${baseURL}/${discordId}/${code}`));
+export async function findOne(uin: string, code: string): Promise<UserCode> {
+    return withAxiosErrorHandling(() => axios.get<UserCode>(`${baseURL}/${uin}/${code}`));
 }
 
 export async function create(userCode: Partial<UserCode>): Promise<UserCode> {
     return withAxiosErrorHandling(() => axios.post<UserCode>(baseURL, userCode));
 }
 
-export async function update(discordId: string, code: string, userCode: Partial<UserCode>): Promise<UserCode> {
-    return withAxiosErrorHandling(() => axios.put<UserCode>(`${baseURL}/${discordId}/${code}`, userCode));
+export async function update(uin: string, code: string, userCode: Partial<UserCode>): Promise<UserCode> {
+    return withAxiosErrorHandling(() => axios.put<UserCode>(`${baseURL}/${uin}/${code}`, userCode));
 }
 
-export async function remove(discordId: string, code: string): Promise<void> {
-    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${discordId}/${code}`));
+export async function remove(uin: string, code: string): Promise<void> {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${uin}/${code}`));
 }
 
-export async function removeId(discordId: string): Promise<void> {
-    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${discordId}`));
+export async function removeId(uin: string): Promise<void> {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${uin}`));
 }
 
-export async function findByUser(discordId: string): Promise<UserCode[]> {
-    return withAxiosErrorHandling(() => axios.get<UserCode[]>(`${baseURL}/user/${discordId}`));
+export async function findByUser(uin: string): Promise<UserCode[]> {
+    return withAxiosErrorHandling(() => axios.get<UserCode[]>(`${baseURL}/user/${uin}`));
 }
 
 export async function findByCode(code: string): Promise<UserCode[]> {

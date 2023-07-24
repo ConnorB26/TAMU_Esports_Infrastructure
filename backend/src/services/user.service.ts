@@ -14,25 +14,48 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async findOne(discordId: string): Promise<User> {
+    async findOne(uin: string): Promise<User> {
         const entity = await this.userRepository.findOne({
             where: {
-                discordId: discordId
+                uin: uin
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User with discordId ${discordId} not found.`);
+            throw new NotFoundException(`User with uin ${uin} not found.`);
         }
         return entity;
     }
 
-    async remove(discordId: string): Promise<void> {
-        const entity = await this.findOne(discordId);
+    async findOneDiscord(discordID: string): Promise<User> {
+        const entity = await this.userRepository.findOne({
+            where: {
+                discord_id: discordID
+            }
+        });
+        if (!entity) {
+            throw new NotFoundException(`User with discord ID ${discordID} not found.`);
+        }
+        return entity;
+    }
+
+    async remove(uin: string): Promise<void> {
+        const entity = await this.findOne(uin);
         await this.userRepository.remove(entity);
     }
 
-    async update(discordId: string, updateDto: Partial<User>): Promise<User> {
-        const entity = await this.findOne(discordId);
+    async removeDiscord(discordID: string): Promise<void> {
+        const entity = await this.findOneDiscord(discordID);
+        await this.userRepository.remove(entity);
+    }
+
+    async update(uin: string, updateDto: Partial<User>): Promise<User> {
+        const entity = await this.findOne(uin);
+        const updatedEntity = Object.assign(entity, updateDto);
+        return this.userRepository.save(updatedEntity);
+    }
+
+    async updateDiscord(discordID: string, updateDto: Partial<User>): Promise<User> {
+        const entity = await this.findOneDiscord(discordID);
         const updatedEntity = Object.assign(entity, updateDto);
         return this.userRepository.save(updatedEntity);
     }

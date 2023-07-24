@@ -6,7 +6,9 @@ import roleCommandCache from "./cache/roleCommandCache";
 import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events, GuildMember } from "discord.js";
 import { removeMembership } from "./utilities/membership";
-import { unregisterUser } from "./utilities/users";
+import { registerUser, unregisterUser } from "./utilities/users";
+import { createWebsocket } from "./utilities/webSocket";
+import { User } from "./models/user";
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
@@ -89,15 +91,39 @@ client.on(Events.GuildMemberRemove, async member => {
     await unregisterUser(member.id);
 });
 
-// Handle reserve modal submissions
-client.on(Events.InteractionCreate, interaction => {
-	if (!interaction.isModalSubmit()) return;
+// Handle modal submissions
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isModalSubmit()) return;
+    await interaction.deferReply({ ephemeral: true });
 
-    const startTimeStr = interaction.fields.getTextInputValue('startTimeInput');
-    const endTimeStr = interaction.fields.getTextInputValue('endTimeInput');
+    if (interaction.customId === 'register') {
+        const uin = interaction.fields.getTextInputValue('uinInput');
+        const name = interaction.fields.getTextInputValue('nameInput');
+        const email = interaction.fields.getTextInputValue('emailInput');
 
-    console.log(startTimeStr);
-    console.log(endTimeStr);
+        const user: User = {
+            uin: uin,
+            name: name,
+            email: email,
+            discordId: interaction.user.id,
+            hasPaidDues: false
+        };
+
+        try {
+            await registerUser(user);
+            await interaction.editReply(`You have registered successfully!`);
+        } catch (error) {
+            console.log(error);
+            await interaction.editReply(`An error occurred when attempting to register.`);
+        }
+    }
 });
 
 client.login(config.DISCORD_TOKEN);
+
+// Setup WebSocket
+function handleMessage(data: any) {
+    console.log(data);
+}
+
+createWebsocket(handleMessage);

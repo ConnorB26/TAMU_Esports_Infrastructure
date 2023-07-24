@@ -1,19 +1,37 @@
-import { IsBoolean, IsString } from 'class-validator';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { IsString, IsBoolean } from 'class-validator';
 
 @Entity('users')
 export class User {
-    @PrimaryColumn({ name: 'discord_id' })
-    discordId: string;
+    @PrimaryColumn({ type: 'varchar', length: 255 })
+    uin: string;
 
-    @Column({ name: 'has_paid_dues', default: false })
-    hasPaidDues: boolean;
+    @Column({ type: 'varchar', length: 255 })
+    name: string;
+
+    @Column({ type: 'varchar', length: 255 })
+    email: string;
+
+    @Column({ type: 'varchar', length: 255 })
+    discord_id: string;
+
+    @Column({ type: 'boolean', default: false })
+    has_paid_dues: boolean;
 }
 
 export class UserDto {
     @IsString()
-    discordId: string;
+    uin: string;
+
+    @IsString()
+    name: string;
+
+    @IsString()
+    email: string;
+
+    @IsString()
+    discord_id: string;
 
     @IsBoolean()
-    hasPaidDues: boolean;
+    has_paid_dues: boolean;
 }

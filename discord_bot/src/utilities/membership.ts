@@ -1,17 +1,15 @@
 import { Guild, GuildMember } from 'discord.js';
 import DiscordSettingCache from '../cache/discordSettingCache';
 import { create as createUserCode, removeId as removeUserCode } from '../services/userCodeService';
-import { findOne as getUser } from '../services/userService';
-import { registerUser } from './users';
+import { findOneDiscord as getUser } from '../services/userService';
 
 export async function giveMembership(guild: Guild, member: GuildMember, code: string) {
-    const discordId = member.id;
-
     // If not registered, register
+    let user;
     try {
-        await getUser(discordId);
+        user = await getUser(member.id);
     } catch (error) {
-        registerUser(discordId);
+        throw new Error('You need to register before claiming your membership. You can do so by using the command /register')
     }
 
     // Get the member role name from the cache
@@ -28,10 +26,18 @@ export async function giveMembership(guild: Guild, member: GuildMember, code: st
     await member.roles.add(role);
 
     // Add to user code table
-    await createUserCode({ discordId: discordId, code });
+    await createUserCode({ uin: user.uin, code });
 }
 
 export async function removeMembership(guild: Guild, member: GuildMember) {
+    // Get user UIN
+    let user;
+    try {
+        user = await getUser(member.id);
+    } catch (error) {
+        throw new Error('You need to register and claim a membership before trying to unclaim it. You can do so by using the commands /register and /claim')
+    }
+
     // Get the member role name from the cache
     const memberRoleName = DiscordSettingCache.get('member_role');
     if (!memberRoleName) {
@@ -45,5 +51,5 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
     }
 
     // Remove from user code table
-    await removeUserCode(member.id);
+    await removeUserCode(user.uin);
 }

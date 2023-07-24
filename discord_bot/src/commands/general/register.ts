@@ -1,18 +1,16 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { registerUser } from "../../utilities/users";
+import { getRegisterModal, registerUser } from "../../utilities/users";
 
 export const data = new SlashCommandBuilder()
     .setName('register')
     .setDescription('Register the current user');
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
-
     try {
-        await registerUser(interaction.user.id);
-        await interaction.editReply(`Registered ${interaction.user.username}`);
+        const modal = await getRegisterModal(interaction.user.id);
+        await interaction.showModal(modal);
     } catch (error) {
         console.error(error);
-        await interaction.editReply(`Failed to register ${interaction.user.username}`);
+        await interaction.reply({ content: `Failed to register ${interaction.user.username}`, ephemeral: true });
     }
 }

@@ -16,18 +16,33 @@ export class UserController {
         return this.userService.findAll();
     }
 
-    @Get(':discordId')
-    findOne(@Param('discordId') discordId: string) {
-        return this.userService.findOne(discordId);
+    @Get(':uin')
+    findOne(@Param('uin') uin: string) {
+        return this.userService.findOne(uin);
     }
 
-    @Delete(':discordId')
-    remove(@Param('discordId') discordId: string) {
-        return this.userService.remove(discordId);
+    @Get('discord/:id')
+    findOneDiscord(@Param('id') id: string) {
+        return this.userService.findOneDiscord(id);
     }
 
-    @Put(':discordId')
-    update(@Param('discordId') discordId: string, @Body() userDto: UserDto) {
-        return this.userService.update(discordId, userDto);
+    @Delete(':uin')
+    remove(@Param('uin') uin: string) {
+        return this.userService.remove(uin);
+    }
+
+    @Delete('discord/:id')
+    removeDiscord(@Param('id') id: string) {
+        return this.userService.removeDiscord(id);
+    }
+
+    @Put(':uin')
+    update(@Param('uin') uin: string, @Body() userDto: UserDto) {
+        return this.userService.update(uin, userDto);
+    }
+
+    @Put('discord/:id')
+    updateDiscord(@Param('id') id: string, @Body() userDto: UserDto) {
+        return this.userService.updateDiscord(id, userDto);
     }
 }

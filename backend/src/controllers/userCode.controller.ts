@@ -16,9 +16,9 @@ export class UserCodeController {
         return this.userCodeService.findAll();
     }
 
-    @Get('user/:discordId')
-    findByUser(@Param('discordId') discordId: string) {
-        return this.userCodeService.findByUser(discordId);
+    @Get('user/:uin')
+    findByUser(@Param('uin') uin: string) {
+        return this.userCodeService.findByUser(uin);
     }
 
     @Get('code/:code')
@@ -26,23 +26,23 @@ export class UserCodeController {
         return this.userCodeService.findByCode(code);
     }
 
-    @Get(':discordId/:code')
-    findOne(@Param('discordId') discordId: string, @Param('code') code: string) {
-        return this.userCodeService.findOne(discordId, code);
+    @Get(':uin/:code')
+    findOne(@Param('uin') uin: string, @Param('code') code: string) {
+        return this.userCodeService.findOne(uin, code);
     }
 
-    @Delete(':discordId/:code')
-    remove(@Param('discordId') discordId: string, @Param('code') code: string) {
-        return this.userCodeService.remove(discordId, code);
+    @Delete(':uin/:code')
+    remove(@Param('uin') uin: string, @Param('code') code: string) {
+        return this.userCodeService.remove(uin, code);
     }
 
-    @Delete(':discordId')
-    removeUser(@Param('discordId') discordId: string) {
-        return this.userCodeService.removeUser(discordId);
+    @Delete(':uin')
+    removeUser(@Param('uin') uin: string) {
+        return this.userCodeService.removeUser(uin);
     }
 
-    @Put(':discordId/:code')
-    update(@Param('discordId') discordId: string, @Param('code') code: string, @Body() userCodeDto: UserCodeDto) {
-        return this.userCodeService.update(discordId, code, userCodeDto);
+    @Put(':uin/:code')
+    update(@Param('uin') uin: string, @Param('code') code: string, @Body() userCodeDto: UserCodeDto) {
+        return this.userCodeService.update(uin, code, userCodeDto);
     }
 }

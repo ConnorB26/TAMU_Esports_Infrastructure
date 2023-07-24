@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOptionResolver, GuildMember, SlashCommandBuilder } from "discord.js";
 import { findOne as findUser, create as createUser, remove as removeUser } from '../../services/userService';
-import { createProfileEmbed } from "../../utilities/users";
+import { createProfileEmbed, getRegisterModal, unregisterUser } from "../../utilities/users";
 
 export const data = new SlashCommandBuilder()
     .setName('users')
@@ -13,14 +13,14 @@ export const data = new SlashCommandBuilder()
                 option.setName('user')
                     .setDescription('User to get')
                     .setRequired(true)))
-    .addSubcommand(subcommand =>
+    /*.addSubcommand(subcommand =>
         subcommand
             .setName('register')
             .setDescription('Register a user')
             .addUserOption(option =>
                 option.setName('user')
                     .setDescription('User to register')
-                    .setRequired(true)))
+                    .setRequired(true)))*/
     .addSubcommand(subcommand =>
         subcommand
             .setName('unregister')
@@ -31,9 +31,11 @@ export const data = new SlashCommandBuilder()
                     .setRequired(true)));
 
 export async function execute(interaction: CommandInteraction) {
-    await interaction.deferReply({ ephemeral: true });
-
     const opts = interaction.options as CommandInteractionOptionResolver;
+
+    if(opts.getSubcommand() !== 'register')
+        await interaction.deferReply({ ephemeral: true });
+
     const user = opts.getMember('user') as GuildMember;
 
     if (!user) {
@@ -45,10 +47,10 @@ export async function execute(interaction: CommandInteraction) {
             const embed = await createProfileEmbed(user);
             await interaction.editReply({ embeds: [embed] });
         } else if (opts.getSubcommand() === 'register') {
-            await createUser({ discordId: user.user.id, hasPaidDues: false });
-            await interaction.editReply(`Registered ${user.user.username}`);
+            const modal = await getRegisterModal(user.id);
+            await interaction.showModal(modal);
         } else if (opts.getSubcommand() === 'unregister') {
-            await removeUser(user.id);
+            await unregisterUser(user.id);
             await interaction.editReply(`Unregistered ${user.user.username}`);
         } else {
             await interaction.editReply(`Unknown subcommand: ${opts.getSubcommand()}`);

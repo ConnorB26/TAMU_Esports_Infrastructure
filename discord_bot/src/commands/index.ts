@@ -10,7 +10,6 @@ import * as unclaim from "./general/unclaim";
 import * as register from "./general/register";
 import * as unregister from "./general/unregister";
 import * as profile from "./general/profile";
-import * as reserve from "./general/reserve";
 
 export const commands = {
     ping,
@@ -24,6 +23,5 @@ export const commands = {
     unclaim,
     register,
     unregister,
-    profile,
-    reserve
+    profile
 };

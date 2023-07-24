@@ -1,4 +1,4 @@
 export interface UserCode {
-    discordId: string;
+    uin: string;
     code: string;
 }

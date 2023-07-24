@@ -12,7 +12,7 @@ export async function execute(interaction: CommandInteraction) {
     try {
         const userCodes = await userCodeService.findAll();
         for (const userCode of userCodes) {
-            await userCodeService.remove(userCode.discordId, userCode.code);
+            await userCodeService.remove(userCode.uin, userCode.code);
         }
         const codes = await confirmationCodeService.findAll();
         for (const code of codes) {

@@ -12,6 +12,7 @@ import { UserModule } from './modules/user.module';
 import { UserCodeModule } from './modules/userCode.module';
 import { RoleCommand } from './entities/roleCommand.entity';
 import { RoleCommandModule } from './modules/roleCommand.module';
+import { DiscordBotInteractionModule } from './modules/discordBotInteraction.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { RoleCommandModule } from './modules/roleCommand.module';
     DiscordSettingModule,
     UserModule,
     UserCodeModule,
-    RoleCommandModule
+    RoleCommandModule,
+    DiscordBotInteractionModule
   ],
   controllers: [],
   providers: [],

@@ -5,14 +5,14 @@ import { IsString } from 'class-validator';
 
 @Entity('user_codes')
 export class UserCode {
-    @PrimaryColumn({ name: 'discord_id' })
-    discordId: string;
+    @PrimaryColumn({ name: 'uin' })
+    uin: string;
 
     @PrimaryColumn()
     code: string;
 
-    @ManyToOne(() => User, user => user.discordId)
-    @JoinColumn({ name: "discord_id" })
+    @ManyToOne(() => User, user => user.uin)
+    @JoinColumn({ name: "uin" })
     user: User;
 
     @ManyToOne(() => ConfirmationCode, code => code.code)
@@ -22,7 +22,7 @@ export class UserCode {
 
 export class UserCodeDto {
     @IsString()
-    discordId: string;
+    uin: string;
 
     @IsString()
     code: string;

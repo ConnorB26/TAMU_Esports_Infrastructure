@@ -14,27 +14,27 @@ export class UserCodeService {
         return this.userCodeRepository.find();
     }
 
-    async findOne(discordId: string, code: string): Promise<UserCode> {
+    async findOne(uin: string, code: string): Promise<UserCode> {
         const entity = await this.userCodeRepository.findOne({
             where: {
-                discordId: discordId,
+                uin: uin,
                 code: code
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with discordId ${discordId} and code ${code} not found.`);
+            throw new NotFoundException(`User code with uin ${uin} and code ${code} not found.`);
         }
         return entity;
     }
 
-    async findByUser(discordId: string): Promise<UserCode> {
+    async findByUser(uin: string): Promise<UserCode> {
         const entity = await this.userCodeRepository.findOne({
             where: {
-                discordId: discordId
+                uin: uin
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with discordId ${discordId} not found.`);
+            throw new NotFoundException(`User code with uin ${uin} not found.`);
         }
         return entity;
     }
@@ -51,25 +51,25 @@ export class UserCodeService {
         return entity;
     }
 
-    async remove(discordId: string, code: string): Promise<void> {
-        const entity = await this.findOne(discordId, code);
+    async remove(uin: string, code: string): Promise<void> {
+        const entity = await this.findOne(uin, code);
         await this.userCodeRepository.remove(entity);
     }
 
-    async removeUser(discordId: string): Promise<void> {
+    async removeUser(uin: string): Promise<void> {
         const entity = await this.userCodeRepository.findOne({
             where: {
-                discordId: discordId
+                uin: uin
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with discordId ${discordId} not found.`);
+            throw new NotFoundException(`User code with uin ${uin} not found.`);
         }
         await this.userCodeRepository.remove(entity);
     }
 
-    async update(discordId: string, code: string, updateDto: Partial<UserCode>): Promise<UserCode> {
-        const entity = await this.findOne(discordId, code);
+    async update(uin: string, code: string, updateDto: Partial<UserCode>): Promise<UserCode> {
+        const entity = await this.findOne(uin, code);
         const updatedEntity = Object.assign(entity, updateDto);
         return this.userCodeRepository.save(updatedEntity);
     }
