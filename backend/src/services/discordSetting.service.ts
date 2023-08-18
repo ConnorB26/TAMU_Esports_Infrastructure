@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DiscordSetting } from 'src/entities/discordSetting.entity';
@@ -51,7 +51,17 @@ export class DiscordSettingService {
     }
 
     async save(createDto: Partial<DiscordSetting>): Promise<DiscordSetting> {
+        const exists = await this.discordSettingRepository.findOne({
+            where: { name: createDto.name }
+        });
+        if (exists) {
+            throw new ConflictException(`Discord setting with name ${createDto.name} already exists.`);
+        }
         const newEntity = this.discordSettingRepository.create(createDto as any);
-        return this.discordSettingRepository.save(newEntity as any);
+        try {
+            return await this.discordSettingRepository.save(newEntity as any);
+        } catch (error) {
+            throw new BadRequestException(`Failed to save the Discord setting: ${error.message}`);
+        }
     }
 }

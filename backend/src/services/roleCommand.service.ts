@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RoleCommand } from 'src/entities/roleCommand.entity';
@@ -21,7 +21,7 @@ export class RoleCommandService {
             }
         });
         if (!entity) {
-            throw new NotFoundException(`Role command with id ${id} not found.`);
+            throw new NotFoundException(`Permission with id ${id} not found.`);
         }
         return entity;
     }
@@ -38,6 +38,9 @@ export class RoleCommandService {
                 command_name: command_name
             }
         });
+        if (!entity) {
+            throw new NotFoundException(`Permission with role ID ${role_id} and command name ${command_name} not found.`);
+        }
         await this.roleCommandRepository.remove(entity);
     }
 
@@ -48,7 +51,20 @@ export class RoleCommandService {
     }
 
     async save(createDto: Partial<RoleCommand>): Promise<RoleCommand> {
+        const exists = await this.roleCommandRepository.findOne({
+            where: { 
+                role_id: createDto.role_id, 
+                command_name: createDto.command_name 
+            }
+        });
+        if (exists) {
+            throw new ConflictException(`Permission for the command name ${createDto.command_name} already exists for role id ${createDto.role_id}.`);
+        }
         const newEntity = this.roleCommandRepository.create(createDto as any);
-        return this.roleCommandRepository.save(newEntity as any);
+        try {
+            return await this.roleCommandRepository.save(newEntity as any);
+        } catch (error) {
+            throw new BadRequestException(`Failed to save the permission: ${error.message}`);
+        }
     }
 }

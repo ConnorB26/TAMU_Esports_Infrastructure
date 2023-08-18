@@ -3,7 +3,7 @@ import { DiscordSetting } from '../models/discordSetting';
 import withAxiosErrorHandling from '../utilities/axiosErrorHandling';
 import { config } from '../utilities/config';
 
-const baseURL = 'http://backend:3001/discord_settings';
+const baseURL = `${config.BASE_URL}/discord_settings`;
 
 axios.defaults.headers.common['Authorization'] = `Bearer ${config.BACKEND_DISCORD_TOKEN}`;
 

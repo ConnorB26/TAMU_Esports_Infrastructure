@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfirmationCode } from 'src/entities/confirmationCode.entity';
@@ -38,7 +38,17 @@ export class ConfirmationCodeService {
     }
 
     async save(createDto: Partial<ConfirmationCode>): Promise<ConfirmationCode> {
+        const exists = await this.confirmationCodeRepository.findOne({
+            where: { code: createDto.code }
+        });
+        if (exists) {
+            throw new ConflictException(`Confirmation code ${createDto.code} already exists.`);
+        }
         const newEntity = this.confirmationCodeRepository.create(createDto as any);
-        return this.confirmationCodeRepository.save(newEntity as any);
+        try {
+            return await this.confirmationCodeRepository.save(newEntity as any);
+        } catch (error) {
+            throw new BadRequestException(`Failed to save the confirmation code: ${error.message}`);
+        }
     }
 }

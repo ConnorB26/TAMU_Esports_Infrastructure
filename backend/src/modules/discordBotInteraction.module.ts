@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { EventsGateway } from '../websockets/events.gateway';
 import { GoogleFormsController } from 'src/controllers/googleForms.controller';
+import { SseController } from 'src/controllers/serverSentEvents.controller';
+import { SseService } from 'src/services/serverSentEvents.service';
 
 @Module({
-    providers: [EventsGateway],
-    controllers: [GoogleFormsController],
-    exports: [EventsGateway]
+    providers: [SseService],
+    controllers: [GoogleFormsController, SseController],
+    exports: [SseService]
 })
 export class DiscordBotInteractionModule { }

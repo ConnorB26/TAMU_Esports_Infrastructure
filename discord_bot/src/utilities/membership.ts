@@ -39,13 +39,13 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
     }
 
     // Get the member role name from the cache
-    const memberRoleName = DiscordSettingCache.get('member_role');
-    if (!memberRoleName) {
+    const memberRoleId = DiscordSettingCache.get('member_role');
+    if (!memberRoleId) {
         throw new Error('member_role setting not found');
     }
 
     // Remove the user's role
-    const role = guild.roles.cache.find(role => role.name === memberRoleName);
+    const role = guild.roles.cache.find(role => role.id === memberRoleId);
     if (role) {
         await member.roles.remove(role);
     }

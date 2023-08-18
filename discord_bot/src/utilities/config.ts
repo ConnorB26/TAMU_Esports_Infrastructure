@@ -9,13 +9,16 @@ if (!DISCORD_TOKEN || !DISCORD_CLIENT_ID || !DISCORD_GUILD_ID) {
     throw new Error("Missing environment variables");
 }
 
+const BASE_URL = 'http://backend:3001';
+
 export const config = {
     DISCORD_TOKEN,
     DISCORD_CLIENT_ID,
     DISCORD_GUILD_ID,
     BACKEND_DISCORD_TOKEN,
     TWITCH_CLIENT_ID,
-    TWITCH_CLIENT_SECRET
+    TWITCH_CLIENT_SECRET,
+    BASE_URL
 };
 
 export const client = new Client({

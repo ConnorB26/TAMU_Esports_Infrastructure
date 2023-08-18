@@ -3,7 +3,7 @@ import { ConfirmationCode } from '../models/confirmationCode';
 import withAxiosErrorHandling from '../utilities/axiosErrorHandling';
 import { config } from '../utilities/config';
 
-const baseURL = 'http://backend:3001/confirmation_codes';
+const baseURL = `${config.BASE_URL}/confirmation_codes`;
 
 axios.defaults.headers.common['Authorization'] = `Bearer ${config.BACKEND_DISCORD_TOKEN}`;
 

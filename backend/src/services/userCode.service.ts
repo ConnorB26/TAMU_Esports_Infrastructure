@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserCode } from 'src/entities/userCode.entity';
+import { UserService } from './user.service';
+import { ConfirmationCodeService } from './confirmationCode.service';
 
 @Injectable()
 export class UserCodeService {
     constructor(
         @InjectRepository(UserCode)
         private userCodeRepository: Repository<UserCode>,
+        private userService: UserService,
+        private confirmationCodeService: ConfirmationCodeService
     ) { }
 
     findAll(): Promise<UserCode[]> {
@@ -22,7 +26,7 @@ export class UserCodeService {
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with uin ${uin} and code ${code} not found.`);
+            throw new NotFoundException(`Membership with uin ${uin} and code ${code} not found.`);
         }
         return entity;
     }
@@ -34,7 +38,7 @@ export class UserCodeService {
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with uin ${uin} not found.`);
+            throw new NotFoundException(`Membership with uin ${uin} not found.`);
         }
         return entity;
     }
@@ -46,7 +50,7 @@ export class UserCodeService {
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User code with code ${code} not found.`);
+            throw new NotFoundException(`Membership with code ${code} not found.`);
         }
         return entity;
     }
@@ -57,14 +61,7 @@ export class UserCodeService {
     }
 
     async removeUser(uin: string): Promise<void> {
-        const entity = await this.userCodeRepository.findOne({
-            where: {
-                uin: uin
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`User code with uin ${uin} not found.`);
-        }
+        const entity = await this.findByUser(uin);
         await this.userCodeRepository.remove(entity);
     }
 
@@ -75,7 +72,33 @@ export class UserCodeService {
     }
 
     async save(createDto: Partial<UserCode>): Promise<UserCode> {
+        const existingUin = await this.userCodeRepository.findOne({ 
+            where: { uin: createDto.uin } 
+        });
+
+        const existingCode = await this.userCodeRepository.findOne({ 
+            where: { code: createDto.code } 
+        });
+
+        if (existingUin) {
+            throw new ConflictException(`Membership with UIN ${createDto.uin} already exists.`);
+        }
+
+        if (existingCode) {
+            throw new ConflictException(`Membership with code ${createDto.code} already exists.`);
+        }
+
+        // Check if linked user exists
+        await this.userService.findOne(createDto.uin);
+
+        // Check if linked confirmation code exists
+        await this.confirmationCodeService.findOne(createDto.code);
+
         const newEntity = this.userCodeRepository.create(createDto as any);
-        return this.userCodeRepository.save(newEntity as any);
+        try {
+            return await this.userCodeRepository.save(newEntity as any);
+        } catch (error) {
+            throw new BadRequestException(`Failed to save the membership: ${error.message}`);
+        }
     }
 }

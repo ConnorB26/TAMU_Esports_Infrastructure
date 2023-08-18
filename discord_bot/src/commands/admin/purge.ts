@@ -26,8 +26,8 @@ export async function execute(interaction: CommandInteraction) {
     for (const member of members.values()) {
         if (!roleIds.some(id => member.roles.cache.has(id)) && !member.user.bot) {
             try {
-                /*await member.send('You have been kicked from the Texas A&M eSports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuesports');
-                await member.kick('User did not have any of the necessary roles determining status within the server as a Student, Guest, or Alumni.');*/
+                await member.send('You have been kicked from the Texas A&M eSports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuesports');
+                await member.kick('User did not have any of the necessary roles determining status within the server as a Student, Guest, or Alumni.');
                 kickedList.push(member);
 
                 if (kickedList.length >= numberOfPeople) {

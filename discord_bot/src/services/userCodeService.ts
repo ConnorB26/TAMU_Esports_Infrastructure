@@ -3,7 +3,7 @@ import { UserCode } from '../models/userCode';
 import withAxiosErrorHandling from '../utilities/axiosErrorHandling';
 import { config } from '../utilities/config';
 
-const baseURL = 'http://backend:3001/user_codes';
+const baseURL = `${config.BASE_URL}/user_codes`;
 
 axios.defaults.headers.common['Authorization'] = `Bearer ${config.BACKEND_DISCORD_TOKEN}`;
 

@@ -1,13 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { EventsGateway } from '../websockets/events.gateway';
+import { SseService } from 'src/services/serverSentEvents.service';
 
 @Controller('google-forms')
 export class GoogleFormsController {
-  constructor(private eventsGateway: EventsGateway) {}
+  constructor(private readonly sseService: SseService) {}
 
   @Post('submit')
   handleFormSubmit(@Body() data: any) {
-    this.eventsGateway.sendMessageToClients(data);
-    return { message: 'Form data received and broadcasted' };
+    this.sseService.pushSseEvent(data);
+    return { message: 'Event triggered' };
   }
 }

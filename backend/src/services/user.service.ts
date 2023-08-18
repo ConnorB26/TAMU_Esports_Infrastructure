@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
@@ -21,7 +21,7 @@ export class UserService {
             }
         });
         if (!entity) {
-            throw new NotFoundException(`User with uin ${uin} not found.`);
+            throw new NotFoundException(`User with that UIN not found.`);
         }
         return entity;
     }
@@ -61,7 +61,31 @@ export class UserService {
     }
 
     async save(createDto: Partial<User>): Promise<User> {
+        const uinExists = await this.userRepository.findOne({
+            where: { 
+                uin: createDto.uin 
+            }
+        });
+
+        const discordIdExists = await this.userRepository.findOne({
+            where: { 
+                discord_id: createDto.discord_id 
+            }
+        });
+
+        if (uinExists) {
+            throw new ConflictException(`User with that UIN already exists.`);
+        }
+
+        if (discordIdExists) {
+            throw new ConflictException(`You are already registered.`);
+        }
+
         const newEntity = this.userRepository.create(createDto as any);
-        return this.userRepository.save(newEntity as any);
+        try {
+            return await this.userRepository.save(newEntity as any);
+        } catch (error) {
+            throw new BadRequestException(`Failed to save the user: ${error.message}`);
+        }
     }
 }

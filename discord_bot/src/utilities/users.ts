@@ -19,14 +19,17 @@ export async function createProfileEmbed(discordUser: GuildMember) {
         .setColor(discordUser.displayHexColor)
         .setAuthor({ name: discordUser.displayName ?? discordUser.user.username, iconURL: discordUser.avatarURL() ?? discordUser.user.avatarURL() ?? "" })
         .addFields(
-            { name: 'Dues Paid', value: userInfo.hasPaidDues ? 'Yes' : 'No' }
+            { name: 'UIN', value: userInfo.uin},
+            { name: 'Name', value: userInfo.name},
+            { name: 'Email', value: userInfo.email},
+            { name: 'Dues Paid', value: userInfo.has_paid_dues ? 'Yes' : 'No' }
         );
 
     return embed;
 }
 
 // Get register modal
-export async function getRegisterModal(discordID: string) {
+export async function getRegisterModal() {
     const modal = new ModalBuilder()
         .setCustomId('register')
         .setTitle(`Registration`)
@@ -51,6 +54,30 @@ export async function getRegisterModal(discordID: string) {
     const thirdActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
 
     modal.addComponents(firstActionRow, secondActionRow, thirdActionRow);
+
+    return modal;
+}
+
+// Get edit modal
+export async function getEditModal() {
+    const modal = new ModalBuilder()
+        .setCustomId('edit')
+        .setTitle(`Edit Profile`)
+
+    const nameInput = new TextInputBuilder()
+        .setCustomId('nameInput')
+        .setLabel('Name')
+        .setStyle(TextInputStyle.Short);
+
+    const emailInput = new TextInputBuilder()
+        .setCustomId('emailInput')
+        .setLabel('Email')
+        .setStyle(TextInputStyle.Short);
+
+    const firstActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);
+    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
+
+    modal.addComponents(firstActionRow, secondActionRow);
 
     return modal;
 }

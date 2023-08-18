@@ -2,6 +2,6 @@ export interface User {
     uin: string;
     name: string;
     email: string;
-    discordId: string;
-    hasPaidDues: boolean;
+    discord_id: string;
+    has_paid_dues: boolean;
 }

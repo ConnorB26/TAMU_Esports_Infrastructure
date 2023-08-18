@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from './config';
 import { DiscordSettingModule } from './modules/discordSetting.module';
@@ -15,30 +15,31 @@ import { RoleCommandModule } from './modules/roleCommand.module';
 import { DiscordBotInteractionModule } from './modules/discordBotInteraction.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: config.DB_HOST,
-      port: config.DB_PORT_NUMBER,
-      username: config.DB_USERNAME,
-      password: config.DB_PASSWORD,
-      database: config.DB_DATABASE,
-      entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand]
-    }),
-    ConfirmationCodeModule,
-    DiscordSettingModule,
-    UserModule,
-    UserCodeModule,
-    RoleCommandModule,
-    DiscordBotInteractionModule
-  ],
-  controllers: [],
-  providers: [],
+    imports: [
+        TypeOrmModule.forRoot({
+            type: 'postgres',
+            host: config.DB_HOST,
+            port: config.DB_PORT_NUMBER,
+            username: config.DB_USERNAME,
+            password: config.DB_PASSWORD,
+            database: config.DB_DATABASE,
+            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand],
+        }),
+        ConfirmationCodeModule,
+        DiscordSettingModule,
+        UserModule,
+        UserCodeModule,
+        RoleCommandModule,
+        DiscordBotInteractionModule
+    ],
+    controllers: [],
+    providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(TokenMiddleware)
-      .forRoutes('*');
-  }
+
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(TokenMiddleware)
+            .forRoutes('*');
+    }
 }

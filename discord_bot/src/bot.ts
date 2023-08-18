@@ -7,23 +7,28 @@ import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events, GuildMember } from "discord.js";
 import { removeMembership } from "./utilities/membership";
 import { registerUser, unregisterUser } from "./utilities/users";
-import { createWebsocket } from "./utilities/webSocket";
 import { User } from "./models/user";
+import EventSource from 'eventsource';
+import * as userService from './services/userService';
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
     console.log(`Logged in as ${client.user?.tag}!`);
 
-    // Populate caches
-    await populateCaches();
-
     // Start twitch polling
     startTwitchPolling();
 });
 
+let apiConnected = false;
+
 const userCommandTimestamps = new Map<string, number[]>();
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isCommand() || !interaction.guild) {
+        return;
+    }
+
+    if (!apiConnected) {
+        await interaction.reply({ ephemeral: true, content: 'There was an error retrieving information, please try again later.' });
         return;
     }
 
@@ -96,34 +101,77 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isModalSubmit()) return;
     await interaction.deferReply({ ephemeral: true });
 
-    if (interaction.customId === 'register') {
-        const uin = interaction.fields.getTextInputValue('uinInput');
-        const name = interaction.fields.getTextInputValue('nameInput');
-        const email = interaction.fields.getTextInputValue('emailInput');
+    switch (interaction.customId) {
+        case 'register':
+            const uin = interaction.fields.getTextInputValue('uinInput');
+            const name = interaction.fields.getTextInputValue('nameInput');
+            const email = interaction.fields.getTextInputValue('emailInput');
 
-        const user: User = {
-            uin: uin,
-            name: name,
-            email: email,
-            discordId: interaction.user.id,
-            hasPaidDues: false
-        };
+            const user: User = {
+                uin: uin,
+                name: name,
+                email: email,
+                discord_id: interaction.user.id,
+                has_paid_dues: false
+            };
 
-        try {
-            await registerUser(user);
-            await interaction.editReply(`You have registered successfully!`);
-        } catch (error) {
-            console.log(error);
-            await interaction.editReply(`An error occurred when attempting to register.`);
-        }
+            try {
+                await registerUser(user);
+                await interaction.editReply(`You have registered successfully!`);
+            } catch (error) {
+                await interaction.editReply(`${error}`);
+            }
+            break;
+        case 'edit':
+            const oldUser: User = await userService.findOneDiscord(interaction.user.id);
+            const newName = interaction.fields.getTextInputValue('nameInput');
+            const newEmail = interaction.fields.getTextInputValue('emailInput');
+
+            const newUser: User = {
+                uin: oldUser.uin,
+                name: newName,
+                email: newEmail,
+                discord_id: interaction.user.id,
+                has_paid_dues: oldUser.has_paid_dues
+            };
+
+            try {
+                await userService.update(oldUser.uin, newUser);
+                await interaction.editReply(`You have updated your profile successfully!`);
+            } catch (error) {
+                await interaction.editReply(`${error}`);
+            }
+            break;
     }
 });
 
+// Server sent events
+const headers = {
+    'Authorization': `Bearer ${config.BACKEND_DISCORD_TOKEN}`
+};
+const eventSource = new EventSource(`${config.BASE_URL}/sse`, { headers: headers });
+eventSource.onmessage = ({ data }) => {
+    const parsedData = JSON.parse(data);
+    console.log('Received SSE message:', parsedData);
+};
+
+eventSource.onerror = (event: MessageEvent & { message?: string }) => {
+    const errorMessage = event.message;
+
+    if (!errorMessage) {
+        console.error('Error occurred with no message:', event);
+        return;
+    }
+
+    if (errorMessage.includes('ECONNREFUSED') || errorMessage.includes('EAI_AGAIN')) return;
+
+    console.error('Error occurred:', errorMessage);
+};
+
+eventSource.onopen = async () => {
+    await populateCaches();
+    apiConnected = true;
+};
+
+// Log in bot
 client.login(config.DISCORD_TOKEN);
-
-// Setup WebSocket
-function handleMessage(data: any) {
-    console.log(data);
-}
-
-createWebsocket(handleMessage);

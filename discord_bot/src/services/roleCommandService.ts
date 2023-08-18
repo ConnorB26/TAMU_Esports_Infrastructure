@@ -3,7 +3,7 @@ import withAxiosErrorHandling from '../utilities/axiosErrorHandling';
 import { RoleCommand } from '../models/roleCommand';
 import { config } from '../utilities/config';
 
-const baseURL = 'http://backend:3001/role_commands';
+const baseURL = `${config.BASE_URL}/role_commands`;
 
 axios.defaults.headers.common['Authorization'] = `Bearer ${config.BACKEND_DISCORD_TOKEN}`;
 
