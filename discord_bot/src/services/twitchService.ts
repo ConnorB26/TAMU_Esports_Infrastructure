@@ -1,10 +1,11 @@
 import { TwitchApi } from 'node-twitch';
-import { client } from '../config';
+import { client, config } from '../utilities/config';
 import { ChannelType, DMChannel, EmbedBuilder, TextChannel } from 'discord.js';
+import discordSettingCache from '../cache/discordSettingCache';
 
 const twitch = new TwitchApi({
-    client_id: process.env.TWITCH_CLIENT_ID ?? "",
-    client_secret: process.env.TWITCH_CLIENT_SECRET ?? "",
+    client_id: config.TWITCH_CLIENT_ID ?? "",
+    client_secret: config.TWITCH_CLIENT_SECRET ?? "",
 });
 
 let isLiveMemory = false;
@@ -34,9 +35,9 @@ async function sendTwitchNotification(streamData: any) {
         .setImage(streamData.thumbnail_url.replace('{width}x{height}', '1920x1080'));
 
     try {
-        const res = await client.channels.fetch(settings.twitch_notif_channel);
+        const res = await client.channels.fetch(discordSettingCache.get('twitch_notif_channel') ?? '');
         if (res && (res.type === ChannelType.GuildText || res.type === ChannelType.DM)) {
-            (res as TextChannel | DMChannel).send({ content: `<@&${settings.twitch_notif_role}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
+            (res as TextChannel | DMChannel).send({ content: `<@&${discordSettingCache.get('twitch_notif_role')}> TAMU eSports is now live on Twitch!`, embeds: [embed] });
             return true;
         } else {
             return false;
