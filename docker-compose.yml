@@ -41,13 +41,15 @@ services:
       - ./.env:/app/.env
     networks:
       - app-network
+    profiles:
+      - dev
 
   strapi:
     build:
       context: ./content-management-system
       dockerfile: Dockerfile
     container_name: content_management_system
-    image: strapi/strapi
+    image: strapi:latest
     restart: unless-stopped
     env_file: .env
     environment:
@@ -72,16 +74,3 @@ services:
       - "1337:1337"
     networks:
       - app-network
-
-  nginx:
-    image: nginx:stable
-    container_name: nginx
-    volumes:
-      - ./nginx/nginx.${NODE_ENV}.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    networks:
-      - app-network
-    depends_on:
-      - frontend
-      - backend

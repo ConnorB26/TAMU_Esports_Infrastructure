@@ -1,34 +1,26 @@
-# build stage
-FROM node:16-alpine as build
+# Base stage
+FROM node:18-alpine as base
 
 # Installing libvips-dev for sharp Compatibility
 RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev nasm bash vips-dev
 
 WORKDIR /app
-
 COPY package.json package-lock.json ./
 
-ARG NODE_ENV=development
-ENV NODE_ENV=${NODE_ENV}
+# Build stage
+FROM base as build
 
-RUN if [ "$NODE_ENV" = "production" ] ; then npm install --production; else npm install ; fi
-RUN npm install --platform=linuxmusl --arch=x64 sharp
-
+# Install sharp separately for the Docker environment
+RUN npm install --platform=linux --arch=x64 sharp
+RUN npm install
 COPY . .
-
 RUN npm run build
 
-# production stage
-FROM node:16-alpine as production
+# Production stage
+FROM base as production
 
-# Installing libvips-dev for sharp Compatibility
-RUN apk add vips-dev
-RUN rm -rf /var/cache/apk/*
-
-WORKDIR /app
-
-COPY --from=build /app ./
+RUN npm install --only=production
+COPY --from=build /app/build ./build
 
 EXPOSE 1337
-
 CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run start; else npm run develop; fi"]
