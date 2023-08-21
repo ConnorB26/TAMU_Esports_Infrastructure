@@ -1,10 +1,9 @@
 const dotenv = require('dotenv');
-const path = require('path');
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config();
 
 const {
-    WEB_SOCKET_TOKEN,
+    BACKEND_DISCORD_TOKEN,
     DB_DATABASE,
     DB_USERNAME,
     DB_PASSWORD,
@@ -15,7 +14,7 @@ const {
 const DB_PORT_NUMBER: number = +DB_PORT;
 
 export const config = {
-    WEB_SOCKET_TOKEN,
+    BACKEND_DISCORD_TOKEN,
     DB_DATABASE,
     DB_USERNAME,
     DB_PASSWORD,
