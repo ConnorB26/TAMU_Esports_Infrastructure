@@ -19,7 +19,7 @@ RUN npm run build
 # Production stage
 FROM base as production
 
-RUN npm install --only=production
+RUN npm install
 COPY --from=build /app/build ./build
 
 EXPOSE 1337
