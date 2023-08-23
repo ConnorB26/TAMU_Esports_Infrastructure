@@ -35,19 +35,6 @@ services:
     environment:
       - NODE_ENV
 
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - ./.env:/app/.env
-    networks:
-      - app-network
-    environment:
-      - NODE_ENV
-
   strapi:
     build:
       context: ./content-management-system
