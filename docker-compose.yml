@@ -17,6 +17,8 @@ services:
       - ./.env:/app/.env
     networks:
       - app-network
+    environment:
+      - NODE_ENV
 
   discord_bot:
     build: ./discord_bot
@@ -28,6 +30,8 @@ services:
       - app-network
     depends_on:
       - backend
+    environment:
+      - NODE_ENV
 
   frontend:
     build:
@@ -43,6 +47,8 @@ services:
       - app-network
     profiles:
       - dev
+    environment:
+      - NODE_ENV
 
   strapi:
     build:
