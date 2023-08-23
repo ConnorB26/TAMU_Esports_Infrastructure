@@ -13,4 +13,4 @@ COPY . .
 RUN npm run build
 
 # Start the application
-CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run start; else npm run dev; fi"]
+CMD [ "npm", "run", "start" ]

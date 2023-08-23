@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "set NODE_ENV=development&& docker-compose --profile dev --env-file .env up",
-    "start:prod": "set NODE_ENV=production&& docker-compose --env-file .env up",
-    "build": "docker-compose build",
-    "rebuild-strapi": "docker-compose down && docker-compose build strapi && docker-compose up -d strapi"
+    "start": "docker-compose --env-file .env up",
+    "build:dev": "docker-compose -f docker-compose.yml build",
+    "build:prod": "docker-compose -f docker-compose.prod.yml build"
   },
   "repository": {
     "type": "git",
