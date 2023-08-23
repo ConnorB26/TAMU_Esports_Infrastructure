@@ -8,7 +8,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: backend
     ports:
       - "3001:3001"
@@ -17,11 +17,13 @@ services:
       - ./.env:/app/.env
     networks:
       - app-network
+    environment:
+      - NODE_ENV
 
   discord_bot:
     build:
       context: ./discord_bot
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: discord_bot
     volumes:
       - ./discord_bot:/app
@@ -30,11 +32,26 @@ services:
       - app-network
     depends_on:
       - backend
+    environment:
+      - NODE_ENV
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - ./.env:/app/.env
+    networks:
+      - app-network
+    environment:
+      - NODE_ENV
 
   strapi:
     build:
       context: ./content-management-system
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: content_management_system
     image: strapi:latest
     restart: unless-stopped
