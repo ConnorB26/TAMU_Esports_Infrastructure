@@ -6,9 +6,7 @@ networks:
 
 services:
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    build: ./backend
     container_name: backend
     ports:
       - "3001:3001"
@@ -34,9 +32,7 @@ services:
       - NODE_ENV
 
   frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    build: ./frontend
     container_name: frontend
     ports:
       - "3000:3000"
@@ -51,9 +47,7 @@ services:
       - NODE_ENV
 
   strapi:
-    build:
-      context: ./content-management-system
-      dockerfile: Dockerfile
+    build: ./content-management-system
     container_name: content_management_system
     image: strapi:latest
     restart: unless-stopped
