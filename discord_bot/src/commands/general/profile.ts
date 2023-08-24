@@ -57,7 +57,7 @@ export async function execute(interaction: CommandInteraction) {
                     }
                     return acc;
                 }, [] as string[]);
-                await interaction.editReply(`Permissions: ${permissions}`);
+                await interaction.editReply(`Permissions: ${permissions.join(', ').replaceAll('*', '\\*')}`);
                 break;
             case 'register':
                 try {
