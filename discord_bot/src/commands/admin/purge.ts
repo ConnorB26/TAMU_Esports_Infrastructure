@@ -1,5 +1,6 @@
 import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder } from "discord.js";
 import { config } from "../../utilities/config";
+import { getPurgableUsers } from "../../utilities/purging";
 
 export const data = new SlashCommandBuilder()
     .setName('purge')
@@ -14,28 +15,26 @@ export async function execute(interaction: CommandInteraction) {
 
     const opts = interaction.options as CommandInteractionOptionResolver;
     const numberOfPeople = opts.getInteger('number_of_people')!;
-    const roleIds = ['490790816889962506', '881711748560846848', '490790817754251264', '490786632383987734'];
 
     if (!interaction.guild || interaction.guildId !== config.DISCORD_GUILD_ID) {
         return await interaction.editReply('This command must be used in the Texas A&M eSports Server.');
     }
 
     const members = await interaction.guild.members.fetch();
+    const purgable = await getPurgableUsers(members);
     let kickedList = [];
+    
+    for(const member of purgable) {
+        try {
+            await member.send('You have been kicked from the Texas A&M eSports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuesports');
+            await member.kick('User did not have any of the necessary roles determining status within the server as a Student, Guest, or Alumni.');
+            kickedList.push(member);
 
-    for (const member of members.values()) {
-        if (!roleIds.some(id => member.roles.cache.has(id)) && !member.user.bot) {
-            try {
-                await member.send('You have been kicked from the Texas A&M eSports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuesports');
-                await member.kick('User did not have any of the necessary roles determining status within the server as a Student, Guest, or Alumni.');
-                kickedList.push(member);
-
-                if (kickedList.length >= numberOfPeople) {
-                    break;
-                }
-            } catch (error) {
-                console.error(`Error kicking member ${member.user.username}: ${error}`);
+            if (kickedList.length >= numberOfPeople) {
+                break;
             }
+        } catch (error) {
+            console.error(`Error kicking member ${member.user.username}: ${error}`);
         }
     }
 
