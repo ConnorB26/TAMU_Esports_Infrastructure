@@ -29,3 +29,5 @@ export const rateLimit = {
     minutes: 1,
     commands: 5
 };
+
+export const purgeRoldIDs = ['490790816889962506', '881711748560846848', '490790817754251264', '490786632383987734'];

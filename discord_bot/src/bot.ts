@@ -92,8 +92,12 @@ client.on(Events.GuildMemberRemove, async member => {
         return;
     }
 
-    await removeMembership(member.guild, member as GuildMember);
-    await unregisterUser(member.id);
+    try {
+        await removeMembership(member.guild, member as GuildMember);
+        await unregisterUser(member.id);
+    } catch (err) {
+
+    }
 });
 
 // Handle modal submissions

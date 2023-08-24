@@ -17,8 +17,7 @@ services:
       - ./.env:/app/.env
     networks:
       - app-network
-    environment:
-      - NODE_ENV
+    restart: unless-stopped
 
   discord_bot:
     build:
@@ -32,8 +31,7 @@ services:
       - app-network
     depends_on:
       - backend
-    environment:
-      - NODE_ENV
+    restart: unless-stopped
 
   strapi:
     build:
@@ -60,7 +58,7 @@ services:
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
     volumes:
       - ./content-management-system:/app
-      - ./.env:/.env
+      - ./.env:/app/.env
     ports:
       - "1337:1337"
     networks:
