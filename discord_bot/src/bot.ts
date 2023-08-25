@@ -86,6 +86,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
+// Error event handler
+client.on(Events.Error, (error) => {
+    console.error('Error occurred:', error.message);
+});
+
 // Clear up data of anyone who has been kicked/banned or has left the main server
 client.on(Events.GuildMemberRemove, async member => {
     if (member.guild.id !== config.DISCORD_GUILD_ID) {
