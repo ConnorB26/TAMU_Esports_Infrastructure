@@ -115,6 +115,9 @@ export async function execute(interaction: CommandInteraction) {
                         csvData += `="${code.code}",${code.claimed}\n`;
                     });
                     break;
+                default:
+                    await interaction.editReply(`Could not generate any statistics for ${statName}.`);
+                    break;
             }
 
             // Convert csvData to a Buffer and send it as a file:
