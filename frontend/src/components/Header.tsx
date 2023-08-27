@@ -1,56 +1,116 @@
-import React from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Navbar, FormControl, Nav, Form, Button } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
-import logo from '../assets/brand/logotamu.png';
+import { FaSearch } from 'react-icons/fa';
+import logo from '../assets/brand/maroon_logo.png';
+import webpLogo from '../assets/brand/maroon_logo.webp';
 import styles from './Header.module.css';
 
+const baseImageSize = 116;
+
 const Header: React.FC = () => {
-    return (
-        <Navbar bg="primary" data-bs-theme="dark" expand="lg" className={styles.navbar}>
-            <Navbar.Brand as={Link} to="/" className={styles['navbar-brand']}>
-                <img
-                    alt=""
-                    src={logo}
-                    width="30"
-                    height="30"
-                    className="align-top"
-                />
-                TAMU eSports
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="ml-auto">
-                    <Nav.Item className={styles['nav-link']}>
-                        <NavLink to="/" className={({ isActive }: { isActive: boolean }) => (isActive ? `${styles.active}` : '')}>
-                            Home
-                        </NavLink>
-                    </Nav.Item>
-                    <Nav.Item className={styles['nav-link']}>
-                        <NavLink to="/about" className={({ isActive }: { isActive: boolean }) => (isActive ? `${styles.active}` : '')}>
-                            About
-                        </NavLink>
-                    </Nav.Item>
-                    {/*
-                    <Nav.Item className={styles['nav-link']}>
-                        <NavLink to="/rosters" className={({ isActive }: { isActive: boolean }) => (isActive ? `${styles.active}` : '')}>
-                            Rosters
-                        </NavLink>
-                    </Nav.Item>
-                    <Nav.Item className={styles['nav-link']}>
-                        <NavLink to="/awards" className={({ isActive }: { isActive: boolean }) => (isActive ? `${styles.active}` : '')}>
-                            Awards
-                        </NavLink>
-                    </Nav.Item>
-                    */}
-                    <Nav.Item className={styles['nav-link']}>
-                        <NavLink to="/contact" className={({ isActive }: { isActive: boolean }) => (isActive ? `${styles.active}` : '')}>
-                            Contact
-                        </NavLink>
-                    </Nav.Item>
-                </Nav>
-            </Navbar.Collapse>
-        </Navbar>
-    );
+  const [imageHeight, setImageHeight] = useState(baseImageSize);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const bottomDivRef = useRef<HTMLDivElement>(null);
+
+  const checkScreenSize = () => {
+    setIsSmallScreen(window.innerWidth <= 1024);
+  };
+
+  const handleScroll = () => {
+    const bottomDiv = bottomDivRef.current;
+    if (bottomDiv) {
+      const rect = bottomDiv.getBoundingClientRect();
+      setImageHeight(Math.min(rect.bottom, baseImageSize));
+    }
+  };
+
+  useEffect(() => {
+    checkScreenSize();
+    handleScroll();
+    window.addEventListener("resize", () => {
+      checkScreenSize();
+      handleScroll();
+    });
+
+    const interval = setInterval(() => {
+      checkScreenSize();
+      handleScroll();
+    }, 500);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  return (
+    <>
+      {!isSmallScreen && (
+        <div className={styles.topDiv}>
+          <Navbar.Brand className={styles.brandText}>Texas A&M University eSports</Navbar.Brand>
+          <div style={{ width: baseImageSize * 2.5 }}></div>
+          <Form className={styles.searchForm}>
+            <FormControl type="text" placeholder="Search..." className={styles.searchControl} />
+            <Button className={styles.searchButton}>
+              <FaSearch />
+            </Button>
+          </Form>
+        </div>
+      )}
+      <Navbar.Brand
+        className={`${styles.brandLogo} ${isMouseDown ? styles.mouseDown : ''}`}
+        onMouseDown={() => setIsMouseDown(true)}
+        onMouseUp={() => setIsMouseDown(false)}
+      >
+        <Link to="/">
+          <picture>
+            <source srcSet={webpLogo} type="image/webp" />
+            <img src={logo} alt="AME Logo" style={{ width: imageHeight, height: imageHeight }} />
+          </picture>
+        </Link>
+      </Navbar.Brand>
+      <div ref={bottomDivRef} className={styles.bottomDiv}>
+        <Nav>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          >
+            Contact
+          </NavLink>
+        </Nav>
+        <div style={{ width: baseImageSize * 2 }}></div>
+        <Nav>
+          <NavLink
+            to="/rosters"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          >
+            Rosters
+          </NavLink>
+          <NavLink
+            to="/awards"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          >
+            Awards
+          </NavLink>
+        </Nav>
+      </div>
+    </>
+  );
 };
 
 export default Header;
