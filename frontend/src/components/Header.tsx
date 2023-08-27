@@ -1,18 +1,19 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
+import logo from '../assets/brand/logotamu.png';
 import styles from './Header.module.css';
 
 const Header: React.FC = () => {
     return (
-        <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
+        <Navbar bg="primary" data-bs-theme="dark" expand="lg" className={styles.navbar}>
             <Navbar.Brand as={Link} to="/" className={styles['navbar-brand']}>
                 <img
                     alt=""
-                    src="/path/to/brand-logo.png" // Replace with the path to your logo
+                    src={logo}
                     width="30"
                     height="30"
-                    className="d-inline-block align-top"
+                    className="align-top"
                 />
                 TAMU eSports
             </Navbar.Brand>

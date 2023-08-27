@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 
 const HomePage: React.FC = () => {
     return (
-        <Container fluid>
+        <Container fluid style={{height: '200vh'}}>
             Home Page
         </Container>
     );

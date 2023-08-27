@@ -5,11 +5,12 @@ import AboutPage from './containers/AboutPage';
 import NotFoundPage from './containers/NotFoundPage';
 import Header from './components/Header';
 import ContactPage from './containers/ContactPage';
+import CustomHeader from './components/CustomHeader';
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+      <CustomHeader />
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
