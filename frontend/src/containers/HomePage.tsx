@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
     return (
         <Container fluid>
             <div className={styles.carouselContainer}>
-                <Carousel interval={5000} controls={false}>
+                <Carousel interval={4000} controls={false} pause={false}>
                     {carouselItems}
                 </Carousel>
                 <div className={styles.overlayText}>

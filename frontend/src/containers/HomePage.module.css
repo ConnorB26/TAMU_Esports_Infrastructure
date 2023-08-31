@@ -1,5 +1,6 @@
 .carouselContainer {
     position: relative;
+    max-height: 880px;
 }
 
 .overlayText {
@@ -38,8 +39,8 @@
 }
 
 .carouselImage {
-    max-height: 880px;
     object-fit: contain;
+    max-height: 880px;
 }
 
 @media (max-width: 1024px) {
