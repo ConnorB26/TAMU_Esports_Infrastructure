@@ -106,14 +106,32 @@
     margin-left: 0;
 }
 
+.navbar {
+    padding: 0 !important;
+    align-items: center;
+}
+
+.navbarToggle {
+    height: 60px;
+}
+
 @media (max-width: 1024px) {
     .topDiv {
         display: none;
     }
-}
 
-@media (max-width: 1024px) {
     .brandLogo img {
         box-shadow: none;
+        background: linear-gradient(to bottom, #500000 0%, #500000 77%, #3c0000 100%);
+    }
+
+    .bottomDiv {
+        justify-content: space-between;
+    }
+
+    .navLink {
+        font-size: 1rem;
+        padding: .5rem 0;
+        text-transform: none;
     }
 }

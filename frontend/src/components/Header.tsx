@@ -8,6 +8,32 @@ import styles from './Header.module.css';
 
 const baseImageSize = 116;
 
+const NavLinks = ({ indices }: any) => {
+  const navLinks = [
+    { to: '/about', label: 'About' },
+    { to: '/contact', label: 'Contact' },
+    { to: '/rosters', label: 'Rosters' },
+    { to: '/awards', label: 'Awards' },
+  ];
+
+  return (
+    <>
+      {indices.map((index: any) => {
+        const link = navLinks[index];
+        return (
+          <NavLink
+            key={index}
+            to={link.to}
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+          >
+            {link.label}
+          </NavLink>
+        );
+      })}
+    </>
+  );
+};
+
 const Header: React.FC = () => {
   const [imageHeight, setImageHeight] = useState(baseImageSize);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -56,7 +82,7 @@ const Header: React.FC = () => {
     <>
       {!isSmallScreen && (
         <div className={styles.topDiv}>
-          <Navbar.Brand className={styles.brandText}>Texas A&M University eSports</Navbar.Brand>
+          <Navbar.Brand className={styles.brandText}>Texas A&M University Esports</Navbar.Brand>
           <div style={{ width: baseImageSize * 2.5 }}></div>
           <Form className={styles.searchForm}>
             <FormControl type="text" placeholder="Search..." className={styles.searchControl} />
@@ -79,35 +105,31 @@ const Header: React.FC = () => {
         </Link>
       </Navbar.Brand>
       <div ref={bottomDivRef} className={styles.bottomDiv}>
-        <Nav>
-          <NavLink
-            to="/about"
-            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-          >
-            About
-          </NavLink>
-          <NavLink
-            to="/contact"
-            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-          >
-            Contact
-          </NavLink>
-        </Nav>
-        <div style={{ width: baseImageSize * 2 }}></div>
-        <Nav>
-          <NavLink
-            to="/rosters"
-            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-          >
-            Rosters
-          </NavLink>
-          <NavLink
-            to="/awards"
-            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-          >
-            Awards
-          </NavLink>
-        </Nav>
+        {isSmallScreen ? (
+          <>
+            <Navbar expand={false} className={styles.navbar}>
+              <Navbar.Toggle className={styles.navbarToggle} />
+              <Navbar.Collapse>
+                <Nav>
+                  <NavLinks indices={[0, 1, 2, 3]} />
+                </Nav>
+              </Navbar.Collapse>
+            </Navbar>
+            <Button>
+              <FaSearch />
+            </Button>
+          </>
+        ) : (
+          <>
+            <Nav>
+              <NavLinks indices={[0, 1]} />
+            </Nav>
+            <div style={{ width: baseImageSize * 2 }}></div>
+            <Nav>
+              <NavLinks indices={[2, 3]} />
+            </Nav>
+          </>
+        )}
       </div>
     </>
   );
