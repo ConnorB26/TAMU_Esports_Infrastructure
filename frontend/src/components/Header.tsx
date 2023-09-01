@@ -115,7 +115,7 @@ const Header: React.FC = () => {
                 </Nav>
               </Navbar.Collapse>
             </Navbar>
-            <Button>
+            <Button className={styles.searchButtonSmall}>
               <FaSearch />
             </Button>
           </>
