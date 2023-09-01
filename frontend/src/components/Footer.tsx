@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
                 <a href="https://www.linkedin.com/company/tamu-esports" target="_blank" rel="noopener noreferrer" className={`${styles.socialIcon} ${styles.linkedInIcon}`}><FaLinkedin /></a>
             </div>
             <div className={styles.legalContainer}>
-                <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
+                <a href="/">Terms of Use</a> | <a href="/">Privacy Policy</a>
                 <p>&copy; 2023 Texas A&M University Esports. All rights reserved.</p>
             </div>
         </div>
