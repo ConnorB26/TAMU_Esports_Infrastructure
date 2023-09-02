@@ -29,3 +29,88 @@
 .sponsorsPartnersSpacer {
     height: 100px;
 }
+
+.bannerPlaceholder {
+    height: 640px;
+    background-color: black;
+}
+
+.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+
+.followUsWrapper {
+    background-color: gray;
+}
+
+.followUsSection {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.socialsColumn,
+.twitterColumn {
+    flex: 1;
+    height: 400px;
+}
+
+.socialsColumn h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.socialList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.socialItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+
+.socialIcon {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    margin: 0 8px;
+    color: white;
+    text-decoration: none;
+}
+
+.socialIcon>svg {
+    margin-right: 8px;
+}
+
+.discordIcon:hover>svg {
+    color: #7289da;
+}
+
+.twitterIcon:hover>svg {
+    color: #1da1f2;
+}
+
+.twitchIcon:hover>svg {
+    color: #9146ff;
+}
+
+.tiktokIcon:hover>svg {
+    color: #000000;
+}
+
+.instagramIcon:hover>svg {
+    color: #E1306C;
+}
+
+.facebookIcon:hover>svg {
+    color: #3b5998;
+}
+
+.linkedInIcon:hover>svg {
+    color: #0077B5;
+}

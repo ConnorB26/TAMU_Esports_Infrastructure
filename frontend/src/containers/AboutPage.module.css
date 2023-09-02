@@ -1,0 +1,88 @@
+.introductionSection {
+    background-color: #ffffff;
+    color: #500000;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.missionVisionSection {
+    background-color: #eaeaea;
+    color: #500000 !important;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.cardContainer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 300px;
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+}
+
+.leadershipSection {
+    background-color: #500000;
+    color: #ffffff;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.leadershipSection h2,
+.leadershipSection h3,
+.leadershipSection h4 {
+    color: #ffffff;
+}
+
+.leadershipGrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.profileCard {
+    width: 150px;
+    text-align: center;
+    margin: 20px;
+}
+
+.eventsSection {
+    background-color: #eaeaea;
+    color: #500000;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.faqSection {
+    background-color: #500000;
+    color: #ffffff;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.faqSection h2 {
+    color: #ffffff;
+}
+
+.faqAccordion {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.getInvolvedSection {
+    background-color: #eaeaea;
+    color: #500000;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.joinButton {
+    padding: 10px 20px;
+    background-color: #500000;
+    color: #ffffff;
+}

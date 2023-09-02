@@ -89,6 +89,20 @@
     justify-content: center;
 }
 
+.navContainer {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+}
+
+.leftNav {
+    justify-content: flex-end;
+}
+
+.rightNav {
+    justify-content: flex-start;
+}
+
 .navLink {
     height: 100%;
     display: flex;

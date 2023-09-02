@@ -14,6 +14,7 @@ const NavLinks = ({ indices }: any) => {
     { to: '/contact', label: 'Contact' },
     { to: '/rosters', label: 'Rosters' },
     { to: '/awards', label: 'Awards' },
+    { to: '/members', label: 'Members' }
   ];
 
   return (
@@ -111,7 +112,7 @@ const Header: React.FC = () => {
               <Navbar.Toggle className={styles.navbarToggle} />
               <Navbar.Collapse>
                 <Nav>
-                  <NavLinks indices={[0, 1, 2, 3]} />
+                  <NavLinks indices={[0, 1, 4, 2, 3]} />
                 </Nav>
               </Navbar.Collapse>
             </Navbar>
@@ -121,13 +122,17 @@ const Header: React.FC = () => {
           </>
         ) : (
           <>
-            <Nav>
-              <NavLinks indices={[0, 1]} />
-            </Nav>
+            <div className={`${styles.navContainer} ${styles.leftNav}`}>
+              <Nav>
+                <NavLinks indices={[0, 1, 4]} />
+              </Nav>
+            </div>
             <div style={{ width: baseImageSize * 2 }}></div>
-            <Nav>
-              <NavLinks indices={[2, 3]} />
-            </Nav>
+            <div className={`${styles.navContainer} ${styles.rightNav}`}>
+              <Nav>
+                <NavLinks indices={[2, 3]} />
+              </Nav>
+            </div>
           </>
         )}
       </div>
