@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Accordion } from 'react-bootstrap';
 import styles from './AboutPage.module.css';
+import '../styles/MaroonAccordion.css';
+import InViewMotionDiv from '../components/InViewMotionDiv';
 
 const AboutPage: React.FC = () => {
     const [activeKey, setActiveKey] = useState<string | null>("");
@@ -12,14 +13,20 @@ const AboutPage: React.FC = () => {
 
     return (
         <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.3 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { delay: 0.075 } }
+            }}>
                 <section className={styles.introductionSection}>
                     <h1>Introduction</h1>
                     <p>Our organization is ...</p>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0, transition: { delay: 0.15 } }
+            }}>
                 <section className={styles.missionVisionSection}>
                     <h2>Mission & Vision</h2>
                     <div className={styles.cardContainer}>
@@ -33,9 +40,12 @@ const AboutPage: React.FC = () => {
                         </div>
                     </div>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.9 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0, transition: { delay: 0.225 } }
+            }}>
                 <section className={styles.leadershipSection}>
                     <h2>Leadership</h2>
                     <div className={styles.leadershipGrid}>
@@ -51,9 +61,12 @@ const AboutPage: React.FC = () => {
                         </div>
                     </div>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.2 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0, transition: { delay: 0.3 } }
+            }}>
                 <section className={styles.eventsSection}>
                     <h2>Events & Activities</h2>
                     <div className={styles.timeline}>
@@ -62,9 +75,12 @@ const AboutPage: React.FC = () => {
                         <p>Event 3: Community Outreach</p>
                     </div>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.5 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0, transition: { delay: 0.375 } }
+            }}>
                 <section className={styles.faqSection}>
                     <h2>Frequently Asked Questions</h2>
                     <Accordion activeKey={activeKey} onSelect={(key: any) => setActiveKey(key)} flush>
@@ -82,14 +98,17 @@ const AboutPage: React.FC = () => {
                         </Accordion.Item>
                     </Accordion>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.8 } }}>
+            <InViewMotionDiv variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: { opacity: 1, y: 0, transition: { delay: 0.45 } }
+            }}>
                 <section className={styles.getInvolvedSection}>
                     <h2>Get Involved</h2>
                     <button className={styles.joinButton}>Join Us</button>
                 </section>
-            </motion.div>
+            </InViewMotionDiv>
         </>
     );
 };

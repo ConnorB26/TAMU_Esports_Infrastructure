@@ -1,31 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import styles from './HomePage.module.css';
-
 import banner from '../assets/brand/banner_small.webp'
 import tamuLogo from '../assets/brand/maroon_logo.webp';
+import hyperxLogo from '../assets/partners/hyperx.webp';
+import uconnectLogo from '../assets/partners/uconnect.webp';
 import { FaDiscord, FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaTwitch, FaTwitter } from 'react-icons/fa';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 import { Row } from 'react-bootstrap';
-
-const sponsors = [
-    { name: 'Sponsor1', image: tamuLogo, url: 'https://sponsor1.com' },
-    { name: 'Sponsor2', image: tamuLogo, url: 'https://sponsor2.com' },
-    { name: 'Sponsor3', image: tamuLogo, url: 'https://sponsor3.com' },
-    { name: 'Sponsor4', image: tamuLogo, url: 'https://sponsor4.com' },
-    { name: 'Sponsor5', image: tamuLogo, url: 'https://sponsor5.com' },
-    { name: 'Sponsor6', image: tamuLogo, url: 'https://sponsor6.com' },
-];
+import InViewMotionDiv from '../components/InViewMotionDiv';
 
 const partnerships = [
-    { name: 'Partner1', image: tamuLogo, url: 'https://partner1.com' },
-    { name: 'Partner2', image: tamuLogo, url: 'https://partner2.com' },
-    { name: 'Partner3', image: tamuLogo, url: 'https://partner3.com' },
-    { name: 'Partner4', image: tamuLogo, url: 'https://partner4.com' },
-    { name: 'Partner5', image: tamuLogo, url: 'https://partner5.com' },
-    { name: 'Partner6', image: tamuLogo, url: 'https://partner6.com' },
+    { name: 'TSM University', image: tamuLogo, url: 'https://twitter.com/tsmuniversity?lang=en' },
+    { name: 'Hyper X', image: hyperxLogo, url: 'https://hyperx.com/' },
+    { name: 'Uconnect', image: uconnectLogo, url: 'https://www.uconnect.app/' }
 ];
 
 interface SocialLink {
@@ -46,67 +34,6 @@ const socialLinks: SocialLink[] = [
 ];
 
 const HomePage: React.FC = () => {
-    const controlsSponsors = useAnimation();
-    const controlsPartners = useAnimation();
-    const controlsSocialIcons = useAnimation();
-    const controlsTwitter = useAnimation();
-    const [refSponsors, inViewSponsors] = useInView({
-        triggerOnce: true,
-        threshold: 0.1
-    });
-    const [refPartners, inViewPartners] = useInView({
-        triggerOnce: true,
-        threshold: 0.1
-    });
-    const [refSocialIcons, inViewSocialIcons] = useInView({
-        triggerOnce: true,
-        threshold: 0.1
-    });
-    const [refTwitter, inViewTwitter] = useInView({
-        triggerOnce: true,
-        threshold: 0.1
-    });
-
-    useEffect(() => {
-        if (inViewSponsors) {
-            controlsSponsors.start(i => ({
-                opacity: 1,
-                y: 0,
-                transition: { delay: i * 0.1 }
-            }));
-        }
-    }, [controlsSponsors, inViewSponsors]);
-
-    useEffect(() => {
-        if (inViewPartners) {
-            controlsPartners.start(i => ({
-                opacity: 1,
-                y: 0,
-                transition: { delay: i * 0.1 + ((sponsors.length - 1) * 0.1) }
-            }));
-        }
-    }, [controlsPartners, inViewPartners]);
-
-    useEffect(() => {
-        if (inViewSocialIcons) {
-            controlsSocialIcons.start(i => ({
-                opacity: 1,
-                x: 0,
-                transition: { delay: i * 0.1 }
-            }));
-        }
-    }, [controlsSocialIcons, inViewSocialIcons]);
-
-    useEffect(() => {
-        if (inViewTwitter) {
-            controlsTwitter.start({
-                x: 0,
-                opacity: 1,
-                transition: { delay: .25 }
-            });
-        }
-    }, [controlsTwitter, inViewTwitter]);
-
     const [imageLoaded, setImageLoaded] = useState(false);
     const handleImageLoad = () => {
         setImageLoaded(true);
@@ -129,82 +56,74 @@ const HomePage: React.FC = () => {
             <div className={styles.followUsWrapper}>
                 <Container>
                     <Row className={styles.followUsSection}>
-                        <motion.div className={`col-md-6 col-sm-12 ${styles.socialsColumn}`} ref={refSocialIcons}>
-                            <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                Follow Us
-                            </motion.h1>
-                            <motion.div className={styles.socialList} ref={refSocialIcons}>
+                        <div className={`col-md-6 col-sm-12 ${styles.socialsColumn}`}>
+                            <InViewMotionDiv variants={{
+                                hidden: { opacity: 0 },
+                                visible: { opacity: 1, transition: { duration: 0.5 } }
+                            }}>
+                                <h1>Follow Us</h1>
+                            </InViewMotionDiv>
+                            <div className={styles.socialList}>
                                 {socialLinks.map((link, index) => (
-                                    <motion.a
-                                        href={link.url}
+                                    <InViewMotionDiv
                                         key={index}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`${styles.socialIcon} ${link.className}`}
-                                        custom={index}
-                                        initial={{ opacity: 0, x: -50 }}
-                                        animate={controlsSocialIcons}
+                                        variants={{
+                                            hidden: { opacity: 0, x: -50 },
+                                            visible: { opacity: 1, x: 0, transition: { delay: 0.1 * (index + 1), duration: 0.5 } }
+                                        }}
                                     >
-                                        <link.Icon />{link.name}
-                                    </motion.a>
+                                        <a
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`${styles.socialIcon} ${link.className}`}
+                                        >
+                                            <link.Icon />{link.name}
+                                        </a>
+                                    </InViewMotionDiv>
                                 ))}
-                            </motion.div>
-                        </motion.div>
+                            </div>
+                        </div>
 
-                        <motion.div className={`col-md-6 col-sm-12 ${styles.twitterColumn}`} ref={refTwitter} initial={{ x: 200, opacity: 0 }} animate={controlsTwitter}>
+                        <InViewMotionDiv className={`col-md-6 col-sm-12 ${styles.twitterColumn}`} variants={{
+                            hidden: { opacity: 0, x: 200 },
+                            visible: { opacity: 1, x: 0, transition: { delay: 0.25, duration: 0.5 } }
+                        }}>
                             <TwitterTimelineEmbed sourceType="profile" screenName="tamuesports" autoHeight />
-                        </motion.div>
+                        </InViewMotionDiv>
                     </Row>
                 </Container>
             </div>
 
             <Container className={styles.sponsorsPartnersContainer}>
-                <motion.div ref={refSponsors}>
-                    <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.3 } }}>
-                        Sponsors
-                    </motion.h1>
-                    <div className={styles.sponsorContainer}>
-                        {sponsors.map((sponsor, index) => (
-                            <motion.a
-                                href={sponsor.url}
-                                key={index}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                custom={index}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={controlsSponsors}
-                            >
-                                <img src={sponsor.image} alt={sponsor.name} />
-                                <p>{sponsor.name}</p>
-                            </motion.a>
-                        ))}
-                    </div>
-                </motion.div>
-
-                <div className={styles.sponsorsPartnersSpacer} />
-
-                <motion.div ref={refPartners}>
-                    <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: sponsors.length * 0.1 } }}>
-                        Partners
-                    </motion.h1>
-                    <div className={styles.partnerContainer}>
-                        {partnerships.map((partner, index) => (
-                            <motion.a
+                <InViewMotionDiv variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1, transition: { duration: 0.5 } }
+                }}>
+                    <h1>Partners</h1>
+                </InViewMotionDiv>
+                <div className={styles.partnerContainer}>
+                    {partnerships.map((partner, index) => (
+                        <InViewMotionDiv
+                            key={index}
+                            variants={{
+                                hidden: { opacity: 0, y: 50 },
+                                visible: { opacity: 1, y: 0, transition: { delay: 0.2 * (index + 1), duration: 0.5 } }
+                            }}
+                        >
+                            <a
                                 href={partner.url}
-                                key={index}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                custom={index}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={controlsPartners}
                             >
                                 <img src={partner.image} alt={partner.name} />
-                                <p>{partner.name}</p>
-                            </motion.a>
-                        ))}
-                    </div>
-                </motion.div>
+                                {/*<p>{partner.name}</p>*/}
+                            </a>
+                        </InViewMotionDiv>
+                    ))}
+                </div>
             </Container>
+
         </>
     );
 };

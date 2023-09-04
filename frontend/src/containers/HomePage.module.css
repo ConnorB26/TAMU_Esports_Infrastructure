@@ -50,6 +50,10 @@
     padding: 20px;
 }
 
+.followUsSection h1 {
+    color: var(--bs-primary);
+}
+
 .socialsColumn,
 .twitterColumn {
     flex: 1;
@@ -65,13 +69,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.socialItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px;
+    width: 200px;
 }
 
 .socialIcon {
