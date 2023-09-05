@@ -12,10 +12,10 @@ export const data = new SlashCommandBuilder()
                 option.setName('code')
                     .setDescription('Confirmation code from membership dues payment')
                     .setRequired(true)))
-    .addSubcommand(subcommand =>
+    /*.addSubcommand(subcommand =>
         subcommand
             .setName('unclaim')
-            .setDescription('Unclaim membership'))
+            .setDescription('Unclaim membership'))*/
 
 export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
