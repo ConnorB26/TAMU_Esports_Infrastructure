@@ -1,0 +1,54 @@
+.footerContainer {
+    background-color: #333333;
+    color: white;
+}
+
+.legalContainer {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.socialIcon {
+    font-size: 24px;
+    margin: 0 8px;
+    transition: color 0.2s ease;
+    color: white;
+}
+
+.socialIcon:hover {
+    transition: color 0.2s ease;
+}
+
+.discordIcon:hover {
+    color: #7289da;
+}
+
+.twitterIcon:hover {
+    color: #1da1f2;
+}
+
+.twitchIcon:hover {
+    color: #9146ff;
+}
+
+.tiktokIcon:hover {
+    color: #000000;
+}
+
+.instagramIcon:hover {
+    color: #E1306C;
+}
+
+.facebookIcon:hover {
+    color: #3b5998;
+}
+
+.linkedInIcon:hover {
+    color: #0077B5;
+}
+
+.legalContainer a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}

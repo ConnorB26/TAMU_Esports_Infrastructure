@@ -1,0 +1,20 @@
+.card {
+    background-color: #fff;
+    border: 1px solid #EAEAEA;
+    border-radius: 5px;
+    transition: box-shadow 0.2s, transform 0.15s;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+.card:not(a):not(button) {
+    cursor: default !important;
+}
+
+.wrapper {
+    background-color: #F6F6F6;
+}
