@@ -1,7 +1,7 @@
 import { Guild, GuildMember } from 'discord.js';
 import DiscordSettingCache from '../cache/discordSettingCache';
 import { create as createUserCode, removeId as removeUserCode } from '../services/userCodeService';
-import { findOneDiscord as getUser } from '../services/userService';
+import { findOneDiscord as getUser, removeDiscord as removeUser } from '../services/userService';
 
 export async function giveMembership(guild: Guild, member: GuildMember, code: string) {
     // If not registered, register
@@ -52,4 +52,22 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
 
     // Remove from user code table
     await removeUserCode(user.uin);
+}
+
+export async function cleanupMembership(discordID: string) {
+    let user;
+    try {
+        user = await getUser(discordID);
+    } catch (error) {
+
+    }
+
+    if (user) {
+        try {
+            await removeUserCode(user.uin);
+            await removeUser(discordID);
+        } catch (error) {
+
+        }
+    }
 }
