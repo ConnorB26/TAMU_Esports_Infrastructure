@@ -84,20 +84,20 @@ export async function execute(interaction: CommandInteraction) {
             switch (statName) {
                 case 'members':
                     const membersList = await userCodeService.findAll();
-                    csvData = "UIN,Name,Email,Discord ID,Confirmation Code\n";
+                    csvData = "UIN,First Name,Last Name,Email,Discord ID,Confirmation Code\n";
 
                     const csvLines = await Promise.all(membersList.map(async member => {
                         const memberUserInfo = await userService.findOne(member.uin);
-                        return `="${memberUserInfo.uin}",${memberUserInfo.name},${memberUserInfo.email},="${memberUserInfo.discord_id}",="${member.code}"`;
+                        return `="${memberUserInfo.uin}",${memberUserInfo.first_name},${memberUserInfo.last_name},${memberUserInfo.email},="${memberUserInfo.discord_id}",="${member.code}"`;
                     }));
 
                     csvData += csvLines.join('\n');
                     break;
                 case 'users':
                     const usersList = await userService.findAll();
-                    csvData = "UIN,Name,Email,Discord ID,Dues Paid\n";
+                    csvData = "UIN,First Name,Last Name,Email,Discord ID,Dues Paid\n";
                     usersList.forEach(async user => {
-                        csvData += `="${user.uin}",${user.name},${user.email},="${user.discord_id}",${user.has_paid_dues}\n`;
+                        csvData += `="${user.uin}",${user.first_name},${user.last_name},${user.email},="${user.discord_id}",${user.has_paid_dues}\n`;
                     });
                     break;
                 case 'purgable':

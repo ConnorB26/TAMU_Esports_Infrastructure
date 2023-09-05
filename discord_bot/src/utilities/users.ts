@@ -19,9 +19,9 @@ export async function createProfileEmbed(discordUser: GuildMember) {
         .setColor(discordUser.displayHexColor)
         .setAuthor({ name: discordUser.displayName ?? discordUser.user.username, iconURL: discordUser.avatarURL() ?? discordUser.user.avatarURL() ?? "" })
         .addFields(
-            { name: 'UIN', value: userInfo.uin},
-            { name: 'Name', value: userInfo.name},
-            { name: 'Email', value: userInfo.email},
+            { name: 'UIN', value: userInfo.uin },
+            { name: 'Name', value: userInfo.first_name + ' ' + userInfo.last_name },
+            { name: 'Email', value: userInfo.email },
             { name: 'Dues Paid', value: userInfo.has_paid_dues ? 'Yes' : 'No' }
         );
 
@@ -39,9 +39,14 @@ export async function getRegisterModal() {
         .setLabel('UIN')
         .setStyle(TextInputStyle.Short);
 
-    const nameInput = new TextInputBuilder()
-        .setCustomId('nameInput')
-        .setLabel('Name')
+    const firstNameInput = new TextInputBuilder()
+        .setCustomId('firstNameInput')
+        .setLabel('First Name')
+        .setStyle(TextInputStyle.Short);
+
+    const lastNameInput = new TextInputBuilder()
+        .setCustomId('lastNameInput')
+        .setLabel('Last Name')
         .setStyle(TextInputStyle.Short);
 
     const emailInput = new TextInputBuilder()
@@ -50,10 +55,11 @@ export async function getRegisterModal() {
         .setStyle(TextInputStyle.Short);
 
     const firstActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(uinInput);
-    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);
-    const thirdActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
+    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(firstNameInput);
+    const thirdActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(lastNameInput);
+    const fourthActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
 
-    modal.addComponents(firstActionRow, secondActionRow, thirdActionRow);
+    modal.addComponents(firstActionRow, secondActionRow, thirdActionRow, fourthActionRow);
 
     return modal;
 }
@@ -64,9 +70,14 @@ export async function getEditModal() {
         .setCustomId('edit')
         .setTitle(`Edit Profile`)
 
-    const nameInput = new TextInputBuilder()
-        .setCustomId('nameInput')
-        .setLabel('Name')
+    const firstNameInput = new TextInputBuilder()
+        .setCustomId('firstNameInput')
+        .setLabel('First Name')
+        .setStyle(TextInputStyle.Short);
+
+    const lastNameInput = new TextInputBuilder()
+        .setCustomId('lastNameInput')
+        .setLabel('Last Name')
         .setStyle(TextInputStyle.Short);
 
     const emailInput = new TextInputBuilder()
@@ -74,10 +85,11 @@ export async function getEditModal() {
         .setLabel('Email')
         .setStyle(TextInputStyle.Short);
 
-    const firstActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);
-    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
+    const firstActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(firstNameInput);
+    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(lastNameInput);
+    const thirdActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(emailInput);
 
-    modal.addComponents(firstActionRow, secondActionRow);
+    modal.addComponents(firstActionRow, secondActionRow, thirdActionRow);
 
     return modal;
 }

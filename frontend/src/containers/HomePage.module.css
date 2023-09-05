@@ -1,0 +1,88 @@
+.bannerSpacer {
+    height: 300px;
+    background-color: black;
+}
+
+.partnerContainer,
+.sponsorContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.bannerPlaceholder,
+.partnerLink img,
+.sponsorLink img {
+    max-width: 100px;
+    height: auto;
+}
+
+.followUsWrapper {
+    background-color: gray;
+}
+
+.socialsColumn,
+.twitterColumn {
+    height: 400px;
+}
+
+.socialList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.socialIcon {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    margin: 0 8px;
+    color: white;
+    text-decoration: none;
+    width: 200px;
+}
+
+.socialIcon>svg {
+    margin-right: 8px;
+}
+
+.discordIcon:hover>svg {
+    color: #7289da;
+}
+
+.twitterIcon:hover>svg {
+    color: #1da1f2;
+}
+
+.twitchIcon:hover>svg {
+    color: #9146ff;
+}
+
+.tiktokIcon:hover>svg {
+    color: #000000;
+}
+
+.instagramIcon:hover>svg {
+    color: #E1306C;
+}
+
+.facebookIcon:hover>svg {
+    color: #3b5998;
+}
+
+.linkedInIcon:hover>svg {
+    color: #0077B5;
+}
+
+.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+
+@media (max-width: 1024px) {
+    .bannerSpacer {
+        height: 100px;
+    }
+}
