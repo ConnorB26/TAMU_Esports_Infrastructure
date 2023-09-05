@@ -5,7 +5,7 @@ import { populateCaches } from "./utilities/populateCache";
 import roleCommandCache from "./cache/roleCommandCache";
 import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events, GuildMember } from "discord.js";
-import { removeMembership } from "./utilities/membership";
+import { cleanupMembership, removeMembership } from "./utilities/membership";
 import { registerUser, unregisterUser } from "./utilities/users";
 import { User } from "./models/user";
 import EventSource from 'eventsource';
@@ -19,6 +19,17 @@ client.once(Events.ClientReady, async () => {
     startTwitchPolling();
 });
 
+// Howdy reply
+client.on(Events.MessageCreate, (message) => {
+    if (message.author.bot) return;
+
+    if (message.mentions.users.has(client.user!.id) && message.content.toLowerCase().includes('howdy')) {
+        message.reply('Howdy!');
+    }
+});
+
+
+// Command handling
 let apiConnected = false;
 
 const userCommandTimestamps = new Map<string, number[]>();
@@ -97,12 +108,7 @@ client.on(Events.GuildMemberRemove, async member => {
         return;
     }
 
-    try {
-        await removeMembership(member.guild, member as GuildMember);
-        await unregisterUser(member.id);
-    } catch (err) {
-
-    }
+    cleanupMembership(member.id);
 });
 
 // Handle modal submissions
@@ -113,12 +119,14 @@ client.on(Events.InteractionCreate, async interaction => {
     switch (interaction.customId) {
         case 'register':
             const uin = interaction.fields.getTextInputValue('uinInput');
-            const name = interaction.fields.getTextInputValue('nameInput');
+            const firstName = interaction.fields.getTextInputValue('firstNameInput');
+            const lastName = interaction.fields.getTextInputValue('lastNameInput');
             const email = interaction.fields.getTextInputValue('emailInput');
 
             const user: User = {
                 uin: uin,
-                name: name,
+                first_name: firstName,
+                last_name: lastName,
                 email: email,
                 discord_id: interaction.user.id,
                 has_paid_dues: false
@@ -133,12 +141,14 @@ client.on(Events.InteractionCreate, async interaction => {
             break;
         case 'edit':
             const oldUser: User = await userService.findOneDiscord(interaction.user.id);
-            const newName = interaction.fields.getTextInputValue('nameInput');
+            const newFirstName = interaction.fields.getTextInputValue('firstNameInput');
+            const newLastName = interaction.fields.getTextInputValue('lastNameInput');
             const newEmail = interaction.fields.getTextInputValue('emailInput');
 
             const newUser: User = {
                 uin: oldUser.uin,
-                name: newName,
+                first_name: newFirstName,
+                last_name: newLastName,
                 email: newEmail,
                 discord_id: interaction.user.id,
                 has_paid_dues: oldUser.has_paid_dues

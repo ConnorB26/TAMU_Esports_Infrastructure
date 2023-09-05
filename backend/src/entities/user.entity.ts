@@ -7,7 +7,10 @@ export class User {
     uin: string;
 
     @Column({ type: 'varchar', length: 255 })
-    name: string;
+    first_name: string;
+
+    @Column({ type: 'varchar', length: 255 })
+    last_name: string;
 
     @Column({ type: 'varchar', length: 255 })
     email: string;
@@ -24,7 +27,10 @@ export class UserDto {
     uin: string;
 
     @IsString()
-    name: string;
+    first_name: string;
+
+    @IsString()
+    last_name: string;
 
     @IsString()
     email: string;
