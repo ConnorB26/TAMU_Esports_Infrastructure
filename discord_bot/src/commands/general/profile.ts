@@ -22,10 +22,10 @@ export const data = new SlashCommandBuilder()
         subcommand
             .setName('edit')
             .setDescription('Edit profile information'))
-    .addSubcommand(subcommand =>
+    /*.addSubcommand(subcommand =>
         subcommand
             .setName('unregister')
-            .setDescription('Unregister as a user'))
+            .setDescription('Unregister as a user'))*/
 
 export async function execute(interaction: CommandInteraction) {
     const opts = interaction.options as CommandInteractionOptionResolver;
