@@ -126,18 +126,6 @@ const AboutPage: React.FC = () => {
                     </Container>
                 </section>
             </InViewMotionDiv>
-
-            <InViewMotionDiv variants={{
-                hidden: { opacity: 0, y: 50 },
-                visible: { opacity: 1, y: 0, transition: { delay: 0.45 } }
-            }}>
-                <section className={`${styles.lightGreyBackground} py-5`}>
-                    <Container className="text-center">
-                        <h2>Get Involved</h2>
-                        <Button className="mt-3" variant="primary">Join Us</Button>
-                    </Container>
-                </section>
-            </InViewMotionDiv>
         </>
     );
 };

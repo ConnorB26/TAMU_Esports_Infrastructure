@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, FormControl, Nav, Form, Button, Container } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import logo from '../assets/brand/maroon_logo.png';
 import webpLogo from '../assets/brand/maroon_logo.webp';
 import styles from './Header.module.css';
 import '../styles/MaroonNavbarToggle.css';
+import ScrollLink from './ScrollLink';
 
 const baseImageSize = 116;
 
@@ -18,6 +19,10 @@ const NavLinks = ({ indices }: any) => {
         { to: '/members', label: 'Members' }
     ];
 
+    const scroll = () => {
+        window.scrollTo(0, 0); 
+    }
+
     return (
         <>
             {indices.map((index: any) => {
@@ -27,6 +32,7 @@ const NavLinks = ({ indices }: any) => {
                         key={index}
                         to={link.to}
                         className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+                        onClick={scroll}
                     >
                         {link.label}
                     </NavLink>
@@ -99,12 +105,12 @@ const Header: React.FC = () => {
                 onMouseDown={() => setIsMouseDown(true)}
                 onMouseUp={() => setIsMouseDown(false)}
             >
-                <Link to="/">
+                <ScrollLink to="/">
                     <picture>
                         <source srcSet={webpLogo} type="image/webp" />
                         <img src={logo} alt="AME Logo" style={{ width: imageHeight, height: imageHeight }} />
                     </picture>
-                </Link>
+                </ScrollLink>
             </Navbar.Brand>
             <Container fluid ref={bottomDivRef} className={styles.bottomDiv}>
                 {isSmallScreen ? (
