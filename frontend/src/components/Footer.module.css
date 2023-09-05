@@ -1,8 +1,6 @@
 .footerContainer {
     background-color: #333333;
     color: white;
-    text-align: center;
-    padding-top: 20px;
 }
 
 .legalContainer {
@@ -15,6 +13,10 @@
     margin: 0 8px;
     transition: color 0.2s ease;
     color: white;
+}
+
+.socialIcon:hover {
+    transition: color 0.2s ease;
 }
 
 .discordIcon:hover {

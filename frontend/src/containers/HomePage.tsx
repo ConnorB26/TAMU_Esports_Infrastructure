@@ -7,7 +7,7 @@ import hyperxLogo from '../assets/partners/hyperx.webp';
 import uconnectLogo from '../assets/partners/uconnect.webp';
 import { FaDiscord, FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaTwitch, FaTwitter } from 'react-icons/fa';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
-import { Row } from 'react-bootstrap';
+import { Col, Image, Row } from 'react-bootstrap';
 import InViewMotionDiv from '../components/InViewMotionDiv';
 
 const partnerships = [
@@ -35,43 +35,30 @@ const socialLinks: SocialLink[] = [
 
 const HomePage: React.FC = () => {
     const [imageLoaded, setImageLoaded] = useState(false);
-    const handleImageLoad = () => {
-        setImageLoaded(true);
-    };
 
     return (
         <>
-            <img
-                src={banner}
-                onLoad={handleImageLoad}
-                className={`w-100 ${imageLoaded ? '' : styles.hidden}`}
-                alt=""
-            />
-            {!imageLoaded && (
-                <div className={styles.bannerPlaceholder}></div>
-            )}
+            <Image src={banner} onLoad={() => setImageLoaded(true)} fluid className={imageLoaded ? '' : styles.hidden} />
+            {!imageLoaded && <div className={styles.bannerPlaceholder}/>}
 
-            <div className={styles.bannerSpacer}></div>
+            <div className={styles.bannerSpacer}/>
 
-            <div className={styles.followUsWrapper}>
+            <Container fluid className={`py-4 ${styles.followUsWrapper}`}>
                 <Container>
-                    <Row className={styles.followUsSection}>
-                        <div className={`col-md-6 col-sm-12 ${styles.socialsColumn}`}>
+                    <Row className="justify-content-around">
+                        <Col md={6} sm={12} className="text-center mb-4">
                             <InViewMotionDiv variants={{
                                 hidden: { opacity: 0 },
                                 visible: { opacity: 1, transition: { duration: 0.5 } }
                             }}>
-                                <h1>Follow Us</h1>
+                                <h1 className="text-primary">Follow Us</h1>
                             </InViewMotionDiv>
-                            <div className={styles.socialList}>
+                            <Container fluid className={styles.socialList}>
                                 {socialLinks.map((link, index) => (
-                                    <InViewMotionDiv
-                                        key={index}
-                                        variants={{
-                                            hidden: { opacity: 0, x: -50 },
-                                            visible: { opacity: 1, x: 0, transition: { delay: 0.1 * (index + 1), duration: 0.5 } }
-                                        }}
-                                    >
+                                    <InViewMotionDiv key={index} variants={{
+                                        hidden: { opacity: 0, x: -50 },
+                                        visible: { opacity: 1, x: 0, transition: { delay: 0.1 * (index + 1), duration: 0.5 } }
+                                    }}>
                                         <a
                                             href={link.url}
                                             target="_blank"
@@ -82,8 +69,8 @@ const HomePage: React.FC = () => {
                                         </a>
                                     </InViewMotionDiv>
                                 ))}
-                            </div>
-                        </div>
+                            </Container>
+                        </Col>
 
                         <InViewMotionDiv className={`col-md-6 col-sm-12 ${styles.twitterColumn}`} variants={{
                             hidden: { opacity: 0, x: 200 },
@@ -93,37 +80,34 @@ const HomePage: React.FC = () => {
                         </InViewMotionDiv>
                     </Row>
                 </Container>
-            </div>
+            </Container>
 
-            <Container className={styles.sponsorsPartnersContainer}>
+            <Container className="py-5">
                 <InViewMotionDiv variants={{
                     hidden: { opacity: 0 },
                     visible: { opacity: 1, transition: { duration: 0.5 } }
                 }}>
-                    <h1>Partners</h1>
+                    <h1 className="text-primary">Partners</h1>
                 </InViewMotionDiv>
-                <div className={styles.partnerContainer}>
+                <Container fluid className="d-flex justify-content-around flex-wrap">
                     {partnerships.map((partner, index) => (
-                        <InViewMotionDiv
-                            key={index}
-                            variants={{
-                                hidden: { opacity: 0, y: 50 },
-                                visible: { opacity: 1, y: 0, transition: { delay: 0.2 * (index + 1), duration: 0.5 } }
-                            }}
-                        >
+                        <InViewMotionDiv key={index} variants={{
+                            hidden: { opacity: 0, y: 50 },
+                            visible: { opacity: 1, y: 0, transition: { delay: 0.2 * (index + 1), duration: 0.5 } }
+                        }}>
                             <a
                                 href={partner.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className={`text-center mb-3 ${styles.partnerLink}`}
                             >
-                                <img src={partner.image} alt={partner.name} />
+                                <Image src={partner.image} alt={partner.name} fluid />
                                 {/*<p>{partner.name}</p>*/}
                             </a>
                         </InViewMotionDiv>
                     ))}
-                </div>
+                </Container>
             </Container>
-
         </>
     );
 };

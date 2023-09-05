@@ -1,84 +1,35 @@
-.introductionSection {
-    background-color: #ffffff;
-    color: #500000;
-    padding: 50px 0;
-    text-align: center;
+.leadershipCard {
+    background-color: #590000;
+    color: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 150px;
 }
 
-.missionVisionSection {
-    background-color: #eaeaea;
-    color: #500000 !important;
-    padding: 50px 0;
-    text-align: center;
+.leadershipCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
 }
 
-.cardContainer {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.card {
-    background: #fff;
-    border: 1px solid #ccc;
+.missionVisionCards {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: 300px;
     padding: 20px;
     margin: 20px;
-    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.leadershipSection {
-    background-color: #500000;
-    color: #ffffff;
-    padding: 50px 0;
-    text-align: center;
+.missionVisionCards:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
 }
 
-.leadershipSection h2,
-.leadershipSection h3,
-.leadershipSection h4 {
-    color: #ffffff;
-}
-
-.leadershipGrid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.profileCard {
-    width: 150px;
-    text-align: center;
-    margin: 20px;
-}
-
-.eventsSection {
+.lightGreyBackground {
     background-color: #eaeaea;
-    color: #500000;
-    padding: 50px 0;
-    text-align: center;
+    color: var(--bs-primary);
 }
 
-.faqSection {
-    background-color: #500000;
-    color: #ffffff;
-    padding: 50px 0;
-    text-align: center;
-}
-
-.faqSection h2 {
-    color: #ffffff;
-}
-
-.getInvolvedSection {
-    background-color: #eaeaea;
-    color: #500000;
-    padding: 50px 0;
-    text-align: center;
-}
-
-.joinButton {
-    padding: 10px 20px;
-    background-color: #500000;
-    color: #ffffff;
+.maroonBackground {
+    background-color: var(--bs-primary);
+    color: white;
 }
