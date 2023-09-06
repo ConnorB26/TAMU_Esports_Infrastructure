@@ -75,19 +75,15 @@ const MembersPage: React.FC = () => {
                                 <Card.Body>
                                     <Card.Title className={styles.cardTitle}>How to Become a Member</Card.Title>
                                     <Card.Text>
-                                        1. Be a student at Texas A&M University
-                                        <br />
-                                        2. Purchase dues on Flywire <a href="https://tamu.estore.flywire.com/products/fall-semester-2023-membership-dues-97652" target="_blank" rel="noopener noreferrer">here</a>
-                                        <br />
-                                        3. Wait up to 5 minutes from when you receive the confirmation email for our system to process it
-                                        <br />
-                                        4. Join the <a href="https://discord.gg/tamuesports" target="_blank" rel="noopener noreferrer">TAMU Esports Discord server</a> if you haven't already
-                                        <br />
-                                        5. Register an account with Rev Bot by using her "/profile register" command and filling out the requested information
-                                        <br />
-                                        {`5. Claim your membership status and role by using the "/membership claim {code}" where {code} is your order number from Flywire (don't share this with anyone!)`}
-                                        <br />
-                                        6. Enjoy your new status as a member of Texas A&M's best organization!
+                                        <ol>
+                                            <li>Be a student at Texas A&M University</li>
+                                            <li>Purchase dues on Flywire <a href="https://tamu.estore.flywire.com/products/fall-semester-2023-membership-dues-97652" target="_blank" rel="noopener noreferrer">here</a></li>
+                                            <li>Wait up to 5 minutes from when you receive the confirmation email for our system to process it</li>
+                                            <li>Join the <a href="https://discord.gg/tamuesports" target="_blank" rel="noopener noreferrer">TAMU Esports Discord server</a> if you haven't already</li>
+                                            <li>Register an account with Rev Bot by using her "/profile register" command and filling out the requested information</li>
+                                            <li>{`Claim your membership status and role by using the "/membership claim {code}" where {code} is your order number from Flywire (don't share this with anyone!)`}</li>
+                                            <li>Enjoy your new status as a member of Texas A&M's best organization!</li>
+                                        </ol>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
