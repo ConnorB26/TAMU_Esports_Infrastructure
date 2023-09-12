@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import styles from './HomePage.module.css';
 import banner from '../assets/brand/banner_small.webp'
-import tamuLogo from '../assets/brand/maroon_logo.webp';
+import tsmuLogo from '../assets/partners/tsmu.webp';
 import hyperxLogo from '../assets/partners/hyperx.webp';
 import uconnectLogo from '../assets/partners/uconnect.webp';
 import { FaDiscord, FaFacebook, FaInstagram, FaLinkedin, FaTiktok, FaTwitch, FaTwitter } from 'react-icons/fa';
@@ -11,7 +11,7 @@ import { Col, Image, Row } from 'react-bootstrap';
 import InViewMotionDiv from '../components/InViewMotionDiv';
 
 const partnerships = [
-    { name: 'TSM University', image: tamuLogo, url: 'https://twitter.com/tsmuniversity?lang=en' },
+    { name: 'TSM University', image: tsmuLogo, url: 'https://twitter.com/tsmuniversity?lang=en' },
     { name: 'Hyper X', image: hyperxLogo, url: 'https://hyperx.com/' },
     { name: 'Uconnect', image: uconnectLogo, url: 'https://www.uconnect.app/' }
 ];
@@ -94,15 +94,16 @@ const HomePage: React.FC = () => {
                         <InViewMotionDiv key={index} variants={{
                             hidden: { opacity: 0, y: 50 },
                             visible: { opacity: 1, y: 0, transition: { delay: 0.2 * (index + 1), duration: 0.5 } }
-                        }}>
+                        }}
+                            className={`${styles.partnerDiv} my-1`}
+                        >
                             <a
                                 href={partner.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`text-center mb-3 ${styles.partnerLink}`}
+                                className={styles.partnerLink}
                             >
                                 <Image src={partner.image} alt={partner.name} fluid />
-                                {/*<p>{partner.name}</p>*/}
                             </a>
                         </InViewMotionDiv>
                     ))}

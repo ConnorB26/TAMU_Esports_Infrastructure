@@ -10,11 +10,20 @@
     justify-content: space-around;
 }
 
-.bannerPlaceholder,
-.partnerLink img,
-.sponsorLink img {
-    max-width: 100px;
+.bannerPlaceholder {
+    height: 640px;
+    background-color: black;
+}
+
+.partnerLink img {
+    max-width: 125px;
     height: auto;
+}
+
+.partnerDiv {
+    display: flex;
+    align-items: center;
+    height: 70px;
 }
 
 .followUsWrapper {
