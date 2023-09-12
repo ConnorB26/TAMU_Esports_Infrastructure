@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Button, Card, Container } from 'react-bootstrap';
+import { Accordion, Card, Container } from 'react-bootstrap';
 import styles from './AboutPage.module.css';
 import '../styles/MaroonAccordion.css';
 import InViewMotionDiv from '../components/InViewMotionDiv';
@@ -93,10 +93,13 @@ const AboutPage: React.FC = () => {
                 <section className={`${styles.lightGreyBackground} py-5`}>
                     <Container className="text-center">
                         <h2>Events & Activities</h2>
-                        <div className={styles.timeline}>
-                            <p>Event 1: Gaming Tournament</p>
-                            <p>Event 2: Charity Stream</p>
-                            <p>Event 3: Community Outreach</p>
+                        <div className={styles.eventsTypeList}>
+                            <p><strong>Gaming Tournaments:</strong> Compete against fellow members in various games and win exciting prizes.</p>
+                            <p><strong>LAN Parties:</strong> Bring your own device and enjoy a night of gaming with friends and fellow enthusiasts.</p>
+                            <p><strong>Socials:</strong> Hang out with the community, discuss your favorite games, and make new connections.</p>
+                            <p><strong>Charity Streams:</strong> Join us as we game for a cause and raise funds for charities close to our hearts.</p>
+                            <p><strong>Community Outreach:</strong> Introducing gaming and esports to local schools and communities.</p>
+                            <p><strong>Workshops & Panels:</strong> Learn from industry experts about the esports scene, streaming, game development, and more.</p>
                         </div>
                     </Container>
                 </section>

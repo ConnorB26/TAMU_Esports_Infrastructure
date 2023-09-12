@@ -2,6 +2,7 @@ import { Guild, GuildMember } from 'discord.js';
 import DiscordSettingCache from '../cache/discordSettingCache';
 import { create as createUserCode, removeId as removeUserCode } from '../services/userCodeService';
 import { findOneDiscord as getUser, removeDiscord as removeUser } from '../services/userService';
+import { findOne as findCode } from '../services/confirmationCodeService';
 
 export async function giveMembership(guild: Guild, member: GuildMember, code: string) {
     // If not registered, register
@@ -9,7 +10,14 @@ export async function giveMembership(guild: Guild, member: GuildMember, code: st
     try {
         user = await getUser(member.id);
     } catch (error) {
-        throw new Error('You need to register before claiming your membership. You can do so by using the command /register')
+        throw new Error('You need to register before claiming your membership. You can do so by using the command /register');
+    }
+
+    // Check if code has been added
+    try {
+        await findCode(code);
+    } catch(error) {
+        throw new Error('The code you are trying to claim is not in the database');
     }
 
     // Get the member role name from the cache
@@ -35,7 +43,7 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
     try {
         user = await getUser(member.id);
     } catch (error) {
-        throw new Error('You need to register and claim a membership before trying to unclaim it. You can do so by using the commands /register and /claim')
+        throw new Error('You need to register and claim a membership before trying to unclaim it. You can do so by using the commands /register and /claim');
     }
 
     // Get the member role name from the cache
