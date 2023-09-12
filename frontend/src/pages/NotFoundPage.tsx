@@ -3,8 +3,8 @@ import Container from 'react-bootstrap/Container';
 
 const NotFoundPage: React.FC = () => {
     return (
-        <Container fluid>
-            {/* Your content here */}
+        <Container>
+            <h1>Page Not Found</h1>
         </Container>
     );
 };
