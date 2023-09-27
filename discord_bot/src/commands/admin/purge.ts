@@ -17,7 +17,7 @@ export async function execute(interaction: CommandInteraction) {
     const numberOfPeople = opts.getInteger('number_of_people')!;
 
     if (!interaction.guild || interaction.guildId !== config.DISCORD_GUILD_ID) {
-        return await interaction.editReply('This command must be used in the Texas A&M eSports Server.');
+        return await interaction.editReply('This command must be used in the Texas A&M Esports Server.');
     }
 
     const members = await interaction.guild.members.fetch();
@@ -26,7 +26,7 @@ export async function execute(interaction: CommandInteraction) {
     
     for(const member of purgable) {
         try {
-            await member.send('You have been kicked from the Texas A&M eSports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuesports');
+            await member.send('You have been kicked from the Texas A&M Esports server because you did not have any of the necessary roles determining your status within the server as a Student, Guest, or Alumni. If you feel like you should not have been kicked from the server, please feel free to rejoin: https://discord.gg/tamuEsports');
             await member.kick('User did not have any of the necessary roles determining status within the server as a Student, Guest, or Alumni.');
             kickedList.push(member);
 

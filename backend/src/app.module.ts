@@ -23,6 +23,7 @@ import { DiscordBotInteractionModule } from './modules/discordBotInteraction.mod
             username: config.DB_USERNAME,
             password: config.DB_PASSWORD,
             database: config.DB_DATABASE,
+            schema: config.DB_SCHEMA,
             entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand],
         }),
         ConfirmationCodeModule,
