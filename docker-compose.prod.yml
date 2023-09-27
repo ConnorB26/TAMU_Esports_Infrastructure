@@ -10,11 +10,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     container_name: backend
+    env_file: .env.production
     ports:
       - "3001:3001"
     volumes:
       - ./backend:/app
-      - ./.env:/app/.env
+      - ./.env.production:/app/.env
     networks:
       - app-network
     restart: unless-stopped
@@ -24,9 +25,10 @@ services:
       context: ./discord_bot
       dockerfile: Dockerfile.prod
     container_name: discord_bot
+    env_file: .env.production
     volumes:
       - ./discord_bot:/app
-      - ./.env:/app/.env
+      - ./.env.production:/app/.env
     networks:
       - app-network
     depends_on:
@@ -40,7 +42,7 @@ services:
     container_name: content_management_system
     image: strapi:latest
     restart: unless-stopped
-    env_file: .env
+    env_file: .env.production
     environment:
       HOST: ${CMS_HOST}
       PORT: ${CMS_PORT}
@@ -58,7 +60,7 @@ services:
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
     volumes:
       - ./content-management-system:/app
-      - ./.env:/app/.env
+      - ./.env.production:/app/.env
     ports:
       - "1337:1337"
     networks:
