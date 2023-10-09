@@ -6,6 +6,9 @@ export const data = new SlashCommandBuilder()
     .setName("qotd_leaderboard")
     .setDescription("Leaderboard for question of the day")
 
+
+
+// Question of the day leaderboard command
 export async function execute(interaction: CommandInteraction){
     createQotdLeaderboard();
 }
