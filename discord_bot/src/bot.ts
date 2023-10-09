@@ -10,6 +10,7 @@ import { registerUser } from "./utilities/users";
 import { User } from "./models/user";
 import EventSource from 'eventsource';
 import * as userService from './services/userService';
+import discordSettingCache from "./cache/discordSettingCache";
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
@@ -26,6 +27,15 @@ client.on(Events.MessageCreate, (message) => {
     if (message.mentions.users.has(client.user!.id) && message.content.toLowerCase().includes('howdy')) {
         message.reply('Howdy!');
     }
+
+    // check for QOTD
+    if (message.mentions.roles.find(role => role.id === discordSettingCache.get("qotd_role_id")) &&
+        message.member?.roles.cache.find(role => role.id === discordSettingCache.get("qotd_giver_role_id")) && 
+        message.channel.id === discordSettingCache.get("qotd_channel_id")) 
+    {
+        message.reply("QOTD Activated");
+    }
+
 });
 
 
