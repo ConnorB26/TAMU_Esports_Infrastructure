@@ -13,6 +13,8 @@ import { UserCodeModule } from './modules/userCode.module';
 import { RoleCommand } from './entities/roleCommand.entity';
 import { RoleCommandModule } from './modules/roleCommand.module';
 import { DiscordBotInteractionModule } from './modules/discordBotInteraction.module';
+import { QOTDEntry } from './entities/qotdLeaderboard.entity';
+import { QOTDLeaderboardModule } from './modules/qotdLeaderboard.module';
 
 @Module({
     imports: [
@@ -24,14 +26,15 @@ import { DiscordBotInteractionModule } from './modules/discordBotInteraction.mod
             password: config.DB_PASSWORD,
             database: config.DB_DATABASE,
             schema: config.DB_SCHEMA,
-            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand],
+            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand, QOTDEntry],
         }),
         ConfirmationCodeModule,
         DiscordSettingModule,
         UserModule,
         UserCodeModule,
         RoleCommandModule,
-        DiscordBotInteractionModule
+        DiscordBotInteractionModule,
+        QOTDLeaderboardModule
     ],
     controllers: [],
     providers: [],
