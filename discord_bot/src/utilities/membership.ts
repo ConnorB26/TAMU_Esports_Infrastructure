@@ -1,4 +1,4 @@
-import { Guild, GuildMember } from 'discord.js';
+import { Collection, Guild, GuildMember, Role, Snowflake, User } from 'discord.js';
 import DiscordSettingCache from '../cache/discordSettingCache';
 import { create as createUserCode, removeId as removeUserCode } from '../services/userCodeService';
 import { findOneDiscord as getUser, removeDiscord as removeUser } from '../services/userService';
@@ -16,7 +16,7 @@ export async function giveMembership(guild: Guild, member: GuildMember, code: st
     // Check if code has been added
     try {
         await findCode(code);
-    } catch(error) {
+    } catch (error) {
         throw new Error('The code you are trying to claim is not in the database');
     }
 
@@ -78,4 +78,42 @@ export async function cleanupMembership(discordID: string) {
 
         }
     }
+}
+
+export async function getUnpaidDuesList(guild: Guild, specificRole?: Role): Promise<Map<User, Role[]>> {
+    let teamRoles: Role[];
+
+    if (specificRole) {
+        teamRoles = [specificRole];
+    } else {
+        // Get all "Team ____" roles
+        const TEAM_ROLE_PATTERN = /^Team\s\w+/;
+        teamRoles = [...guild.roles.cache.filter(role => TEAM_ROLE_PATTERN.test(role.name) && role.name != 'Team Captain' && role.name !=  'Team Fight Tactics' && role.name != 'Team Manager').values()];
+    }
+    // Get the member role name from the cache
+    const memberRoleId = DiscordSettingCache.get('member_role');
+    if (!memberRoleId) {
+        throw new Error('member_role setting not found');
+    }
+
+    // Get all users that have a team role but haven't paid dues
+    const nonMembers: Map<User, Role[]> = new Map();
+
+    for (const teamRole of teamRoles) {
+        for (const [, member] of teamRole.members) {
+            // Check if the member is already in the nonMembers list to avoid unnecessary computations
+            if (nonMembers.has(member.user)) continue;
+
+            const memberRoles = [...member.roles.cache.values()];
+
+            if (memberRoles.some(role => role.id === DiscordSettingCache.get('student_role')) && !memberRoles.some(role => role.id === memberRoleId)) {
+                const memberTeamRoles = memberRoles.filter(role => teamRoles.includes(role));
+                if (memberTeamRoles.length) {
+                    nonMembers.set(member.user, memberTeamRoles);
+                }
+            }
+        }
+    }
+
+    return nonMembers;
 }

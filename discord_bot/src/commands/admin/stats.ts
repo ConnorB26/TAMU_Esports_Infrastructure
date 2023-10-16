@@ -2,7 +2,6 @@ import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuild
 import * as userCodeService from '../../services/userCodeService';
 import * as userService from '../../services/userService';
 import * as codeService from '../../services/confirmationCodeService';
-import { purgeRoldIDs } from "../../utilities/config";
 import { getPurgableUsers } from "../../utilities/purging";
 
 export const data = new SlashCommandBuilder()
@@ -120,7 +119,6 @@ export async function execute(interaction: CommandInteraction) {
                     break;
             }
 
-            // Convert csvData to a Buffer and send it as a file:
             if (csvData === '')
                 break;
 

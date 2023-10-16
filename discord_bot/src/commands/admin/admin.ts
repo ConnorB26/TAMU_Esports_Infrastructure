@@ -1,8 +1,9 @@
-import { CommandInteraction, CommandInteractionOptionResolver, GuildMember, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, GuildMember, Role, SlashCommandBuilder } from "discord.js";
 import { createProfileEmbed } from "../../utilities/users";
 import * as userCodeService from '../../services/userCodeService';
 import * as confirmationCodeService from '../../services/confirmationCodeService';
 import * as userService from '../../services/userService';
+import { getUnpaidDuesList } from "../../utilities/membership";
 
 export const data = new SlashCommandBuilder()
     .setName('admin')
@@ -26,6 +27,22 @@ export const data = new SlashCommandBuilder()
                         option.setName('code')
                             .setDescription('Code to check')
                             .setRequired(true)))
+            .addSubcommand(subcommand =>
+                subcommand
+                    .setName('check_all')
+                    .setDescription(`Get a list of all competitive team members who haven't paid their dues`)
+                    .addRoleOption(option =>
+                        option.setName('role')
+                            .setDescription('Specific team role to get list from')
+                            .setRequired(false)))
+            .addSubcommand(subcommand =>
+                subcommand
+                    .setName('message_all')
+                    .setDescription(`Message all of the competitive team members who haven't paid their dues`)
+                    .addRoleOption(option =>
+                        option.setName('role')
+                            .setDescription('Specific team role to message')
+                            .setRequired(false)))
     )
     .addSubcommandGroup(group =>
         group.setName('users')
@@ -44,6 +61,7 @@ export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
     const opts = interaction.options as CommandInteractionOptionResolver;
+    const role = opts.getRole('role') as Role | undefined;
     const user = opts.getMember('user') as GuildMember;
     const group = opts.getSubcommandGroup();
     const subcommand = opts.getSubcommand();
@@ -98,6 +116,35 @@ export async function execute(interaction: CommandInteraction) {
                     await interaction.editReply(`Code ${codeToCheck} has not been claimed.`);
                     break;
                 }
+                break;
+            case 'membership check_all':
+                let csvData: string = 'Username,Team(s)\n';
+                const unpaidUsersCheck = await getUnpaidDuesList(interaction.guild, role);
+
+                unpaidUsersCheck.forEach((roles, user) => {
+                    const rolesNames = roles.map(role => role.name).join(' | ');
+                    csvData += `"${user.username}","${rolesNames}"\n`;
+                });
+
+                if (csvData === '')
+                    break;
+
+                const buffer = Buffer.from(csvData, 'utf8');
+                await interaction.editReply({ files: [{ attachment: buffer, name: 'users_missing_dues.csv' }] });
+                break;
+            case 'membership message_all':
+                const unpaidUsersMsg = await getUnpaidDuesList(interaction.guild, role);
+
+                let errorList: string[] = [];
+                unpaidUsersMsg.forEach(async (roles, user) => {
+                    try {
+                        await user.send(`Howdy ${user.username},\n\nYou are receiving this message because you have not obtained the member status for Texas A&M Esports as a player in a one of the competitive teams. Please remember to complete the dues process as it is a requirement for our teams.\n\nIf you've already paid, don't forget to follow the steps to register with the bot by following the instructions here: https://discord.com/channels/490773969876549643/1148675227476295860/1148685606948450316.\n\nIf you've had a conversation in private with President Alex or Vice President Pierce, you can disregard this message.`);
+                    } catch (err) {
+                        errorList.push(user.username);
+                    }
+                });
+
+                await interaction.editReply(`All team members who have not paid dues have been messaged${errorList.length > 0 ? `, except for: ${errorList.join(',')}` : ''}.`)
                 break;
             default:
                 await interaction.editReply(`Unknown subcommand: ${subcommand}`);
