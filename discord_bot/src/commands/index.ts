@@ -7,6 +7,7 @@ import * as purge from "./admin/purge";
 import * as stats from "./admin/stats";
 import * as profile from "./general/profile";
 import * as membership from "./general/membership";
+import * as qotd from "./general/qotd"
 
 export const commands = {
     ping,
@@ -17,5 +18,6 @@ export const commands = {
     purge,
     profile,
     membership,
-    stats
+    stats,
+    qotd,
 };

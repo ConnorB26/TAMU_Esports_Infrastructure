@@ -10,5 +10,7 @@ export const data = new SlashCommandBuilder()
 
 // Question of the day leaderboard command
 export async function execute(interaction: CommandInteraction){
-    createQotdLeaderboard();
+    const leaderboard_embed = await createQotdLeaderboard();
+
+    await interaction.reply({embeds: [leaderboard_embed]})
 }

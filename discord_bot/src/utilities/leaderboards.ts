@@ -5,8 +5,11 @@ export async function createQotdLeaderboard(){
     // get the leaderboard from the database to feed into the embed
     const embed = new EmbedBuilder()
     .setColor(Colors.Orange)
+    .addFields(
+        {name: "Test", value: "Test"}
+    )
 
-    // Will need to install pagination
+    // Will need to add pagination
 
     return embed;
 }
