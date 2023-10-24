@@ -28,19 +28,19 @@ client.on(Events.MessageCreate, (message) => {
         message.reply('Howdy!');
     }
 
-    // check for QOTD
-    if (message.mentions.roles.find(role => role.id === discordSettingCache.get("qotd_role_id")) &&
-        message.member?.roles.cache.find(role => role.id === discordSettingCache.get("qotd_giver_role_id")) && 
-        message.channel.id === discordSettingCache.get("qotd_channel_id")) 
-    {
-        message.reply("QOTD Activated");
-    }
+    // if (message.mentions.roles.find(role => role.id === discordSettingCache.get("qotd_role_id")) &&
+    //     message.member?.roles.cache.find(role => role.id === discordSettingCache.get("qotd_giver_role_id")) && 
+    //     message.channel.id === discordSettingCache.get("qotd_channel_id")) 
+    // {
+    //     message.reply("QOTD Activated");
+    // }
 
 });
 
 
 // Command handling
 let apiConnected = false;
+let qotd_asked = false;
 
 const userCommandTimestamps = new Map<string, number[]>();
 client.on(Events.InteractionCreate, async (interaction) => {
