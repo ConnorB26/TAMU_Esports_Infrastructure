@@ -1,6 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder, CommandInteractionOptionResolver, Colors, EmbedBuilder } from "discord.js";
 import {createQotdLeaderboard} from "../../utilities/leaderboards";
 import discordSettingCache from "../../cache/discordSettingCache";
+import botVariableCache from "../../cache/botVariableCache";
 
 export const data = new SlashCommandBuilder()
     .setName("qotd")
@@ -43,10 +44,26 @@ export async function execute(interaction: CommandInteraction){
                 .setColor(Colors.Red)
                 .addFields({name: "Question of the day", value: `${opts.getString("question")}`})
 
-                
 
-                if (interaction.channelId === qotd_channel_id){
-                    await interaction.reply({content: `<@&${qotd_role_id}>`, embeds: [qotd_embed]})
+                // check for channel
+                if (interaction.channelId !== qotd_channel_id){
+                    // Check if QOTD was already asked before
+
+                    // UNCOMMENT FOR PRODUCTION
+                    // if (botVariableCache.get("qotd_asked")){
+                    //     await interaction.reply({ephemeral: true, content: "QOTD already asked!"});
+                    //     break;
+                    // }
+
+                    botVariableCache.set("qotd_asked", true);
+                    const response = await interaction.reply({content: `<@&${qotd_role_id}>`, embeds: [qotd_embed], fetchReply: true})
+                    const response_data = await response.fetch();
+                    // response_data.awaitMessageComponent({componentType: "reply", content: response})
+                    botVariableCache.set("qotd_question", response_data);
+
+                    // Get the message which contains the QOTD
+                    const message = await interaction.channel?.messages.fetch(botVariableCache.get("qotd_question"));
+
                 }else{
                     await interaction.reply({ephemeral: true, content: "Wrong channel!"});
                 }
@@ -54,7 +71,7 @@ export async function execute(interaction: CommandInteraction){
                 break;
         
             default:
-                break;
+                break; 
         }
     } catch (error) {
         

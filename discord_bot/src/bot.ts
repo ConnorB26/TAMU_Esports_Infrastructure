@@ -3,6 +3,7 @@ import { commands } from "./commands";
 import { client } from "./utilities/config";
 import { populateCaches } from "./utilities/populateCache";
 import roleCommandCache from "./cache/roleCommandCache";
+import { variableCache } from "./models/variableCache";
 import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events } from "discord.js";
 import { cleanupMembership } from "./utilities/membership";
@@ -11,6 +12,7 @@ import { User } from "./models/user";
 import EventSource from 'eventsource';
 import * as userService from './services/userService';
 import discordSettingCache from "./cache/discordSettingCache";
+import botVariableCache from "./cache/botVariableCache";
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
@@ -40,7 +42,6 @@ client.on(Events.MessageCreate, (message) => {
 
 // Command handling
 let apiConnected = false;
-let qotd_asked = false;
 
 const userCommandTimestamps = new Map<string, number[]>();
 client.on(Events.InteractionCreate, async (interaction) => {
