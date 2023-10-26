@@ -46,23 +46,22 @@ export async function execute(interaction: CommandInteraction){
 
 
                 // check for channel
-                if (interaction.channelId !== qotd_channel_id){
+                if (interaction.channelId === qotd_channel_id){
                     // Check if QOTD was already asked before
 
                     // UNCOMMENT FOR PRODUCTION
-                    // if (botVariableCache.get("qotd_asked")){
-                    //     await interaction.reply({ephemeral: true, content: "QOTD already asked!"});
-                    //     break;
-                    // }
+                    if (botVariableCache.get("qotd_asked")){
+                        await interaction.reply({ephemeral: true, content: "QOTD already asked!"});
+                        break;
+                    }
 
                     botVariableCache.set("qotd_asked", true);
                     const response = await interaction.reply({content: `<@&${qotd_role_id}>`, embeds: [qotd_embed], fetchReply: true})
                     const response_data = await response.fetch();
                     // response_data.awaitMessageComponent({componentType: "reply", content: response})
-                    botVariableCache.set("qotd_question", response_data);
+                    botVariableCache.set("qotd_question", response_data.id);
 
-                    // Get the message which contains the QOTD
-                    const message = await interaction.channel?.messages.fetch(botVariableCache.get("qotd_question"));
+                    console.log(response_data.id)
 
                 }else{
                     await interaction.reply({ephemeral: true, content: "Wrong channel!"});

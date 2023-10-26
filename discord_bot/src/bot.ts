@@ -8,11 +8,13 @@ import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events } from "discord.js";
 import { cleanupMembership } from "./utilities/membership";
 import { registerUser } from "./utilities/users";
+import { create, update, findOne } from "./services/qotdLeaderboardService";
 import { User } from "./models/user";
 import EventSource from 'eventsource';
 import * as userService from './services/userService';
 import discordSettingCache from "./cache/discordSettingCache";
 import botVariableCache from "./cache/botVariableCache";
+
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
@@ -29,15 +31,39 @@ client.on(Events.MessageCreate, (message) => {
     if (message.mentions.users.has(client.user!.id) && message.content.toLowerCase().includes('howdy')) {
         message.reply('Howdy!');
     }
-
-    // if (message.mentions.roles.find(role => role.id === discordSettingCache.get("qotd_role_id")) &&
-    //     message.member?.roles.cache.find(role => role.id === discordSettingCache.get("qotd_giver_role_id")) && 
-    //     message.channel.id === discordSettingCache.get("qotd_channel_id")) 
-    // {
-    //     message.reply("QOTD Activated");
-    // }
-
 });
+
+// QOTD Event Handling
+client.on(Events.MessageCreate, async (message) => {
+    if (botVariableCache.get("qotd_asked") && message.channelId !== discordSettingCache.get("qotd_channel_id")){
+        if (message.reference && message.reference.messageId){
+            const user_reply = await message.channel.messages.fetch(message.reference.messageId);
+
+            // someone asked the question of the day
+            if (user_reply.id == botVariableCache.get("qotd_question")){
+                // check if user has already asked this question today
+                const qotd_responses = botVariableCache.get("qotd_responses") || [];
+
+                if (qotd_responses.includes(message.author.id)){
+                    await message.reply({content: "You have already asked a question of the day today!"});
+                }else{
+                    qotd_responses.push(message.author.id);
+                    botVariableCache.set("qotd_responses", qotd_responses);
+
+                    console.log(botVariableCache.get("qotd_responses"));
+
+                    // add a point to the user in the database
+                    const user = await findOne(message.author.id);
+                    if (user){
+                        await update(message.author.id, {score: user.score + 1});
+                    }else{
+                        await create({discord_id: message.author.id, score: 1});
+                    }
+                }
+            }
+        }
+    }
+})
 
 
 // Command handling
