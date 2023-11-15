@@ -76,8 +76,11 @@ const AboutPage: React.FC = () => {
                         <h1>Introduction</h1>
                         <p>Texas A&M Esports is the hub for gaming and Esports enthusiasts at Texas A&M, uniting 2000+ students, alumni, and fans. 
                             We provide an active community for competitive and casual gamers to connect, socialize, and stay informed about the latest AME news. 
-                            Whether you're a seasoned pro, an occasional gamer, or simply someone who revels in the thrill of the Esports world, rest assured that Texas A&M Esports has a welcoming space reserved just for you. We extend a warm invitation to join us in celebrating the exhilarating universe of gaming and Esports right here at Texas A&M University!
-                            If you are interested in representing A&M in the Collegiate scene, keep an eye out for tryout announcements every semester! 
+                            Our mission is to foster a vibrant community where competitive gamers and casual players can converge, form lasting bonds, enjoy lively social interactions, and stay up-to-date with the latest AME news.
+                            Whether you're a seasoned pro, an occasional gamer, or simply someone who revels in the thrill of the Esports world, rest assured that Texas A&M Esports has a welcoming space reserved just for you. 
+                            We extend a warm invitation to join us in celebrating the exhilarating universe of gaming and Esports right here at Texas A&M University!
+                            As a testament to our commitment to excellence, we proudly support an impressive array of 16 gaming titles and over 30 dedicated teams participating in their respective Collegiate leagues. 
+                            Our diverse gaming portfolio offers a thrilling platform for gamers from all walks of life to showcase their skills and passion. If you are interested in representing A&M in the Collegiate scene, keep an eye out for tryout announcements every semester!
                             Join us and experience the vibrant Texas A&M Esports community!
                         </p>
                     </Container>
@@ -95,14 +98,15 @@ const AboutPage: React.FC = () => {
                             <Card className={styles.missionVisionCards}>
                                 <Card.Body>
                                     <Card.Title>Mission</Card.Title>
-                                    <Card.Text>Our mission is to foster a vibrant community where competitive gamers and casual players can converge, form lasting bonds, enjoy lively social interactions, and stay up-to-date with the latest AME news. 
+                                    <Card.Text>Our mission is to empower Aggies by fostering a vibrant community where both competitive and casual players unite. 
+                                        We strive to cultivate a dynamic gaming culture at Texas A&M, blending passion with sportsmanship to serve as the hub for all things gaming and esports in Aggieland. 
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
                             <Card className={styles.missionVisionCards}>
                                 <Card.Body>
                                     <Card.Title>Vision</Card.Title>
-                                    <Card.Text>As a testament to our commitment to excellence, we proudly support an impressive array of 16 gaming titles and over 30 dedicated teams participating in their respective Collegiate leagues. Our diverse gaming portfolio offers a thrilling platform for gamers from all walks of life to showcase their skills and passion.</Card.Text>
+                                    <Card.Text>Our vision is to establish TAMU Esports as the catalyst behind a thriving gaming and esports community at Texas A&M through active participation in various collegiate esports leagues, community events, and an unwavering commitment to inclusivity.</Card.Text>
                                 </Card.Body>
                             </Card>
                         </Container>
@@ -161,13 +165,31 @@ Looking ahead, we're excited to continue fostering these connections through mor
                             <Accordion.Item eventKey="0" className={styles.faqAccordion}>
                                 <Accordion.Header>Q: How do I join?</Accordion.Header>
                                 <Accordion.Body>
-                                    A: You can join by ...
+                                    A: You can join by joining the <a href = "https://discord.gg/zZSf5uu3">Discord</a> and paying the dues on <a href ="https://tamu.estore.flywire.com/products/fall-semester-2023-membership-dues-97652">Flywire!</a>
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Accordion.Item eventKey="1" className={styles.faqAccordion}>
                                 <Accordion.Header>Q: Are there membership fees?</Accordion.Header>
                                 <Accordion.Body>
-                                    A: Yes, the fee is ...
+                                    A: Yes, the fee is $20
+                                </Accordion.Body>
+                            </Accordion.Item>
+                            <Accordion.Item eventKey="2" className={styles.faqAccordion}>
+                                <Accordion.Header>Q: How do I redeem my dues?</Accordion.Header>
+                                <Accordion.Body>
+                                    <ol>
+                                            <li>Wait up to 5 minutes from when you receive the confirmation email for our system to process it</li>
+                                            <li>Join the <a href="https://discord.gg/tamuesports" target="_blank" rel="noopener noreferrer">TAMU Esports Discord server</a> if you haven't already</li>
+                                            <li>Register an account with Rev Bot by using her "/profile register" command and filling out the requested information</li>
+                                            <li>{`Claim your membership status and role by using the "/membership claim {code}" where {code} is your order number from Flywire (don't share to anyone!)`}</li>
+                                            <li>Enjoy your new status as a member of Texas A&M's best organization!</li>
+                                        </ol>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                            <Accordion.Item eventKey="3" className={styles.faqAccordion}>
+                                <Accordion.Header>Q: Can I join even if I do not compete on a team?</Accordion.Header>
+                                <Accordion.Body>
+                                    A: Yes! We welcome gamers of varying skill ranges, so there is a place for everyone in AME.
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>
