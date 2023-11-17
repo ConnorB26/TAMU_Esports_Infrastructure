@@ -135,3 +135,6 @@ dist
 /postgres_data/
 /pgadmin_data/
 /public/
+
+# Invisible macOS file
+.DS_STORE
