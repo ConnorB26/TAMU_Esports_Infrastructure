@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import InViewMotionDiv from '../components/InViewMotionDiv';
 import styles from './ContactPage.module.css';
 
@@ -17,17 +17,17 @@ const contactCards = [
     {
         name: "Operations Executive",
         email: "operations@tamuesports.com",
-        description: "General questions about the organization"
+        description: "Questions regarding the non-competitive teams and systems in place"
     },
     {
         name: "Competitive Executive",
         email: "competitive@tamuesports.com",
-        description: "General questions about the organization"
+        description: "Questions regarding the competitive scene and teams"
     },
     {
         name: "Development Lead",
         email: "development@tamuesports.com",
-        description: "General questions about the organization"
+        description: "Inquiries related to website maintenance, technical initiatives, and development projects"
     },
 ];
 
@@ -62,48 +62,6 @@ const ContactPage: React.FC = () => {
                         </Col>
                     ))}
                 </Row>
-
-                <InViewMotionDiv variants={{ hidden: { opacity: 0, x: 100 }, visible: { opacity: 1, x: 0, transition: { delay: 0.3, duration: 0.3 } } }}>
-                    <Row className="justify-content-center mb-5">
-                        <Col md={6} className="p-4 bg-white rounded shadow-sm">
-                            <h3 className="text-center mb-4">Contact Form</h3>
-                            <Form>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Name</Form.Label>
-                                    <Form.Control type="text" placeholder="Enter name" />
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Email address</Form.Label>
-                                    <Form.Control type="email" placeholder="Enter email" />
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Subject</Form.Label>
-                                    <Form.Control type="text" placeholder="Enter subject" />
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Message</Form.Label>
-                                    <Form.Control as="textarea" rows={3} placeholder="Enter your message" />
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Contact</Form.Label>
-                                    <Form.Select>
-                                        {contactCards.map((contact, index) => (
-                                            <option key={index}>{contact.name}</option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-
-                                <Button variant="primary" type="submit" className="w-100">
-                                    Submit
-                                </Button>
-                            </Form>
-                        </Col>
-                    </Row>
-                </InViewMotionDiv>
 
                 <InViewMotionDiv variants={{ hidden: { opacity: 0, scale: 0.8 }, visible: { opacity: 1, scale: 1, transition: { delay: 0.45, duration: 0.3 } } }}>
                     <Row className="mt-5 justify-content-center">

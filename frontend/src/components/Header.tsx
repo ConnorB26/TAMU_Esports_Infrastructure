@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navbar, FormControl, Nav, Form, Button, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
 import logo from '../assets/brand/maroon_logo.png';
 import webpLogo from '../assets/brand/maroon_logo.webp';
 import styles from './Header.module.css';
@@ -20,7 +19,7 @@ const NavLinks = ({ indices }: any) => {
     ];
 
     const scroll = () => {
-        window.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
     }
 
     return (
@@ -92,12 +91,7 @@ const Header: React.FC = () => {
                 <Container fluid className={styles.topDiv}>
                     <Navbar.Brand className={styles.brandText}>Texas A&M University Esports</Navbar.Brand>
                     <div style={{ width: baseImageSize * 2.5 }} />
-                    <Form className={styles.searchForm}>
-                        <FormControl type="text" placeholder="Search..." className={styles.searchControl} />
-                        <Button className={styles.searchButton}>
-                            <FaSearch />
-                        </Button>
-                    </Form>
+                    <Navbar.Brand className={styles.brandText}>Tagline Here</Navbar.Brand>
                 </Container>
             )}
             <Navbar.Brand
@@ -123,9 +117,6 @@ const Header: React.FC = () => {
                                 </Nav>
                             </Navbar.Collapse>
                         </Navbar>
-                        <Button className={styles.searchButtonSmall}>
-                            <FaSearch />
-                        </Button>
                     </>
                 ) : (
                     <>

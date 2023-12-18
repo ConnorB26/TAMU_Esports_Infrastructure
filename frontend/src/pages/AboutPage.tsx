@@ -42,11 +42,6 @@ const leadershipCards = [
         imageUrl: tamuLogo
     },
     {
-        name: "Sebastian Cerro",
-        position: "Director of Event Management",
-        imageUrl: tamuLogo
-    },
-    {
         name: "Alan DeMartini",
         position: "Director of HR",
         imageUrl: tamuLogo
