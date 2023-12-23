@@ -3,53 +3,56 @@ import { Accordion, Card, Container } from 'react-bootstrap';
 import styles from './AboutPage.module.css';
 import '../styles/MaroonAccordion.css';
 import InViewMotionDiv from '../components/InViewMotionDiv';
-import tamuLogo from '../assets/brand/maroon_logo.webp';
+
+import alexd from '../assets/officers/Alex_DeLape.jpg';
+import piercer from '../assets/officers/Pierce_Ray.jpg';
+import naomik from '../assets/officers/Naomi_Kim.jpg';
+import sreyas from '../assets/officers/Sreya_Suresh.jpg';
+import jasono from '../assets/officers/Jason_Owen.jpg';
+import danielg from '../assets/officers/Daniel_Guajardo.jpg';
+import aland from '../assets/officers/Alan_DeMartini.jpg';
+import faithl from '../assets/officers/Faith_Lass.jpg';
 
 const leadershipCards = [
     {
         name: "Alex DeLape",
         position: "President",
-        imageUrl: tamuLogo
+        imageUrl: alexd
     },
     {
         name: "Pierce Ray",
         position: "Vice President",
-        imageUrl: tamuLogo
+        imageUrl: piercer
     },
     {
         name: "Naomi Kim",
         position: "VP Competitive",
-        imageUrl: tamuLogo
+        imageUrl: naomik
     },
     {
         name: "Sreya Suresh",
-        position: "VP Operations",
-        imageUrl: tamuLogo
+        position: "VP Operations & Director of Social Media",
+        imageUrl: sreyas
     },
     {
         name: "Jason Owen",
         position: "Director of Finance",
-        imageUrl: tamuLogo
-    },
-    {
-        name: "Sreya Suresh",
-        position: "Director of Social Media",
-        imageUrl: tamuLogo
+        imageUrl: jasono
     },
     {
         name: "Daniel Guajardo",
         position: "Director of Content Management",
-        imageUrl: tamuLogo
+        imageUrl: danielg
     },
     {
         name: "Alan DeMartini",
         position: "Director of HR",
-        imageUrl: tamuLogo
+        imageUrl: aland
     },
     {
         name: "Faith Lass",
-        position: "Director of Secretary",
-        imageUrl: tamuLogo
+        position: "Director of Secretarial Services",
+        imageUrl: faithl
     },
 ];
 
