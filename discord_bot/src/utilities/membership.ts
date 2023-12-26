@@ -1,7 +1,7 @@
 import { Collection, Guild, GuildMember, Role, Snowflake, User } from 'discord.js';
 import DiscordSettingCache from '../cache/discordSettingCache';
 import { create as createUserCode, removeId as removeUserCode } from '../services/userCodeService';
-import { findOneDiscord as getUser, removeDiscord as removeUser } from '../services/userService';
+import { findOneDiscord as getUser } from '../services/userService';
 import { findOne as findCode } from '../services/confirmationCodeService';
 
 export async function giveMembership(guild: Guild, member: GuildMember, code: string) {
@@ -60,24 +60,6 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
 
     // Remove from user code table
     await removeUserCode(user.uin);
-}
-
-export async function cleanupMembership(discordID: string) {
-    let user;
-    try {
-        user = await getUser(discordID);
-    } catch (error) {
-
-    }
-
-    if (user) {
-        try {
-            await removeUserCode(user.uin);
-            await removeUser(discordID);
-        } catch (error) {
-
-        }
-    }
 }
 
 export async function getUnpaidDuesList(guild: Guild, specificRole?: Role): Promise<Map<User, Role[]>> {

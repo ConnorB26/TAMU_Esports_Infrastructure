@@ -108,7 +108,7 @@ client.on(Events.GuildMemberRemove, async member => {
         return;
     }
 
-    cleanupMembership(member.id);
+    userService.removeDiscord(member.id);
 });
 
 // Handle modal submissions
