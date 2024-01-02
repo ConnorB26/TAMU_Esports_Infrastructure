@@ -24,20 +24,16 @@ export class ReservationAuthService {
 
         // Add the 'is_admin' property to the user object for JWT payload
         const user = {
-            ...userInfo,
+            uin: reservationUser.uin,
             is_admin: reservationUser.is_admin
         };
-
+        
         return user;
     }
 
     async login(user: any) {
-        const payload = {
-            uin: user.uin,
-            is_admin: user.is_admin
-        };
         return {
-            access_token: this.jwtService.sign(payload),
+            access_token: this.jwtService.sign(user),
         };
     }
 }

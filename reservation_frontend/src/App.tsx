@@ -1,23 +1,24 @@
-import React from 'react';
-import './App.css';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import NotFoundPage from './pages/NotFoundPage';
+import BlankPage from './pages/BlankPage';
+import LoginPage from './pages/LoginPage';
+import withAuth from './utilities/withAuth';
+import Header from './components/Header';
+
+// Wrapped components
+const AuthBlankPage = withAuth(BlankPage);
+const AuthAdminPage = withAuth(BlankPage, true);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<><Header isAuthorized={true} /> <BlankPage /></>} />
+        <Route path="admin" element={<AuthAdminPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
