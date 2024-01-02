@@ -5,7 +5,6 @@ import { populateCaches } from "./utilities/populateCache";
 import roleCommandCache from "./cache/roleCommandCache";
 import { startTwitchPolling } from "./services/twitchService";
 import { CommandInteractionOptionResolver, Events } from "discord.js";
-import { cleanupMembership } from "./utilities/membership";
 import { registerUser } from "./utilities/users";
 import { User } from "./models/user";
 import EventSource from 'eventsource';
