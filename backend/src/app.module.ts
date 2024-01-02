@@ -24,6 +24,10 @@ import { QOTDLeaderboardController } from './controllers/qotdLeaderboard.control
 import { ApiKey } from './entities/apiKey.entity';
 import { ApiKeyModule } from './modules/apiKey.module';
 import { ApiKeyController } from './controllers/apiKey.controller';
+import { ReservationAuthModule } from './modules/reservationAuth.module';
+import { ReservationUserModule } from './modules/reservationUser.module';
+import { ReservationUser } from './entities/reservationUser.entity';
+import { ReservationUserController } from './controllers/reservationUser.controller';
 
 @Module({
     imports: [
@@ -35,7 +39,7 @@ import { ApiKeyController } from './controllers/apiKey.controller';
             password: config.DB_PASSWORD,
             database: config.DB_DATABASE,
             schema: config.DB_SCHEMA,
-            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand, QOTDEntry, ApiKey],
+            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand, QOTDEntry, ApiKey, ReservationUser],
         }),
         ConfirmationCodeModule,
         DiscordSettingModule,
@@ -44,7 +48,9 @@ import { ApiKeyController } from './controllers/apiKey.controller';
         RoleCommandModule,
         DiscordBotInteractionModule,
         QOTDLeaderboardModule,
-        ApiKeyModule
+        ApiKeyModule,
+        ReservationAuthModule,
+        ReservationUserModule
     ],
     controllers: [],
     providers: [],
@@ -61,7 +67,8 @@ export class AppModule {
                 UserCodeController,
                 RoleCommandController,
                 QOTDLeaderboardController,
-                ApiKeyController
+                ApiKeyController,
+                ReservationUserController
             );
     }
 }

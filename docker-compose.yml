@@ -5,18 +5,6 @@ networks:
     driver: bridge
 
 services:
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    env_file: .env.development
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - ./.env.development:/app/.env
-    networks:
-      - app-network
-
   backend:
     build:
       context: ./backend
@@ -44,34 +32,3 @@ services:
       - app-network
     depends_on:
       - backend
-
-  strapi:
-    build:
-      context: ./content-management-system
-      dockerfile: Dockerfile.dev
-    container_name: content_management_system
-    image: strapi:latest
-    restart: unless-stopped
-    env_file: .env.development
-    environment:
-      HOST: ${CMS_HOST}
-      PORT: ${CMS_PORT}
-      APP_KEYS: ${APP_KEYS}
-      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
-      JWT_SECRET: ${JWT_SECRET}
-      DATABASE_CLIENT: "postgres"
-      DATABASE_NAME: ${DB_DATABASE}
-      DATABASE_HOST: ${DB_HOST}
-      DATABASE_PORT: ${DB_PORT}
-      DATABASE_USERNAME: ${DB_USERNAME}
-      DATABASE_PASSWORD: ${DB_PASSWORD}
-      DATABASE_SCHEMA: ${STRAPI_DB_SCHEMA}
-      API_TOKEN_SALT: ${API_TOKEN_SALT}
-      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
-    volumes:
-      - ./content-management-system:/app
-      - ./.env.development:/.env
-    ports:
-      - "1337:1337"
-    networks:
-      - app-network
