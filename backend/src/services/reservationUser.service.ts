@@ -32,9 +32,15 @@ export class ReservationUserService {
     }
 
     async update(uin: string, updateDto: Partial<ReservationUser>): Promise<ReservationUser> {
-        const entity = await this.findOne(uin);
-        const updatedEntity = Object.assign(entity, updateDto);
-        return this.reservationUserRepository.save(updatedEntity);
+        let entity = await this.reservationUserRepository.findOne({ where: { uin } });
+
+        if (!entity) {
+            entity = this.reservationUserRepository.create({ uin, ...updateDto });
+        } else {
+            Object.assign(entity, updateDto);
+        }
+
+        return this.reservationUserRepository.save(entity);
     }
 
     async save(createDto: Partial<ReservationUser>): Promise<ReservationUser> {
