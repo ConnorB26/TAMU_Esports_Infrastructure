@@ -10,7 +10,7 @@ export class DiscordReservationStrategy extends PassportStrategy(Strategy, 'disc
     constructor(private userService: UserService) {
         super({
             clientID: config.DISCORD_CLIENT_ID,
-            clientSecret: config.DISCORD_TOKEN,
+            clientSecret: config.DISCORD_CLIENT_SECRET,
             callbackURL: config.DISCORD_CALLBACK_URL,
             scope: ['identify'],
         });
