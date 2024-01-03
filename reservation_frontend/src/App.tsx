@@ -3,21 +3,25 @@ import NotFoundPage from './pages/NotFoundPage';
 import BlankPage from './pages/BlankPage';
 import LoginPage from './pages/LoginPage';
 import withAuth from './utilities/withAuth';
-import Header from './components/Header';
+import { AuthProvider } from './utilities/AuthContext';
 
 // Wrapped components
-const AuthBlankPage = withAuth(BlankPage);
-const AuthAdminPage = withAuth(BlankPage, true);
+const AuthBlankPage = withAuth(BlankPage, "default");
+const AuthReservationPage = withAuth(BlankPage, "reservation");
+const AuthAdminPage = withAuth(BlankPage, "admin");
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route index element={<><Header isAuthorized={true} /> <BlankPage /></>} />
-        <Route path="admin" element={<AuthAdminPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route index element={<AuthBlankPage />} />
+          <Route path="reservation" element={<AuthReservationPage />} />
+          <Route path="admin" element={<AuthAdminPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

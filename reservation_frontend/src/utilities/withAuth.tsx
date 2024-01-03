@@ -1,70 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import { ComponentType } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import Header from '../components/Header';
-import { getCookie } from './cookieUtils';
-import { checkTokenValidity } from './authService';
 import { Container, Spinner } from 'react-bootstrap';
 
-interface DecodedToken {
-    uin: string;
-    is_admin: boolean;
-}
-
-const withAuth = (WrappedComponent: React.ComponentType, adminOnly: boolean = false) => {
+const withAuth = (WrappedComponent: ComponentType<any>, accessLevel = 'default') => {
     return (props: any) => {
-        const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-        const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
-        const [isLoading, setIsLoading] = useState<boolean>(true);
+        const { isAuthenticated, isLoading, user } = useAuth();
 
-        useEffect(() => {
-            const authToken = getCookie('authToken');
-            if (!authToken) {
-                setIsLoading(false);
-                setIsAuthenticated(false);
-                setIsAuthorized(false);
-                return;
+        const hasAccess = () => {
+            switch (accessLevel) {
+                case 'admin':
+                    return user?.is_admin;
+                case 'reservation':
+                    return user?.reservation_access;
+                default:
+                    return isAuthenticated;
             }
+        };
 
-            const validateToken = async () => {
-                const response = await checkTokenValidity(authToken);
-                if (!response.valid) {
-                    setIsAuthenticated(false);
-                    setIsAuthorized(false);
-                    setIsLoading(false);
-                    return;
-                }
-
-                try {
-                    const decoded: DecodedToken = response.decoded;
-                    setIsAuthenticated(true);
-                    setIsAuthorized(adminOnly ? decoded.is_admin : true);
-                } catch (error) {
-                    setIsAuthenticated(false);
-                    setIsAuthorized(false);
-                }
-                setIsLoading(false);
-            };
-
-            validateToken();
-        }, []);
-
-        if (isLoading) {
-            return <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-                <Spinner />
-            </Container>;
+        if(isLoading) {
+            return (
+                <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+                    <Spinner animation="border" />
+                </Container>
+            );
         }
 
-        if (!isAuthenticated) {
-            return <Navigate to="/login" />;
-        }
-
-        if (!isAuthorized) {
-            return <Navigate to="/" />;
+        if (!hasAccess()) {
+            return <Navigate to={isAuthenticated ? "/" : "/login"} />;
         }
 
         return (
             <>
-                <Header isAuthorized={isAuthorized} />
+                <Header />
                 <WrappedComponent {...props} />
             </>
         );

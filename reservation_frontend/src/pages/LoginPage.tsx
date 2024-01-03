@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Toast, ToastContainer } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { oauthUrl } from '../config';
-import { setCookie, getCookie } from '../utilities/cookieUtils';
-import { checkTokenValidity } from '../utilities/authService';
+import { oauthUrl } from '../utilities/config';
+import { useAuth } from '../utilities/AuthContext';
 
 const LoginPage: React.FC = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const { isAuthenticated, validateToken } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+
         const query = new URLSearchParams(location.search);
         const token = query.get('token');
         const success = query.get('success');
         const failure = query.get('failure');
-
-        // Check if already have a valid token
-        const existingToken = getCookie('authToken');
-        if (existingToken) {
-            validateExistingToken(existingToken);
-        }
 
         if (success) {
             setToastMessage('Login successful!');
@@ -32,28 +30,9 @@ const LoginPage: React.FC = () => {
         }
 
         if (token) {
-            validateAndHandleToken(token);
+            validateToken(token);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location]);
-
-    const validateExistingToken = async (token: string) => {
-        const isValid = await checkTokenValidity(token);
-        if (isValid) {
-            navigate('/');
-        }
-    };
-
-    const validateAndHandleToken = async (token: string) => {
-        const isValid = await checkTokenValidity(token);
-        if (isValid) {
-            setCookie('authToken', token, 3600);
-            navigate('/');
-        } else {
-            setToastMessage('Invalid token. Please try logging in again.');
-            setShowToast(true);
-        }
-    };
+    }, [location, isAuthenticated, validateToken, navigate]);
 
     const handleLoginClick = () => {
         window.location.href = oauthUrl;

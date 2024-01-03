@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { backendUrl } from '../config';
+import { backendUrl } from './config';
 
 export const checkTokenValidity = async (token: string): Promise<any> => {
     try {

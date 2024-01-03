@@ -1,12 +1,11 @@
 import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../utilities/AuthContext';
 
-interface HeaderProps {
-    isAuthorized: boolean;
-}
+const Header: React.FC = () => {
+    const { user } = useAuth();
 
-const AppNavbar: React.FC<HeaderProps> = ({ isAuthorized }) => {
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -15,8 +14,8 @@ const AppNavbar: React.FC<HeaderProps> = ({ isAuthorized }) => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={NavLink} to="/" end>Home</Nav.Link>
-                        {isAuthorized && <Nav.Link as={NavLink} to="/admin" end>Admin</Nav.Link>}
-                        {/* More NavLink components can be added here */}
+                        {user?.reservation_access && <Nav.Link as={NavLink} to="/reservation" end>Reservation</Nav.Link>}
+                        {user?.is_admin && <Nav.Link as={NavLink} to="/admin" end>Admin</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -24,4 +23,4 @@ const AppNavbar: React.FC<HeaderProps> = ({ isAuthorized }) => {
     );
 };
 
-export default AppNavbar;
+export default Header;
