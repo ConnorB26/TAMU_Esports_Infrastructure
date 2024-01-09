@@ -18,7 +18,7 @@ export class ReservationUserController {
 
     @Get(':uin')
     findByUser(@Param('uin') uin: string) {
-        return this.reservationUserService.findOne(uin);
+        return this.reservationUserService.findOne({ uin });
     }
 
     @Delete(':uin')

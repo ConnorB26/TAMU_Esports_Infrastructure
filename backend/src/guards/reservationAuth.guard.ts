@@ -1,20 +1,13 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { config } from 'src/config';
+import { Injectable, ExecutionContext } from '@nestjs/common';
+import { DiscordAuthGuard } from './discordAuth.guard';
 
 @Injectable()
-export class ReservationAuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) { }
-
+export class ReservationAuthGuard extends DiscordAuthGuard {
     canActivate(context: ExecutionContext): boolean {
-        const request = context.switchToHttp().getRequest();
-        try {
-            const jwt = request.cookies['authToken'];
-            const payload = this.jwtService.verify(jwt);
-            request.user = payload;
-            return true;
-        } catch (error) {
+        if (!super.canActivate(context)) {
             return false;
         }
+        const request = context.switchToHttp().getRequest();
+        return request.user && request.user.reservation_access;
     }
 }

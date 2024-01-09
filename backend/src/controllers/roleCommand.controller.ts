@@ -18,21 +18,21 @@ export class RoleCommandController {
 
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.roleCommandService.findOne(id);
+        return this.roleCommandService.findOne({ id });
     }
 
     @Delete(':id')
     remove(@Param('id', ParseIntPipe) id: number) {
-        return this.roleCommandService.remove(id);
+        return this.roleCommandService.remove(id.toString());
     }
 
     @Delete(':role_id/:command_name')
     removeVals(@Param('role_id') role_id: string, @Param('command_name') command_name: string) {
-        return this.roleCommandService.removeVals(role_id, command_name);
+        return this.roleCommandService.removeByRoleIdAndCommandName(role_id, command_name);
     }
 
     @Put(':id')
     update(@Param('id', ParseIntPipe) id: number, @Body() roleCommandDto: RoleCommand) {
-        return this.roleCommandService.update(id, roleCommandDto);
+        return this.roleCommandService.update(id.toString(), roleCommandDto);
     }
 }

@@ -1,91 +1,62 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
+import { BaseService } from './base.service';
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
-export class UserService {
+export class UserService extends BaseService<User> {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-    ) { }
-
-    findAll(): Promise<User[]> {
-        return this.userRepository.find();
+    ) {
+        super(userRepository);
     }
 
-    async findOne(uin: string): Promise<User> {
-        const entity = await this.userRepository.findOne({
-            where: {
-                uin: uin
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`User with that UIN not found.`);
-        }
-        return entity;
+    async findOneByUin(uin: string): Promise<User> {
+        return this.findOne({ uin });
     }
 
-    async findOneDiscord(discordID: string): Promise<User> {
-        const entity = await this.userRepository.findOne({
-            where: {
-                discord_id: discordID
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`User with discord ID ${discordID} not found.`);
-        }
-        return entity;
-    }
-
-    async remove(uin: string): Promise<void> {
-        const entity = await this.findOne(uin);
-        await this.userRepository.remove(entity);
-    }
-
-    async removeDiscord(discordID: string): Promise<void> {
-        const entity = await this.findOneDiscord(discordID);
-        await this.userRepository.remove(entity);
-    }
-
-    async update(uin: string, updateDto: Partial<User>): Promise<User> {
-        const entity = await this.findOne(uin);
-        const updatedEntity = Object.assign(entity, updateDto);
-        return this.userRepository.save(updatedEntity);
-    }
-
-    async updateDiscord(discordID: string, updateDto: Partial<User>): Promise<User> {
-        const entity = await this.findOneDiscord(discordID);
-        const updatedEntity = Object.assign(entity, updateDto);
-        return this.userRepository.save(updatedEntity);
+    async findOneByDiscordId(discordId: string): Promise<User> {
+        return this.findOne({ discord_id: discordId });
     }
 
     async save(createDto: Partial<User>): Promise<User> {
-        const uinExists = await this.userRepository.findOne({
-            where: { 
-                uin: createDto.uin 
-            }
-        });
+        const uinExists = await this.findOneByUin(createDto.uin);
+        const discordIdExists = await this.findOneByDiscordId(createDto.discord_id);
 
-        const discordIdExists = await this.userRepository.findOne({
-            where: { 
-                discord_id: createDto.discord_id 
-            }
-        });
-
-        if (uinExists) {
-            throw new ConflictException(`User with that UIN already exists.`);
+        if (uinExists || discordIdExists) {
+            throw new ConflictException(`User with provided UIN or Discord ID already exists.`);
         }
 
-        if (discordIdExists) {
-            throw new ConflictException(`You are already registered.`);
-        }
+        return super.save(createDto);
+    }
 
-        const newEntity = this.userRepository.create(createDto as any);
-        try {
-            return await this.userRepository.save(newEntity as any);
-        } catch (error) {
-            throw new BadRequestException(`Failed to save the user: ${error.message}`);
-        }
+    async updateByUin(uin: string, updateDto: Partial<User>): Promise<User> {
+        let entity = await this.findOneByUin(uin);
+        Object.assign(entity, updateDto);
+        return this.userRepository.save(entity);
+    }
+
+    async updateByDiscordId(discordId: string, updateDto: Partial<User>): Promise<User> {
+        let entity = await this.findOneByDiscordId(discordId);
+        Object.assign(entity, updateDto);
+        return this.userRepository.save(entity);
+    }
+
+    async removeByUin(uin: string): Promise<void> {
+        const entity = await this.findOneByUin(uin);
+        await this.userRepository.remove(entity);
+    }
+
+    async removeByDiscordId(discordId: string): Promise<void> {
+        const entity = await this.findOneByDiscordId(discordId);
+        await this.userRepository.remove(entity);
+    }
+
+    async hasPaidDues(uin: string): Promise<boolean> {
+        const user = await this.findOne({ uin, has_paid_dues: true });
+        return !!user;
     }
 }

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ReservationUserService } from './reservationUser.service';
 import { User } from 'src/entities/user.entity';
 import { ReservationUser } from 'src/entities/reservationUser.entity';
+import { DiscordUser } from 'src/entities/discordUser.entity';
 
 @Injectable()
 export class ReservationAuthService {
@@ -11,7 +12,7 @@ export class ReservationAuthService {
         private reservationUserService: ReservationUserService
     ) { }
 
-    async validateUser(userInfo: any): Promise<any> {
+    async validateUser(userInfo: any): Promise<DiscordUser> {
         if (!userInfo.user.has_paid_dues) {
             throw new NotFoundException('User not authorized for the reservation system.');
         }
@@ -23,7 +24,7 @@ export class ReservationAuthService {
 
         }
 
-        const user = {
+        const user: DiscordUser = {
             uin: userInfo.user.uin,
             reservation_access: !!reservationUser,
             is_admin: reservationUser && reservationUser.is_admin
@@ -32,7 +33,7 @@ export class ReservationAuthService {
         return user;
     }
 
-    async login(user: any) {
+    async login(user: DiscordUser) {
         return {
             access_token: this.jwtService.sign(user),
         };

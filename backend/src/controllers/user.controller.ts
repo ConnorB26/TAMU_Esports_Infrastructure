@@ -18,12 +18,12 @@ export class UserController {
 
     @Get(':uin')
     findOne(@Param('uin') uin: string) {
-        return this.userService.findOne(uin);
+        return this.userService.findOne({ uin });
     }
 
     @Get('discord/:id')
     findOneDiscord(@Param('id') id: string) {
-        return this.userService.findOneDiscord(id);
+        return this.userService.findOneByDiscordId(id);
     }
 
     @Delete(':uin')
@@ -33,7 +33,7 @@ export class UserController {
 
     @Delete('discord/:id')
     removeDiscord(@Param('id') id: string) {
-        return this.userService.removeDiscord(id);
+        return this.userService.removeByDiscordId(id);
     }
 
     @Put(':uin')
@@ -43,6 +43,6 @@ export class UserController {
 
     @Put('discord/:id')
     updateDiscord(@Param('id') id: string, @Body() userDto: UserDto) {
-        return this.userService.updateDiscord(id, userDto);
+        return this.userService.updateByDiscordId(id, userDto);
     }
 }

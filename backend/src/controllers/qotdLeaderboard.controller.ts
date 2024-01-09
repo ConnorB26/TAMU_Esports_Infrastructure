@@ -18,7 +18,7 @@ export class QOTDLeaderboardController {
 
     @Get(':discord_id')
     findByDiscord(@Param('discord_id') discord_id: string) {
-        return this.qotdService.findOne(discord_id);
+        return this.qotdService.findOne({ discord_id });
     }
 
     @Delete(':discord_id')

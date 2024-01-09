@@ -28,21 +28,21 @@ export class UserCodeController {
 
     @Get(':uin/:code')
     findOne(@Param('uin') uin: string, @Param('code') code: string) {
-        return this.userCodeService.findOne(uin, code);
+        return this.userCodeService.findOneByUinAndCode(uin, code);
     }
 
     @Delete(':uin/:code')
     remove(@Param('uin') uin: string, @Param('code') code: string) {
-        return this.userCodeService.remove(uin, code);
+        return this.userCodeService.removeByUinAndCode(uin, code);
     }
 
     @Delete(':uin')
     removeUser(@Param('uin') uin: string) {
-        return this.userCodeService.removeUser(uin);
+        return this.userCodeService.removeByUser(uin);
     }
 
     @Put(':uin/:code')
     update(@Param('uin') uin: string, @Param('code') code: string, @Body() userCodeDto: UserCodeDto) {
-        return this.userCodeService.update(uin, code, userCodeDto);
+        return this.userCodeService.updateByUinAndCode(uin, code, userCodeDto);
     }
 }

@@ -17,7 +17,7 @@ export class DiscordReservationStrategy extends PassportStrategy(Strategy, 'disc
 
     async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
         try {
-            const user = await this.userService.findOneDiscord(profile.id);
+            const user = await this.userService.findOneByDiscordId(profile.id);
             return { user, exists: true };
         } catch (error) {
             return { exists: false };

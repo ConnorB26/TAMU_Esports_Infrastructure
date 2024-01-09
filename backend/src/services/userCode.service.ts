@@ -1,104 +1,65 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserCode } from 'src/entities/userCode.entity';
+import { BaseService } from './base.service';
 import { UserService } from './user.service';
 import { ConfirmationCodeService } from './confirmationCode.service';
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
-export class UserCodeService {
+export class UserCodeService extends BaseService<UserCode> {
     constructor(
         @InjectRepository(UserCode)
         private userCodeRepository: Repository<UserCode>,
         private userService: UserService,
         private confirmationCodeService: ConfirmationCodeService
-    ) { }
-
-    findAll(): Promise<UserCode[]> {
-        return this.userCodeRepository.find();
+    ) {
+        super(userCodeRepository);
     }
 
-    async findOne(uin: string, code: string): Promise<UserCode> {
-        const entity = await this.userCodeRepository.findOne({
-            where: {
-                uin: uin,
-                code: code
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`Membership with uin ${uin} and code ${code} not found.`);
-        }
-        return entity;
+    async findOneByUinAndCode(uin: string, code: string): Promise<UserCode> {
+        return this.findOne({ uin, code });
     }
 
     async findByUser(uin: string): Promise<UserCode> {
-        const entity = await this.userCodeRepository.findOne({
-            where: {
-                uin: uin
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`Membership with uin ${uin} not found.`);
-        }
-        return entity;
+        return this.findOne({ uin });
     }
 
     async findByCode(code: string): Promise<UserCode> {
-        const entity = await this.userCodeRepository.findOne({
-            where: {
-                code: code
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`Membership with code ${code} not found.`);
-        }
-        return entity;
+        return this.findOne({ code });
     }
 
-    async remove(uin: string, code: string): Promise<void> {
-        const entity = await this.findOne(uin, code);
+    async removeByUinAndCode(uin: string, code: string): Promise<void> {
+        const entity = await this.findOneByUinAndCode(uin, code);
         await this.userCodeRepository.remove(entity);
     }
 
-    async removeUser(uin: string): Promise<void> {
+    async removeByUser(uin: string): Promise<void> {
         const entity = await this.findByUser(uin);
         await this.userCodeRepository.remove(entity);
     }
 
-    async update(uin: string, code: string, updateDto: Partial<UserCode>): Promise<UserCode> {
-        const entity = await this.findOne(uin, code);
-        const updatedEntity = Object.assign(entity, updateDto);
-        return this.userCodeRepository.save(updatedEntity);
-    }
-
     async save(createDto: Partial<UserCode>): Promise<UserCode> {
-        const existingUin = await this.userCodeRepository.findOne({ 
-            where: { uin: createDto.uin } 
-        });
+        const existingUin = await this.findOne({ uin: createDto.uin });
+        const existingCode = await this.findOne({ code: createDto.code });
 
-        const existingCode = await this.userCodeRepository.findOne({ 
-            where: { code: createDto.code } 
-        });
-
-        if (existingUin) {
-            throw new ConflictException(`Membership with UIN ${createDto.uin} already exists.`);
-        }
-
-        if (existingCode) {
-            throw new ConflictException(`Membership with code ${createDto.code} already exists.`);
+        if (existingUin || existingCode) {
+            throw new ConflictException(`Membership with provided UIN or code already exists.`);
         }
 
         // Check if linked user exists
-        await this.userService.findOne(createDto.uin);
+        await this.userService.findOne({ uin: createDto.uin });
 
         // Check if linked confirmation code exists
-        await this.confirmationCodeService.findOne(createDto.code);
+        await this.confirmationCodeService.findOne({ code: createDto.code });
 
-        const newEntity = this.userCodeRepository.create(createDto as any);
-        try {
-            return await this.userCodeRepository.save(newEntity as any);
-        } catch (error) {
-            throw new BadRequestException(`Failed to save the membership: ${error.message}`);
-        }
+        return super.save(createDto);
+    }
+
+    async updateByUinAndCode(uin: string, code: string, updateDto: Partial<UserCode>): Promise<UserCode> {
+        let entity = await this.findOneByUinAndCode(uin, code);
+        Object.assign(entity, updateDto);
+        return this.userCodeRepository.save(entity);
     }
 }

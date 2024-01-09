@@ -18,7 +18,7 @@ export class ConfirmationCodeController {
 
     @Get(':code')
     findOne(@Param('code') code: string) {
-        return this.confirmationCodeService.findOne(code);
+        return this.confirmationCodeService.findOne({ code });
     }
 
     @Delete(':code')

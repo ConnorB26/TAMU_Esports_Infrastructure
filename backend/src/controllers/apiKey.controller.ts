@@ -18,16 +18,16 @@ export class ApiKeyController {
 
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.apiKeyService.findOne(id);
+        return this.apiKeyService.findOne({ id });
     }
 
     @Delete(':id')
     remove(@Param('id', ParseIntPipe) id: number) {
-        return this.apiKeyService.remove(id);
+        return this.apiKeyService.remove(id.toString());
     }
 
     @Put(':id')
     update(@Param('id', ParseIntPipe) id: number, @Body() apiKeyDto: ApiKey) {
-        return this.apiKeyService.update(id, apiKeyDto);
+        return this.apiKeyService.update(id.toString(), apiKeyDto);
     }
 }

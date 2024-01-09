@@ -1,70 +1,41 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RoleCommand } from 'src/entities/roleCommand.entity';
+import { BaseService } from './base.service';
 
 @Injectable()
-export class RoleCommandService {
+export class RoleCommandService extends BaseService<RoleCommand> {
     constructor(
         @InjectRepository(RoleCommand)
         private roleCommandRepository: Repository<RoleCommand>,
-    ) { }
-
-    findAll(): Promise<RoleCommand[]> {
-        return this.roleCommandRepository.find();
+    ) {
+        super(roleCommandRepository);
     }
 
-    async findOne(id: number): Promise<RoleCommand> {
-        const entity = await this.roleCommandRepository.findOne({
-            where: {
-                id: id
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`Permission with id ${id} not found.`);
-        }
-        return entity;
+    async findOneByRoleIdAndCommandName(roleId: string, commandName: string): Promise<RoleCommand> {
+        return this.findOne({ role_id: roleId, command_name: commandName });
     }
 
-    async remove(id: number): Promise<void> {
-        const entity = await this.findOne(id);
+    async removeByRoleIdAndCommandName(roleId: string, commandName: string): Promise<void> {
+        const entity = await this.findOneByRoleIdAndCommandName(roleId, commandName);
         await this.roleCommandRepository.remove(entity);
-    }
-
-    async removeVals(role_id: string, command_name: string): Promise<void> {
-        const entity = await this.roleCommandRepository.findOne({
-            where: {
-                role_id: role_id,
-                command_name: command_name
-            }
-        });
-        if (!entity) {
-            throw new NotFoundException(`Permission with role ID ${role_id} and command name ${command_name} not found.`);
-        }
-        await this.roleCommandRepository.remove(entity);
-    }
-
-    async update(id: number, updateDto: Partial<RoleCommand>): Promise<RoleCommand> {
-        const entity = await this.findOne(id);
-        const updatedEntity = Object.assign(entity, updateDto);
-        return this.roleCommandRepository.save(updatedEntity);
     }
 
     async save(createDto: Partial<RoleCommand>): Promise<RoleCommand> {
-        const exists = await this.roleCommandRepository.findOne({
-            where: { 
-                role_id: createDto.role_id, 
-                command_name: createDto.command_name 
-            }
-        });
+        const exists = await this.findOneByRoleIdAndCommandName(createDto.role_id, createDto.command_name);
         if (exists) {
-            throw new ConflictException(`Permission for the command name ${createDto.command_name} already exists for role id ${createDto.role_id}.`);
+            throw new ConflictException(`Permission for command name ${createDto.command_name} already exists for role ID ${createDto.role_id}.`);
         }
-        const newEntity = this.roleCommandRepository.create(createDto as any);
-        try {
-            return await this.roleCommandRepository.save(newEntity as any);
-        } catch (error) {
-            throw new BadRequestException(`Failed to save the permission: ${error.message}`);
+        return super.save(createDto);
+    }
+
+    async updateById(id: number, updateDto: Partial<RoleCommand>): Promise<RoleCommand> {
+        let entity = await this.findOne({ id });
+        if (!entity) {
+            throw new NotFoundException(`Permission with ID ${id} not found.`);
         }
+        Object.assign(entity, updateDto);
+        return this.roleCommandRepository.save(entity);
     }
 }

@@ -18,21 +18,21 @@ export class DiscordSettingController {
 
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.discordSettingService.findOne(id);
+        return this.discordSettingService.findOne({ id });
     }
 
     @Delete(':id')
     remove(@Param('id', ParseIntPipe) id: number) {
-        return this.discordSettingService.remove(id);
+        return this.discordSettingService.remove(id.toString());
     }
 
     @Put(':id')
     update(@Param('id', ParseIntPipe) id: number, @Body() discordSettingDto: DiscordSettingDto) {
-        return this.discordSettingService.update(id, discordSettingDto);
+        return this.discordSettingService.update(id.toString(), discordSettingDto);
     }
 
     @Put('/name/:name')
     updateName(@Param('name') name: string, @Body() discordSettingDto: DiscordSettingDto) {
-        return this.discordSettingService.updateName(name, discordSettingDto);
+        return this.discordSettingService.updateByName(name, discordSettingDto);
     }
 }
