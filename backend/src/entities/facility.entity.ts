@@ -20,3 +20,13 @@ export class Facility {
     @Column({ type: 'text', nullable: true })
     map_image_url: string;
 }
+
+export interface FacilityDTO {
+    id: number;
+    name: string;
+    location: string;
+    hours: string;
+    pc_specs: string;
+    map_image_url?: string;
+    games: string[];
+}

@@ -28,6 +28,14 @@ import { ReservationAuthModule } from './modules/reservationAuth.module';
 import { ReservationUserModule } from './modules/reservationUser.module';
 import { ReservationUser } from './entities/reservationUser.entity';
 import { ReservationUserController } from './controllers/reservationUser.controller';
+import { Facility } from './entities/facility.entity';
+import { FacilityGame } from './entities/facilityGame.entity';
+import { Game } from './entities/game.entity';
+import { Computer } from './entities/computer.entity';
+import { Reservation } from './entities/reservation.entity';
+import { ReservationComputer } from './entities/reservationComputer.entity';
+import { ReservationParticipant } from './entities/reservationParticipant.entity';
+import { ReservationCollectiveModule } from './modules/reservationCollective.module';
 
 @Module({
     imports: [
@@ -39,7 +47,23 @@ import { ReservationUserController } from './controllers/reservationUser.control
             password: config.DB_PASSWORD,
             database: config.DB_DATABASE,
             schema: config.DB_SCHEMA,
-            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand, QOTDEntry, ApiKey, ReservationUser],
+            entities: [
+                ConfirmationCode,
+                DiscordSetting,
+                User,
+                UserCode,
+                RoleCommand,
+                QOTDEntry,
+                ApiKey,
+                ReservationUser,
+                Facility,
+                FacilityGame,
+                Game,
+                Computer,
+                Reservation,
+                ReservationComputer,
+                ReservationParticipant
+            ],
         }),
         ConfirmationCodeModule,
         DiscordSettingModule,
@@ -49,8 +73,7 @@ import { ReservationUserController } from './controllers/reservationUser.control
         DiscordBotInteractionModule,
         QOTDLeaderboardModule,
         ApiKeyModule,
-        ReservationAuthModule,
-        ReservationUserModule
+        ReservationCollectiveModule
     ],
     controllers: [],
     providers: [],

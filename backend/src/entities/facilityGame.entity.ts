@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Game } from './game.entity';
 
 @Entity('facility_games')
 export class FacilityGame {
@@ -7,4 +8,8 @@ export class FacilityGame {
 
     @PrimaryColumn()
     game_id: number;
+
+    @ManyToOne(() => Game, game => game.facilityGames)
+    @JoinColumn({ name: 'game_id' })
+    game: Game;
 }

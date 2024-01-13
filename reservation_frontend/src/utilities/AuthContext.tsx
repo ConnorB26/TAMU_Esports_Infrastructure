@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import DecodedToken from '../models/DecodedToken';
 import { getCookie, setCookie } from './cookieUtils';
-import { checkTokenValidity } from './authService';
+import { checkTokenValidity } from '../services/authService';
 import { useLocation } from 'react-router-dom';
 
 interface AuthContextProps {

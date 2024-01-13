@@ -1,0 +1,52 @@
+.headerGradient {
+    background: linear-gradient(to bottom, #500000 0%, #500000 77%, #3c0000 100%);
+    position: sticky;
+}
+
+.navContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) scale(1.5);
+    height: auto;
+    width: 50px;
+}
+
+.brandText {
+    color: #fff !important;
+    margin-left: 70px;
+}
+
+.navLink {
+    color: #fff !important;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.navLink:hover {
+    color: #ccc !important;
+}
+
+.active {
+    color: #ccc !important;
+}
+
+:global(.navbar-toggler) {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(.navbar-toggler-icon) {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 1.0)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+:global(.navbar-collapse) {
+    background: var(--bs-primary);
+}

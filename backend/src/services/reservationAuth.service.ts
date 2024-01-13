@@ -12,20 +12,20 @@ export class ReservationAuthService {
         private reservationUserService: ReservationUserService
     ) { }
 
-    async validateUser(userInfo: any): Promise<DiscordUser> {
-        if (!userInfo.user.has_paid_dues) {
+    async validateUser(userInfo: User): Promise<DiscordUser> {
+        if (!userInfo.has_paid_dues) {
             throw new NotFoundException('User not authorized for the reservation system.');
         }
 
         let reservationUser: ReservationUser | null;
         try {
-            reservationUser = await this.reservationUserService.findOne(userInfo.user.uin);
+            reservationUser = await this.reservationUserService.findOneByUin(userInfo.uin);
         } catch (error) {
 
         }
 
         const user: DiscordUser = {
-            uin: userInfo.user.uin,
+            uin: userInfo.uin,
             reservation_access: !!reservationUser,
             is_admin: reservationUser && reservationUser.is_admin
         };

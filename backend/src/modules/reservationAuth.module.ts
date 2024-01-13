@@ -20,5 +20,6 @@ import { UserModule } from './user.module';
     ],
     providers: [ReservationAuthService, DiscordReservationStrategy],
     controllers: [ReservationAuthController],
+    exports: [ReservationAuthService, DiscordReservationStrategy, JwtModule, PassportModule]
 })
-export class ReservationAuthModule {}
+export class ReservationAuthModule { }

@@ -2,21 +2,21 @@ import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
 import { config } from 'src/config';
 import { ReservationAuthService } from 'src/services/reservationAuth.service';
 import { JwtService } from '@nestjs/jwt';
-import { ReservationAuthGuard } from 'src/guards/reservationAuth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('reservation_auth')
 export class ReservationAuthController {
     constructor(private reservationAuthService: ReservationAuthService, private jwtService: JwtService) { }
 
     @Get('discord/redirect')
-    @UseGuards(ReservationAuthGuard)
+    @UseGuards(AuthGuard('discord_reservation'))
     async discordAuthRedirect(@Req() req, @Res() res) {
         if (!req.user.exists) {
             return res.redirect(config.DISCORD_FAILURE_REDIRECT_URL);
         }
 
         try {
-            const user = await this.reservationAuthService.validateUser(req.user);
+            const user = await this.reservationAuthService.validateUser(req.user.user);
             const jwt = await this.reservationAuthService.login(user);
 
             res.redirect(`${config.DISCORD_SUCCESS_REDIRECT_URL}&token=${jwt.access_token}`);

@@ -1,4 +1,8 @@
+import axios from "axios";
+
 const isDevelopment = process.env.REACT_APP_DEVELOPMENT === 'true';
+
+axios.defaults.withCredentials = true;
 
 export const backendUrl = isDevelopment
     ? 'http://localhost:3001'

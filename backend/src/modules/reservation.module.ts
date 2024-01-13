@@ -3,15 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReservationService } from '../services/reservation.service';
 import { ReservationController } from '../controllers/reservation.controller';
 import { Reservation } from '../entities/reservation.entity';
-import { ReservationParticipantService } from '../services/reservationParticipant.service';
-import { ReservationComputerService } from '../services/reservationComputer.service';
-import { ReservationParticipant } from '../entities/reservationParticipant.entity';
-import { ReservationComputer } from '../entities/reservationComputer.entity';
+import { ReservationComputerModule } from './reservationComputer.module';
+import { ReservationParticipantModule } from './reservationParticipant.module';
+import { UserModule } from './user.module';
+import { ReservationAuthModule } from './reservationAuth.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Reservation, ReservationParticipant, ReservationComputer])],
+    imports: [TypeOrmModule.forFeature([Reservation]), ReservationComputerModule, ReservationParticipantModule, UserModule, ReservationAuthModule],
     controllers: [ReservationController],
-    providers: [ReservationService, ReservationParticipantService, ReservationComputerService],
-    exports: [ReservationService, ReservationParticipantService, ReservationComputerService]
+    providers: [ReservationService],
+    exports: [ReservationService]
 })
 export class ReservationModule { }

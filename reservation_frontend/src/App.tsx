@@ -3,8 +3,9 @@ import BlankPage from './pages/BlankPage';
 import LoginPage from './pages/LoginPage';
 import withAuth from './utilities/withAuth';
 import { AuthProvider } from './utilities/AuthContext';
+import HomePage from './pages/HomePage';
 
-const AuthBlankPage = withAuth(BlankPage, "default");
+const AuthHomePage = withAuth(HomePage, "default");
 const AuthReservationPage = withAuth(BlankPage, "reservation");
 const AuthAdminPage = withAuth(BlankPage, "admin");
 
@@ -13,8 +14,8 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route index element={<AuthBlankPage />} />
-          <Route path="login" element={<LoginPage />} />
+          <Route path="" element={<AuthHomePage />} />
+          <Route index path="login" element={<LoginPage />} />
           <Route path="reservation" element={<AuthReservationPage />} />
           <Route path="admin" element={<AuthAdminPage />} />
           <Route path="*" element={<Navigate to="/login" />} />
