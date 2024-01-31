@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from './config';
 import { DiscordSettingModule } from './modules/discordSetting.module';
@@ -13,6 +13,17 @@ import { UserCodeModule } from './modules/userCode.module';
 import { RoleCommand } from './entities/roleCommand.entity';
 import { RoleCommandModule } from './modules/roleCommand.module';
 import { DiscordBotInteractionModule } from './modules/discordBotInteraction.module';
+import { QOTDEntry } from './entities/qotdLeaderboard.entity';
+import { QOTDLeaderboardModule } from './modules/qotdLeaderboard.module';
+import { ConfirmationCodeController } from './controllers/confirmationCode.controller';
+import { DiscordSettingController } from './controllers/discordSetting.controller';
+import { UserController } from './controllers/user.controller';
+import { UserCodeController } from './controllers/userCode.controller';
+import { RoleCommandController } from './controllers/roleCommand.controller';
+import { QOTDLeaderboardController } from './controllers/qotdLeaderboard.controller';
+import { ApiKey } from './entities/apiKey.entity';
+import { ApiKeyModule } from './modules/apiKey.module';
+import { ApiKeyController } from './controllers/apiKey.controller';
 
 @Module({
     imports: [
@@ -24,14 +35,16 @@ import { DiscordBotInteractionModule } from './modules/discordBotInteraction.mod
             password: config.DB_PASSWORD,
             database: config.DB_DATABASE,
             schema: config.DB_SCHEMA,
-            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand],
+            entities: [ConfirmationCode, DiscordSetting, User, UserCode, RoleCommand, QOTDEntry, ApiKey],
         }),
         ConfirmationCodeModule,
         DiscordSettingModule,
         UserModule,
         UserCodeModule,
         RoleCommandModule,
-        DiscordBotInteractionModule
+        DiscordBotInteractionModule,
+        QOTDLeaderboardModule,
+        ApiKeyModule
     ],
     controllers: [],
     providers: [],
@@ -41,6 +54,14 @@ export class AppModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(TokenMiddleware)
-            .forRoutes('*');
+            .forRoutes(
+                ConfirmationCodeController,
+                DiscordSettingController,
+                UserController,
+                UserCodeController,
+                RoleCommandController,
+                QOTDLeaderboardController,
+                ApiKeyController
+            );
     }
 }

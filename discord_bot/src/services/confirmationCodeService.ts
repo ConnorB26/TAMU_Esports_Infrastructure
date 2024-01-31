@@ -26,3 +26,7 @@ export async function update(code: string, confirmationCode: Partial<Confirmatio
 export async function remove(code: string): Promise<void> {
     return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${code}`));
 }
+
+export async function reset(): Promise<void> {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/reset`));
+}

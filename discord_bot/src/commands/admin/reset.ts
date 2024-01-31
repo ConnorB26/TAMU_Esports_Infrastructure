@@ -1,6 +1,8 @@
-import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, Guild, SlashCommandBuilder } from "discord.js";
 import * as userCodeService from '../../services/userCodeService';
 import * as confirmationCodeService from '../../services/confirmationCodeService';
+import * as userService from '../../services/userService';
+import { resetMembershipRoles } from "../../utilities/membership";
 
 export const data = new SlashCommandBuilder()
     .setName('reset')
@@ -10,17 +12,15 @@ export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-        const userCodes = await userCodeService.findAll();
-        for (const userCode of userCodes) {
-            await userCodeService.remove(userCode.uin, userCode.code);
-        }
-        const codes = await confirmationCodeService.findAll();
-        for (const code of codes) {
-            await confirmationCodeService.remove(code.code);
-        }
+        const ids = await userService.getResetDiscordIDs();
+        await resetMembershipRoles(interaction.guild as Guild, ids);
+
+        await userCodeService.reset();
+        await confirmationCodeService.reset();
+
         await interaction.editReply('Cleared all memberships and membership confirmation codes');
     } catch (error) {
         console.error(error);
-        await interaction.editReply('Failed to reset the user codes table.');
+        await interaction.editReply('Failed to reset memberships');
     }
 }

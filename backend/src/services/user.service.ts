@@ -38,6 +38,16 @@ export class UserService {
         return entity;
     }
 
+    async getDiscordIDsForReset(): Promise<string[]> {
+        const users = await this.userRepository.find({
+            where: {
+                has_paid_dues: true
+            }
+        });
+
+        return users.map(u => u.discord_id);
+    }
+
     async remove(uin: string): Promise<void> {
         const entity = await this.findOne(uin);
         await this.userRepository.remove(entity);
@@ -62,14 +72,14 @@ export class UserService {
 
     async save(createDto: Partial<User>): Promise<User> {
         const uinExists = await this.userRepository.findOne({
-            where: { 
-                uin: createDto.uin 
+            where: {
+                uin: createDto.uin
             }
         });
 
         const discordIdExists = await this.userRepository.findOne({
-            where: { 
-                discord_id: createDto.discord_id 
+            where: {
+                discord_id: createDto.discord_id
             }
         });
 

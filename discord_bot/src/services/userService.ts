@@ -19,6 +19,10 @@ export async function findOneDiscord(id: string): Promise<User> {
     return withAxiosErrorHandling(() => axios.get<User>(`${baseURL}/discord/${id}`));
 }
 
+export async function getResetDiscordIDs(): Promise<string[]> {
+    return withAxiosErrorHandling(() => axios.get<string[]>(`${baseURL}/reset`));
+}
+
 export async function create(user: Partial<User>): Promise<User> {
     return withAxiosErrorHandling(() => axios.post<User>(baseURL, user));
 }

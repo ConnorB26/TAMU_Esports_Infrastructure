@@ -31,6 +31,11 @@ export class ConfirmationCodeService {
         await this.confirmationCodeRepository.remove(entity);
     }
 
+    async removeAll(): Promise<void> {
+        const entities = await this.findAll();
+        await this.confirmationCodeRepository.remove(entities);
+    }
+
     async update(code: string, updateDto: Partial<ConfirmationCode>): Promise<ConfirmationCode> {
         const entity = await this.findOne(code);
         const updatedEntity = Object.assign(entity, updateDto);

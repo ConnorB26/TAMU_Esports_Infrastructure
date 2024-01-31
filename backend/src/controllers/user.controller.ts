@@ -16,6 +16,11 @@ export class UserController {
         return this.userService.findAll();
     }
 
+    @Get('reset')
+    getResetDiscordIDs() {
+        return this.userService.getDiscordIDsForReset();
+    }
+
     @Get(':uin')
     findOne(@Param('uin') uin: string) {
         return this.userService.findOne(uin);
