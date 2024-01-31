@@ -65,6 +65,11 @@ export class UserCodeService {
         await this.userCodeRepository.remove(entity);
     }
 
+    async removeAll(): Promise<void> {
+        const entities = await this.findAll();
+        await this.userCodeRepository.remove(entities);
+    }
+
     async update(uin: string, code: string, updateDto: Partial<UserCode>): Promise<UserCode> {
         const entity = await this.findOne(uin, code);
         const updatedEntity = Object.assign(entity, updateDto);
@@ -72,12 +77,12 @@ export class UserCodeService {
     }
 
     async save(createDto: Partial<UserCode>): Promise<UserCode> {
-        const existingUin = await this.userCodeRepository.findOne({ 
-            where: { uin: createDto.uin } 
+        const existingUin = await this.userCodeRepository.findOne({
+            where: { uin: createDto.uin }
         });
 
-        const existingCode = await this.userCodeRepository.findOne({ 
-            where: { code: createDto.code } 
+        const existingCode = await this.userCodeRepository.findOne({
+            where: { code: createDto.code }
         });
 
         if (existingUin) {

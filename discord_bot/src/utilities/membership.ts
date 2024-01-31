@@ -62,6 +62,32 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
     await removeUserCode(user.uin);
 }
 
+export async function resetMembershipRoles(guild: Guild, discordIDs: string[]) {
+    // Get the member role name from the cache
+    const memberRoleId = DiscordSettingCache.get('member_role');
+    if (!memberRoleId) {
+        throw new Error('member_role setting not found');
+    }
+
+    // Find the role in the guild
+    const role = guild.roles.cache.find(role => role.id === memberRoleId);
+    if (!role) {
+        throw new Error('member_role not found in the guild');
+    }
+
+    // Iterate over each Discord ID and remove the role
+    for (const id of discordIDs) {
+        try {
+            const member = await guild.members.fetch(id);
+            if (member && member.roles.cache.has(memberRoleId)) {
+                await member.roles.remove(role);
+            }
+        } catch (error) {
+            
+        }
+    }
+}
+
 export async function getUnpaidDuesList(guild: Guild, specificRole?: Role): Promise<Map<User, Role[]>> {
     let teamRoles: Role[];
 
@@ -70,7 +96,7 @@ export async function getUnpaidDuesList(guild: Guild, specificRole?: Role): Prom
     } else {
         // Get all "Team ____" roles
         const TEAM_ROLE_PATTERN = /^Team\s\w+/;
-        teamRoles = [...guild.roles.cache.filter(role => TEAM_ROLE_PATTERN.test(role.name) && role.name != 'Team Captain' && role.name !=  'Team Fight Tactics' && role.name != 'Team Manager').values()];
+        teamRoles = [...guild.roles.cache.filter(role => TEAM_ROLE_PATTERN.test(role.name) && role.name != 'Team Captain' && role.name != 'Team Fight Tactics' && role.name != 'Team Manager').values()];
     }
     // Get the member role name from the cache
     const memberRoleId = DiscordSettingCache.get('member_role');

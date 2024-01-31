@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { QOTDEntryDTO } from 'src/entities/qotdLeaderboard.entity';
-import { QOTDLeaderboardService } from 'src/services/qotdLeaderboard.entity';
+import { QOTDLeaderboardService } from 'src/services/qotdLeaderboard.service';
 
 @Controller('qotd_leader')
 export class QOTDLeaderboardController {

@@ -21,6 +21,11 @@ export class ConfirmationCodeController {
         return this.confirmationCodeService.findOne(code);
     }
 
+    @Delete('reset')
+    removeAll() {
+        return this.confirmationCodeService.removeAll();
+    }
+
     @Delete(':code')
     remove(@Param('code') code: string) {
         return this.confirmationCodeService.remove(code);

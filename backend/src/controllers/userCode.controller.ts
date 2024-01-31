@@ -31,6 +31,11 @@ export class UserCodeController {
         return this.userCodeService.findOne(uin, code);
     }
 
+    @Delete('reset')
+    removeAll() {
+        return this.userCodeService.removeAll();
+    }
+
     @Delete(':uin/:code')
     remove(@Param('uin') uin: string, @Param('code') code: string) {
         return this.userCodeService.remove(uin, code);

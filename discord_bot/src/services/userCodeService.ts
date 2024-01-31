@@ -27,6 +27,10 @@ export async function remove(uin: string, code: string): Promise<void> {
     return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${uin}/${code}`));
 }
 
+export async function reset(): Promise<void> {
+    return withAxiosErrorHandling(() => axios.delete(`${baseURL}/reset`));
+}
+
 export async function removeId(uin: string): Promise<void> {
     return withAxiosErrorHandling(() => axios.delete(`${baseURL}/${uin}`));
 }
