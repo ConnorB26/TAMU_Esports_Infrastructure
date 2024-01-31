@@ -83,9 +83,32 @@ export async function resetMembershipRoles(guild: Guild, discordIDs: string[]) {
                 await member.roles.remove(role);
             }
         } catch (error) {
-            
+
         }
     }
+}
+
+export async function resetAllMemberRoles(guild: Guild) {
+    // Get the member role name from the cache
+    const memberRoleId = DiscordSettingCache.get('member_role');
+    if (!memberRoleId) {
+        throw new Error('member_role setting not found');
+    }
+
+    // Find the role in the guild
+    const role = guild.roles.cache.find(role => role.id === memberRoleId);
+    if (!role) {
+        throw new Error('member_role not found in the guild');
+    }
+
+    let counter = 0;
+    role.members.forEach((member: GuildMember) => {
+        setTimeout(() => {
+            member.roles.remove(role);
+            console.log(`Removed member role from ${member.displayName}`);
+        }, counter * 1000);
+        counter++;
+    });
 }
 
 export async function getUnpaidDuesList(guild: Guild, specificRole?: Role): Promise<Map<User, Role[]>> {
