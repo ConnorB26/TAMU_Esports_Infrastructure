@@ -90,8 +90,8 @@ const Header: React.FC = () => {
             {!isSmallScreen && (
                 <Container fluid className={styles.topDiv}>
                     <Navbar.Brand className={styles.brandText}>Texas A&M University Esports</Navbar.Brand>
-                    <div style={{ width: baseImageSize * 2.5 }} />
-                    <Navbar.Brand className={styles.brandText}>Tagline Here</Navbar.Brand>
+                    <div style={{ width: baseImageSize * 5 }} />
+                    {/*<Navbar.Brand className={styles.brandText}>Tagline Here</Navbar.Brand>*/}
                 </Container>
             )}
             <Navbar.Brand
