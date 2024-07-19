@@ -4,55 +4,41 @@ import styles from './AboutPage.module.css';
 import '../styles/MaroonAccordion.css';
 import InViewMotionDiv from '../components/InViewMotionDiv';
 
-import alexd from '../assets/officers/Alex_DeLape.jpg';
 import piercer from '../assets/officers/Pierce_Ray.jpg';
-import naomik from '../assets/officers/Naomi_Kim.jpg';
 import sreyas from '../assets/officers/Sreya_Suresh.jpg';
-import jasono from '../assets/officers/Jason_Owen.jpg';
-import danielg from '../assets/officers/Daniel_Guajardo.jpg';
-import aland from '../assets/officers/Alan_DeMartini.jpg';
-import faithl from '../assets/officers/Faith_Lass.jpg';
+
+import rev from '../assets/brand/maroon_logo.png';
 
 const leadershipCards = [
     {
-        name: "Alex DeLape",
-        position: "President",
-        imageUrl: alexd
-    },
-    {
         name: "Pierce Ray",
-        position: "Vice President",
+        position: "President",
         imageUrl: piercer
     },
     {
-        name: "Naomi Kim",
-        position: "VP Competitive",
-        imageUrl: naomik
-    },
-    {
         name: "Sreya Suresh",
-        position: "VP Operations & Director of Social Media",
+        position: "Vice President",
         imageUrl: sreyas
     },
     {
-        name: "Jason Owen",
-        position: "Director of Finance",
-        imageUrl: jasono
+        name: "Will Horton",
+        position: "VP Competitive & Director of Finance",
+        imageUrl: rev
     },
     {
-        name: "Daniel Guajardo",
-        position: "Director of Content Management",
-        imageUrl: danielg
+        name: "Leslie Plata",
+        position: "VP Operations & Director of Content Management",
+        imageUrl: rev
     },
     {
-        name: "Alan DeMartini",
-        position: "Director of HR",
-        imageUrl: aland
+        name: "Paris Gabbert",
+        position: "Director of Marketing",
+        imageUrl: rev
     },
     {
-        name: "Faith Lass",
-        position: "Director of Secretarial Services",
-        imageUrl: faithl
+        name: "Sujae Lee",
+        position: "Secretary",
+        imageUrl: rev
     },
 ];
 
