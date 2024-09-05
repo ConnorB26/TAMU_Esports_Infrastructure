@@ -77,7 +77,7 @@ const MembersPage: React.FC = () => {
                                     <Card.Text>
                                         <ol>
                                             <li>Be a student at Texas A&M University</li>
-                                            <li>Purchase dues on Flywire <a href="https://tamu.estore.flywire.com/products/fall-semester-2023-membership-dues-97652" target="_blank" rel="noopener noreferrer">here</a></li>
+                                            <li>Purchase dues on Flywire <a href="https://tamu.estore.flywire.com/products/fall-semester-2024-membership-dues-253501" target="_blank" rel="noopener noreferrer">here</a></li>
                                             <li>Wait up to 5 minutes from when you receive the confirmation email for our system to process it</li>
                                             <li>Join the <a href="https://discord.gg/tamuesports" target="_blank" rel="noopener noreferrer">TAMU Esports Discord server</a> if you haven't already</li>
                                             <li>Register an account with Rev Bot by using her "/profile register" command and filling out the requested information</li>
