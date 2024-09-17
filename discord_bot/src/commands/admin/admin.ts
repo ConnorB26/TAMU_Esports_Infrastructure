@@ -37,6 +37,14 @@ export const data = new SlashCommandBuilder()
                             .setRequired(false)))
             .addSubcommand(subcommand =>
                 subcommand
+                    .setName('create_code')
+                    .setDescription('Create a code for people in need of financial aid for their memberships')
+                    .addUserOption(option =>
+                        option.setName('user')
+                            .setDescription('User for whome to generate the code for')
+                            .setRequired(true)))
+            .addSubcommand(subcommand =>
+                subcommand
                     .setName('message_all')
                     .setDescription(`Message all of the competitive team members who haven't paid their dues`)
                     .addRoleOption(option =>
@@ -145,6 +153,25 @@ export async function execute(interaction: CommandInteraction) {
                 });
 
                 await interaction.editReply(`All team members who have not paid dues have been messaged${errorList.length > 0 ? `, except for: ${errorList.join(',')}` : ''}.`)
+                break;
+            case 'membership create_code':
+                const financialAidUser = opts.getUser('user');
+                const codeName = financialAidUser?.username + '_financialaid';
+
+                try {
+                    await confirmationCodeService.create({
+                        code: codeName,
+                        claimed: false
+                    });
+                }
+                catch (err) {
+                    await interaction.editReply(`A financial aid code for '${financialAidUser?.username}' has already been generated before. Code: \`${codeName}\``);
+                    return;
+                }
+
+                await user?.send(`Howdy ${financialAidUser?.username}! You have been granted financial aid for Texas A&M Esports. To activate it, claim the following code like you would claim your membership normally: \`${codeName}\`. Keep in mind that this is only for the current semester and another request will have to be made and reviewed for future semesters.`)
+
+                await interaction.editReply(`Generated dues code '${codeName}' and sent it to the specified user.`);
                 break;
             default:
                 await interaction.editReply(`Unknown subcommand: ${subcommand}`);
