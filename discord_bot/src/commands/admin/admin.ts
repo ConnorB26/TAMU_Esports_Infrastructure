@@ -37,6 +37,14 @@ export const data = new SlashCommandBuilder()
                             .setRequired(false)))
             .addSubcommand(subcommand =>
                 subcommand
+                    .setName('create_code')
+                    .setDescription('Create a code for people in need of financial aid for their memberships')
+                    .addStringOption(option =>
+                        option.setName('name')
+                            .setDescription('Name of the person generating code for (no spaces)')
+                            .setRequired(true)))
+            .addSubcommand(subcommand =>
+                subcommand
                     .setName('message_all')
                     .setDescription(`Message all of the competitive team members who haven't paid their dues`)
                     .addRoleOption(option =>
@@ -145,6 +153,16 @@ export async function execute(interaction: CommandInteraction) {
                 });
 
                 await interaction.editReply(`All team members who have not paid dues have been messaged${errorList.length > 0 ? `, except for: ${errorList.join(',')}` : ''}.`)
+                break;
+            case 'membership create_code':
+                const codeName = opts.getString('name')! + '_financialaid';
+
+                await confirmationCodeService.create({
+                    code: codeName,
+                    claimed: false
+                });
+
+                await interaction.editReply(`Generated dues code ${codeName}.`);
                 break;
             default:
                 await interaction.editReply(`Unknown subcommand: ${subcommand}`);
