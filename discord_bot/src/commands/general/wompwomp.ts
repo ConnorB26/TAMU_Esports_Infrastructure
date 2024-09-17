@@ -28,9 +28,15 @@ export async function execute(interaction: CommandInteraction) {
         const channel = await guild.channels.fetch(channelId) as TextChannel;
         const message = await channel.messages.fetch(messageId);
 
-        // React with WOMPWOMP like mr president asked
-        const wompWompLetters = ['🇼', '🇴', '🇲', '🇵', '🇼', '🇴', '🇲', '🇵'];
-        for (const letter of wompWompLetters) {
+        // React with custom emojis :womp1:, :womp2:, :womp3:, :womp4: for the first 'womp'
+        const firstWompReactions = ['womp1', 'womp2', 'womp3', 'womp4'];  // Custom emoji names must match exactly
+        for (const reaction of firstWompReactions) {
+            await message.react(reaction);
+        }
+
+        // React with regional indicators for 'W', 'O', 'M', 'P' for the second 'womp'
+        const secondWompReactions = ['regional_indicator_w', 'regional_indicator_🇴', 'regional_indicator_🇲', 'regional_indicator_🇵'];  // Regional indicator emojis for WOMP
+        for (const letter of secondWompReactions) {
             await message.react(letter);
         }
 
