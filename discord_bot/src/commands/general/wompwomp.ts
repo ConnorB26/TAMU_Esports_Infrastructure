@@ -1,4 +1,4 @@
-import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, TextChannel } from 'discord.js';
+import { CommandInteraction, CommandInteractionOptionResolver, Emoji, SlashCommandBuilder, TextChannel } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
     .setName('wompwomp')
@@ -14,7 +14,6 @@ export async function execute(interaction: CommandInteraction) {
     const opts = interaction.options as CommandInteractionOptionResolver;
     const messageLink = opts.getString('messagelink');
 
-    // Parse the message link (format: https://discord.com/channels/{guildId}/{channelId}/{messageId})
     const linkParts = messageLink?.split('/');
     if (!linkParts || linkParts.length < 7) {
         await interaction.editReply('Invalid message link format.');
@@ -28,14 +27,17 @@ export async function execute(interaction: CommandInteraction) {
         const channel = await guild.channels.fetch(channelId) as TextChannel;
         const message = await channel.messages.fetch(messageId);
 
-        // React with custom emojis :womp1:, :womp2:, :womp3:, :womp4: for the first 'womp'
-        const firstWompReactions = ['womp1', 'womp2', 'womp3', 'womp4'];  // Custom emoji names must match exactly
+        const firstWompReactions = ['womp1', 'womp2', 'womp3', 'womp4'];
         for (const reaction of firstWompReactions) {
-            await message.react(reaction);
+            const emoji = guild.emojis.cache.find(e => e.name === reaction);
+            if (emoji) {
+                await message.react(emoji);
+            } else {
+                console.log(`Emoji ${reaction} not found.`);
+            }
         }
 
-        // React with regional indicators for 'W', 'O', 'M', 'P' for the second 'womp'
-        const secondWompReactions = ['regional_indicator_w', 'regional_indicator_🇴', 'regional_indicator_🇲', 'regional_indicator_🇵'];  // Regional indicator emojis for WOMP
+        const secondWompReactions = ['🇼', '🇴', '🇲', '🇵'];
         for (const letter of secondWompReactions) {
             await message.react(letter);
         }
