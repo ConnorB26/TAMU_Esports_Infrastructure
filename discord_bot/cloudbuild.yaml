@@ -15,6 +15,5 @@ steps:
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
-serviceAccount: "$PROJECT_ID@cloudbuild.gserviceaccount.com"
 options:
   logging: CLOUD_LOGGING_ONLY
