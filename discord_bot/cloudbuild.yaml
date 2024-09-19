@@ -5,7 +5,10 @@ steps:
         "build",
         "-t",
         "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
-        ".",
+        "-f",
+        "./discord_bot/Dockerfile.prod",
+        "./discord_bot",
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
+logsBucket: gs://tamu-esports-infrastructure-build-logs-bucket

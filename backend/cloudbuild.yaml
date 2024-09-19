@@ -5,7 +5,10 @@ steps:
         "build",
         "-t",
         "us-central1-docker.pkg.dev/$PROJECT_ID/backend/backend:latest",
-        ".",
+        "-f",
+        "./backend/Dockerfile.prod",
+        "./backend",
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/backend/backend:latest"
+logsBucket: gs://tamu-esports-infrastructure-build-logs-bucket
