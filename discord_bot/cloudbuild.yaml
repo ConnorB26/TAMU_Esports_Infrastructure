@@ -5,15 +5,9 @@ steps:
         "build",
         "-t",
         "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
-        ".",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
+        "-f",
+        "./discord-bot/Dockerfile.prod",
+        "./discord-bot",
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
-options:
-  logging: CLOUD_LOGGING_ONLY
