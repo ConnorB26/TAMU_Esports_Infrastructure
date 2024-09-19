@@ -7,7 +7,11 @@ steps:
         "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
         ".",
       ]
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
+      ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
-serviceAccount: "376083662673@cloudbuild.gserviceaccount.com"
-logsBucket: gs://tamu-esports-infrastructure-build-logs-bucket
