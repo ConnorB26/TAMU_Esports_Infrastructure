@@ -21,11 +21,6 @@ const leadershipCards = [
         imageUrl: sreyas
     },
     {
-        name: "Will Horton",
-        position: "VP Competitive & Director of Finance",
-        imageUrl: rev
-    },
-    {
         name: "Leslie Plata",
         position: "VP Operations & Director of Content Management",
         imageUrl: rev
