@@ -11,3 +11,4 @@ steps:
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/backend/backend:latest"
+logsBucket: gs://tamu-esports-infrastructure-build-logs-bucket
