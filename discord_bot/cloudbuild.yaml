@@ -6,8 +6,8 @@ steps:
         "-t",
         "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest",
         "-f",
-        "./discord-bot/Dockerfile.prod",
-        "./discord-bot",
+        "./discord_bot/Dockerfile.prod",
+        "./discord_bot",
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
