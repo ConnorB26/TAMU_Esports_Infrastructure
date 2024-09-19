@@ -16,4 +16,4 @@ steps:
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/discord-bot/discord-bot:latest"
 logsBucket: "gs://tamu-esports-infrastructure-build-logs-bucket"
-serviceAccount: "projects/$PROJECT_ID/serviceAccounts/376083662673@cloudbuild.gserviceaccount.com"
+serviceAccount: "376083662673@cloudbuild.gserviceaccount.com"
