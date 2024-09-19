@@ -9,4 +9,5 @@ steps:
       ]
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/backend/backend:latest"
+serviceAccount: "376083662673@cloudbuild.gserviceaccount.com"
 logsBucket: gs://tamu-esports-infrastructure-build-logs-bucket
