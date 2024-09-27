@@ -30,11 +30,6 @@ const leadershipCards = [
         position: "Director of Marketing",
         imageUrl: rev
     },
-    {
-        name: "Will Horton",
-        position: "Director of Finance",
-        imageUrl: rev
-    },
 ];
 
 const AboutPage: React.FC = () => {
