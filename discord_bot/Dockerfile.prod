@@ -32,4 +32,4 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 # Start the application
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/bot.js"]
