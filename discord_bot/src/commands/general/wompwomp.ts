@@ -37,7 +37,7 @@ export async function execute(interaction: CommandInteraction) {
             }
         }
 
-        const secondWompReactions = ['🇼', '🇴', '🇲', '🇵'];
+        const secondWompReactions = ['letterw', 'lettero', 'letterm', 'letterp'];
         for (const letter of secondWompReactions) {
             await message.react(letter);
         }
