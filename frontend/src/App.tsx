@@ -8,6 +8,7 @@ import ContactPage from './pages/ContactPage';
 import MembersPage from './pages/MembersPage';
 import ConstructionPage from './pages/ConstructionPage';
 import Footer from './components/Footer';
+import ShopPage from './pages/ShopPage';
 
 function App() {
   return (
@@ -20,10 +21,7 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="members" element={<MembersPage />} />
-            <Route path="rosters" element={<ConstructionPage />} />
-            <Route path="awards" element={<ConstructionPage />} />
-            <Route path="privacy" element={<ConstructionPage />} />
-            <Route path="terms" element={<ConstructionPage />} />
+            <Route path="shop" element={<ShopPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
