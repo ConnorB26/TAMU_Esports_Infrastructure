@@ -6,7 +6,6 @@ import Header from './components/Header';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import MembersPage from './pages/MembersPage';
-import ConstructionPage from './pages/ConstructionPage';
 import Footer from './components/Footer';
 import { ShopifyCollection } from './pages/ShopPage';
 
