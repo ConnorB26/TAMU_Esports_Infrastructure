@@ -8,7 +8,7 @@ import ContactPage from './pages/ContactPage';
 import MembersPage from './pages/MembersPage';
 import ConstructionPage from './pages/ConstructionPage';
 import Footer from './components/Footer';
-import ShopPage from './pages/ShopPage';
+import { ShopifyCollection } from './pages/ShopPage';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="members" element={<MembersPage />} />
-            <Route path="shop" element={<ShopPage />} />
+            <Route path="shop" element={<ShopifyCollection />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
