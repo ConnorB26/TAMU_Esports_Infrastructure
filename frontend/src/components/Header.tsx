@@ -13,9 +13,8 @@ const NavLinks = ({ indices }: any) => {
     const navLinks = [
         { to: '/about', label: 'About' },
         { to: '/contact', label: 'Contact' },
-        { to: '/rosters', label: 'Rosters' },
-        { to: '/awards', label: 'Awards' },
-        { to: '/members', label: 'Members' }
+        { to: '/members', label: 'Members' },
+        { to: '/shop', label: 'Shop' }
     ];
 
     const scroll = () => {
@@ -89,9 +88,12 @@ const Header: React.FC = () => {
         <>
             {!isSmallScreen && (
                 <Container fluid className={styles.topDiv}>
-                    <Navbar.Brand className={styles.brandText}>Texas A&M University Esports</Navbar.Brand>
-                    <div style={{ width: baseImageSize * 5 }} />
-                    {/*<Navbar.Brand className={styles.brandText}>Tagline Here</Navbar.Brand>*/}
+                    <div className={styles.sideSection}>
+                        <Navbar.Brand className={styles.brandText}>Texas A&M University Esports</Navbar.Brand>
+                    </div>
+                    <div className={styles.sideSection}>
+                        <div className={styles.brandText}>Join our <a href="https://discord.gg/tamuesports" target="_blank" rel="noopener noreferrer">Discord</a>!</div>
+                    </div>
                 </Container>
             )}
             <Navbar.Brand
@@ -113,7 +115,7 @@ const Header: React.FC = () => {
                             <Navbar.Toggle className={styles.navbarToggle} />
                             <Navbar.Collapse>
                                 <Nav>
-                                    <NavLinks indices={[0, 1, 4, 2, 3]} />
+                                    <NavLinks indices={[0, 1, 2, 3]} />
                                 </Nav>
                             </Navbar.Collapse>
                         </Navbar>
@@ -122,7 +124,7 @@ const Header: React.FC = () => {
                     <>
                         <Container fluid className={`${styles.navContainer} ${styles.leftNav}`}>
                             <Nav>
-                                <NavLinks indices={[0, 1, 4]} />
+                                <NavLinks indices={[0, 1]} />
                             </Nav>
                         </Container>
                         <div style={{ width: baseImageSize * 2 }} />
