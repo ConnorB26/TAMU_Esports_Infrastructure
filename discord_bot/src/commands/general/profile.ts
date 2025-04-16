@@ -44,7 +44,7 @@ export async function execute(interaction: CommandInteraction) {
                     const embed = await createProfileEmbed(interaction.member as GuildMember);
                     await interaction.editReply({ embeds: [embed] });
                 } catch (error) {
-                    await interaction.editReply(`You do not have a profile. Create one using the register command.`);
+                    await interaction.editReply(`You do not have a profile. Create one using the /profile register command.`);
                 }
                 break;
             case 'permissions':
