@@ -43,7 +43,7 @@ export async function removeMembership(guild: Guild, member: GuildMember) {
     try {
         user = await getUser(member.id);
     } catch (error) {
-        throw new Error('You need to register and claim a membership before trying to unclaim it. You can do so by using the commands /register and /claim');
+        throw new Error('You need to register and claim a membership before trying to unclaim it. You can do so by using the commands /profile register and /membership claim');
     }
 
     // Get the member role name from the cache
