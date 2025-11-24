@@ -9,6 +9,7 @@ import { registerUser } from "./utilities/users";
 import { User } from "./models/user";
 import EventSource from 'eventsource';
 import * as userService from './services/userService';
+import discordSettingCache from "./cache/discordSettingCache";
 
 // Setup bot
 client.once(Events.ClientReady, async () => {
@@ -190,6 +191,43 @@ eventSource.onopen = async () => {
     await populateCaches();
     apiConnected = true;
 };
+
+// Auto-kick users who receive forbidden onboarding roles
+client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+    // Only act on your main server
+    if (newMember.guild.id !== config.DISCORD_GUILD_ID) return;
+
+    // Find newly added roles
+    const newlyAdded = newMember.roles.cache.filter(
+        role => !oldMember.roles.cache.has(role.id)
+    );
+
+    // Check if any newly added role is forbidden
+    const badRole = discordSettingCache.get('bot_role');
+
+    const shouldKick = badRole
+        ? newlyAdded.some(role => String(role.id) === String(badRole))
+        : false;
+
+    if (!shouldKick) return;
+
+    const dmMessage = "You did not pass our verification check. Access denied.";
+
+    try {
+        // Attempt to DM them (but don't crash if DMs are disabled)
+        await newMember.send(dmMessage).catch(() => { });
+
+        // Give Discord a moment to deliver the DM before kick
+        await new Promise(res => setTimeout(res, 300));
+
+        // Kick the user
+        await newMember.kick("Failed verification - onboarding role trigger");
+        console.log(`Auto-kicked ${newMember.user.tag}`);
+    } catch (err) {
+        console.error("Auto-kick failed:", err);
+    }
+});
+
 
 // Log in bot
 client.login(config.DISCORD_TOKEN);
