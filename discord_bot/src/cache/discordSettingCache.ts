@@ -27,6 +27,13 @@ class DiscordSettingCache {
         this.cache.set(name, value);
     }
 
+    public add(name: string, value: string): void {
+        if (this.cache.has(name)) {
+            throw new Error(`Setting with name ${name} already exists`);
+        }
+        this.cache.set(name, value);
+    }
+
     public get(name: string): string | undefined {
         return this.cache.get(name);
     }

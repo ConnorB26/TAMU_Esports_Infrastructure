@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder } from "discord.js";
 import DiscordSettingCache from '../../cache/discordSettingCache';
-import { update as updateSetting } from '../../services/discordSettingService';
+import { update as updateSetting, create } from '../../services/discordSettingService';
 
 export const data = new SlashCommandBuilder()
     .setName("settings")
@@ -22,15 +22,27 @@ export const data = new SlashCommandBuilder()
             .addStringOption(option =>
                 option.setName('new_value')
                     .setDescription('New value for the setting')
+                    .setRequired(true)))
+    .addSubcommand(subcommand =>
+        subcommand.setName('create')
+            .setDescription('Create a new setting')
+            .addStringOption(option =>
+                option.setName('setting_name')
+                    .setDescription('Name of the setting to create')
+                    .setRequired(true))
+            .addStringOption(option =>
+                option.setName('value')
+                    .setDescription('Value of the new setting')
                     .setRequired(true)));
 
 export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
-    
+
     const opts = interaction.options as CommandInteractionOptionResolver;
 
     if (opts.getSubcommand() === 'get') {
         const settingName = opts.getString('setting_name');
+
         if (settingName) {
             const settingValue = DiscordSettingCache.get(settingName);
             return interaction.editReply(`Setting ${settingName} is ${settingValue}`);
@@ -41,6 +53,7 @@ export async function execute(interaction: CommandInteraction) {
     } else if (opts.getSubcommand() === 'update') {
         const settingName = opts.getString('setting_name')!;
         const newValue = opts.getString('new_value') ?? "";
+
         try {
             await updateSetting(settingName, { name: settingName, value: newValue });
             DiscordSettingCache.update(settingName, newValue);
@@ -48,6 +61,23 @@ export async function execute(interaction: CommandInteraction) {
         } catch (error) {
             console.error(error);
             return interaction.editReply(`Failed to update setting ${settingName}`);
+        }
+    } else if (opts.getSubcommand() === 'create') {
+        const settingName = opts.getString('setting_name')!;
+        const value = opts.getString('value') ?? "";
+
+        try {
+            const created = await create({ name: settingName, value });
+            DiscordSettingCache.add(settingName, value);
+
+            return interaction.editReply(
+                `Created new setting **${settingName}** with value **${value}** (ID: ${created.id})`
+            );
+        } catch (error) {
+            console.error(error);
+            return interaction.editReply(
+                `Failed to create setting **${settingName}**`
+            );
         }
     }
 }
